@@ -1,6 +1,8 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Link } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
     return (
@@ -20,6 +22,17 @@ export default function Home() {
                     create interactive and unique fantasy worlds. Peer into the
                     Wildspace and discover all that awaits.
                 </p>
+                <Link
+                    className={buttonVariants({
+                        size: "lg",
+                        className: "mt-5",
+                        variant: "default",
+                    })}
+                    href="/dashboard"
+                    target="_blank"
+                >
+                    Get started <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
                 <Image
                     src="/logo.png"
                     height={540}
@@ -47,7 +60,8 @@ export default function Home() {
                                     Sign up for an account
                                 </span>
                                 <span className="mt-2 text-zinc-700">
-                                    Try 5 generations for free, or sign up for a premium account.
+                                    Try 5 generations for free, or sign up for a
+                                    premium account.
                                 </span>
                             </div>
                         </li>
@@ -60,7 +74,8 @@ export default function Home() {
                                     Create a world
                                 </span>
                                 <span className="mt-2 text-zinc-700">
-                                    We&apos;ll process a world collection. The rest is up to you.
+                                    We&apos;ll process a world collection. The
+                                    rest is up to you.
                                 </span>
                             </div>
                         </li>
@@ -73,7 +88,8 @@ export default function Home() {
                                     Start generating entities
                                 </span>
                                 <span className="mt-2 text-zinc-700">
-                                    It&apos;s that simple. Try generating an NPC, location, city, or country.
+                                    It&apos;s that simple. Try generating an
+                                    NPC, location, city, or country.
                                 </span>
                             </div>
                         </li>

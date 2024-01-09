@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Project Wildspace",
-    description: "A worldbuilding tool that helps you create interactive and unique fantasy worlds. Peer into the Wildspace and discover all that awaits.",
+    description:
+        "A worldbuilding tool that helps you create interactive and unique fantasy worlds. Peer into the Wildspace and discover all that awaits.",
 };
 
 export default function RootLayout({
@@ -23,6 +25,7 @@ export default function RootLayout({
                     inter.className
                 )}
             >
+                <Navbar/>
                 {children}
             </body>
         </html>
