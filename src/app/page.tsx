@@ -35,9 +35,10 @@ export default function Home() {
                 </Link>
                 <Image
                     src="/logo.png"
-                    height={540}
-                    width={540}
+                    height={1080}
+                    width={1080}
                     alt="Project Wildspace Logo"
+                    className="aspect-auto h-[112] w-auto"
                 ></Image>
 
                 <div className="mb-32 mt-32 max-w-5xl sm:mt-56">
