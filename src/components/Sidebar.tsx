@@ -6,7 +6,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import WorldButton from "./WorldInfo";
+import WorldButton from "./WorldButton";
 
 interface SidebarProps {
     world: World;
@@ -21,7 +21,7 @@ const Sidebar = ({ world, characters }: SidebarProps) => {
                 <WorldButton world={world} />
             </div>
             <Separator />
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="multiple" className="w-full">
                 <AccordionItem value="item-1">
                     <AccordionTrigger>Characters</AccordionTrigger>
                     <AccordionContent>

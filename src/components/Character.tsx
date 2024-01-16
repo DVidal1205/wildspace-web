@@ -15,11 +15,10 @@ import { Toggle } from "./ui/toggle";
 import { Check, Loader2 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { trpc } from "@/app/_trpc/client";
-import { TRPCError } from "@trpc/server";
 import { useToast } from "./ui/use-toast";
-import { set } from "date-fns";
-import { TRPCClientError } from "@trpc/client";
 import { World } from "@prisma/client";
+import { set } from "date-fns";
+import Image from "next/image";
 
 const Character = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -29,7 +28,7 @@ const Character = ({ world }: { world: World }) => {
     const [alignmentDisabled, setAlignmentDisabled] = useState<boolean>(false);
     const [ageDisabled, setAgeDisabled] = useState<boolean>(false);
     const [buildDisabled, setBuildDisabled] = useState<boolean>(false);
-    const [eyesDisabled, setEyesDisabled] = useState<boolean>(false);
+    const [genderDisabled, setGenderDisabled] = useState<boolean>(false);
     const [hairDisabled, setHairDisabled] = useState<boolean>(false);
     const [heightDisabled, setHeightDisabled] = useState<boolean>(false);
     const [fashionDisabled, setFashionDisabled] = useState<boolean>(false);
@@ -39,6 +38,7 @@ const Character = ({ world }: { world: World }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [currentlySavingCharacter, setCurrentlySavingCharacter] =
         useState<boolean>(false);
+    const [imageLoading, setImageLoading] = useState<boolean>(false);
 
     const [name, setName] = useState<string>("");
     const [race, setRace] = useState<string>("");
@@ -47,7 +47,7 @@ const Character = ({ world }: { world: World }) => {
     const [alignment, setAlignment] = useState<string>("");
     const [age, setAge] = useState<string>("");
     const [build, setBuild] = useState<string>("");
-    const [eyes, setEyes] = useState<string>("");
+    const [gender, setGender] = useState<string>("");
     const [hair, setHair] = useState<string>("");
     const [height, setHeight] = useState<string>("");
     const [fashion, setFashion] = useState<string>("");
@@ -55,33 +55,35 @@ const Character = ({ world }: { world: World }) => {
     const [goals, setGoals] = useState<string>("");
     const [backstory, setBackstory] = useState<string>("");
     const [prompt, setPrompt] = useState<string>("");
+    const [image, setImage] = useState<string>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
 
-    const { data: response, refetch } = trpc.generateCharacter.useQuery(
-        {
-            name: nameDisabled ? name : "",
-            cClass: classDisabled ? pclass : "",
-            race: raceDisabled ? race : "",
-            subclass: subclassDisabled ? subclass : "",
-            alignment: alignmentDisabled ? alignment : "",
-            age: ageDisabled ? age : "",
-            build: buildDisabled ? build : "",
-            eyes: eyesDisabled ? eyes : "",
-            hair: hairDisabled ? hair : "",
-            height: heightDisabled ? height : "",
-            fashion: fashionDisabled ? fashion : "",
-            quirks: quirksDisabled ? quirks : "",
-            goals: goalsDisabled ? goals : "",
-            backstory: backstoryDisabled ? backstory : "",
-            prompt: prompt,
-            worldInfo: world?.description,
-        },
-        {
-            enabled: false,
-        }
-    );
+    const { data: response, refetch: genFetch } =
+        trpc.generateCharacter.useQuery(
+            {
+                name: nameDisabled ? name : "",
+                cClass: classDisabled ? pclass : "",
+                race: raceDisabled ? race : "",
+                subclass: subclassDisabled ? subclass : "",
+                alignment: alignmentDisabled ? alignment : "",
+                age: ageDisabled ? age : "",
+                build: buildDisabled ? build : "",
+                gender: genderDisabled ? gender : "",
+                hair: hairDisabled ? hair : "",
+                height: heightDisabled ? height : "",
+                fashion: fashionDisabled ? fashion : "",
+                quirks: quirksDisabled ? quirks : "",
+                goals: goalsDisabled ? goals : "",
+                backstory: backstoryDisabled ? backstory : "",
+                prompt: prompt,
+                worldInfo: world?.description,
+            },
+            {
+                enabled: false,
+            }
+        );
     const { mutate: saveCharacter } = trpc.saveCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldCharacters.invalidate();
@@ -94,9 +96,20 @@ const Character = ({ world }: { world: World }) => {
         },
     });
 
+    const { data: imageResponse, refetch: imageFetch } =
+        trpc.generateImage.useQuery(
+            { object: response, type: "Character/Person" },
+            { enabled: false }
+        );
+
     const handleSubmit = () => {
         setLoading(true);
-        refetch();
+        genFetch();
+    };
+
+    const handleImage = () => {
+        setImageLoading(true);
+        imageFetch();
     };
 
     const handleSave = () => {
@@ -108,16 +121,25 @@ const Character = ({ world }: { world: World }) => {
             alignment: alignment,
             age: age,
             build: build,
-            eyes: eyes,
+            gender: gender,
             hair: hair,
             height: height,
             fashion: fashion,
             quirks: quirks,
             goals: goals,
             backstory: backstory,
+            imageURL: image,
             worldID: world.id,
         });
     };
+
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(imageResponse);
+            console.log(imageResponse);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
 
     useEffect(() => {
         if (response) {
@@ -128,7 +150,7 @@ const Character = ({ world }: { world: World }) => {
             setAlignment(response.alignment);
             setAge(response.age);
             setBuild(response.build);
-            setEyes(response.eyes);
+            setGender(response.gender);
             setHair(response.hair);
             setHeight(response.height);
             setFashion(response.fashion);
@@ -137,7 +159,7 @@ const Character = ({ world }: { world: World }) => {
             setBackstory(response.backstory);
             setLoading(false);
         }
-    }, [response, toast]);
+    }, [response]);
 
     return (
         <Card>
@@ -149,7 +171,7 @@ const Character = ({ world }: { world: World }) => {
                     set them.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-5 gap-4">
                 <div className="gap-4 col-span-2 grid grid-cols-2">
                     <div className="space-y-1">
                         <Label htmlFor="name">Name</Label>
@@ -275,17 +297,19 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="eyes">Eyes</Label>
+                        <Label htmlFor="gender">Gender</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="eyes"
+                                id="gender"
                                 autoComplete="off"
-                                value={eyes}
-                                onChange={(e) => setEyes(e.target.value)}
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setEyesDisabled(!eyesDisabled)}
+                                onClick={() =>
+                                    setGenderDisabled(!genderDisabled)
+                                }
                             >
                                 <Check></Check>
                             </Toggle>
@@ -328,7 +352,7 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                 </div>
-                <div className="gap-4 space-y-2">
+                <div className="gap-4 space-y-2 col-span-2">
                     <div className="space-y-1">
                         <Label htmlFor="fashion">Fashion</Label>
                         <div className="flex space-x-2 items-center">
@@ -404,8 +428,37 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                 </div>
+                <div className="space-y-1">
+                    <Label>Image</Label>
+                    <Card className="aspect-square">
+                        {image && (
+                            <Image
+                                height={1024}
+                                width={1024}
+                                src={image}
+                                alt="character image"
+                                className="rounded-xl"
+                            ></Image>
+                        )}
+                    </Card>
+                    <div className="flex justify-center">
+                        {response ? (
+                            <Button className="mt-2" onClick={() => handleImage()}>
+                                {imageLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <div>
+                                        Generate Image
+                                    </div>
+                                )}
+                            </Button>
+                        ) : (
+                            <p>Please Generate Character First...</p>
+                        )}
+                    </div>
+                </div>
             </CardContent>
-            <CardFooter className="gap-4 justify-center">
+            <CardFooter className="gap-4 justify-center mt-12">
                 <Label htmlFor="race">Prompt</Label>
                 <div className="flex space-x-2 items-center">
                     <Input
@@ -413,6 +466,7 @@ const Character = ({ world }: { world: World }) => {
                         autoComplete="off"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
+                        className="w-[400px]"
                     />
                 </div>
 

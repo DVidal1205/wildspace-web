@@ -47,15 +47,16 @@ model Character {
   alignment String
   age       String
   build     String
-  eyes      String
+  gender    String
   hair      String
   height    String
   fashion   String @db.VarChar(1000)
   quirks    String @db.VarChar(1000)
   goals     String @db.VarChar(1000)
   backstory String @db.VarChar(1000)
+  image     String @db.VarChar(1000)
 
-  World   World  @relation(fields: [worldID], references: [id])
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
   worldID String
 
   User   User   @relation(fields: [userId], references: [id])

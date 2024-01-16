@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit, Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
+import { Ghost, Loader2, Plus, Trash } from "lucide-react";
 import UploadButton from "./UploadButton";
 import { trpc } from "@/app/_trpc/client";
 import Skeleton from "react-loading-skeleton";
