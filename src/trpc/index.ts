@@ -1125,7 +1125,7 @@ export const appRouter = router({
                         .describe("Backstory of the Character (3-5 Sentences)"),
                     quirks: z
                         .string()
-                        .describe("Quirks of the Character (2-3 Sentences)"),
+                        .describe("Quirks of the Character for roleplaying. Be specific with mannerisms or behaviors. (2-3 Sentences)"),
                     fashion: z
                         .string()
                         .describe(
@@ -1156,8 +1156,8 @@ export const appRouter = router({
 
             const worldInfo = { worldInfo: input.worldInfo };
 
-            const promptTemplate = `You are an expert Dungeon Master for Dungeons and Dragons Fifth Edition.
-        You come up with catchy and memorable ideas for a Dungeons and Dragons Campaign. 
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
         Create a character concept for an NPC your party may encounter using the following information.  
         When making this character, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the character.
         Your generation Prompt: {question}
