@@ -1261,6 +1261,27 @@ export const appRouter = router({
 
             return character;
         }),
+    getCharacter: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const character = await db.character.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!character) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Character not found",
+                });
+            }
+
+            return character;
+        }),
 });
 
 export type AppRouter = typeof appRouter;

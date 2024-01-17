@@ -1,3 +1,4 @@
+"use client";
 import { Character, World } from "@prisma/client";
 import { Separator } from "./ui/separator";
 import {
@@ -7,6 +8,8 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import WorldButton from "./WorldButton";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface SidebarProps {
     world: World;
@@ -14,6 +17,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ world, characters }: SidebarProps) => {
+    const router = useRouter();
     return (
         <div className="sm:w-[98vw] sm:px-6 md:w-full md:px-0">
             <div className="flex justify-between mb-2">
@@ -34,7 +38,11 @@ const Sidebar = ({ world, characters }: SidebarProps) => {
                                         key={character.id}
                                         className="cursor-pointer my-3"
                                     >
-                                        <div>{character.name}</div>
+                                        <Link
+                                            href={`/dashboard/${world.id}/${character.id}?type=character`}
+                                        >
+                                            {character.name}
+                                        </Link>
                                     </li>
                                 ))
                             )}
