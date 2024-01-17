@@ -12,13 +12,16 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
+import { ToastAction } from "./ui/toast";
 import { World } from "@prisma/client";
 import { set } from "date-fns";
 import Image from "next/image";
+import { router } from "@/trpc/trpc";
+import { useRouter } from "next/navigation";
 
 const CharacterView = ({
     world,
@@ -62,6 +65,12 @@ const CharacterView = ({
     const [backstory, setBackstory] = useState<string>("");
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
+    const [worldResponse, setWorldResponse] = useState<any>("");
+    const [characterResponse, setCharacterResponse] = useState<any>("");
+    const [deletingCharacter, setCurrentlyDeletingCharacter] =
+        useState<boolean>(false);
+
+    const router = useRouter();
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -87,6 +96,7 @@ const CharacterView = ({
             setGoals(character.goals);
             setBackstory(character.backstory);
             setImage(character.image);
+            setCharacterResponse(character);
         }
     }, [character]);
 
@@ -114,15 +124,32 @@ const CharacterView = ({
                 enabled: false,
             }
         );
-    const { mutate: saveCharacter } = trpc.saveCharacter.useMutation({
+    const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldCharacters.invalidate();
+            toast({
+                title: "Character Saved!",
+                description: "Your character has been saved.",
+            });
         },
         onMutate: () => {
             setCurrentlySavingCharacter(true);
         },
         onSettled() {
             setCurrentlySavingCharacter(false);
+        },
+    });
+
+    const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
+        onSuccess: () => {
+            utils.getWorldCharacters.invalidate();
+            router.push(`/dashboard/${world.id}`);
+        },
+        onMutate: () => {
+            setCurrentlyDeletingCharacter(true);
+        },
+        onSettled() {
+            setCurrentlyDeletingCharacter(false);
         },
     });
 
@@ -143,7 +170,7 @@ const CharacterView = ({
     };
 
     const handleSave = () => {
-        saveCharacter({
+        updateCharacter({
             name: name,
             race: race,
             cClass: pclass,
@@ -160,6 +187,7 @@ const CharacterView = ({
             backstory: backstory,
             imageURL: image,
             worldID: world.id,
+            id: entityid,
         });
     };
 
@@ -187,11 +215,12 @@ const CharacterView = ({
             setQuirks(response.quirks);
             setGoals(response.goals);
             setBackstory(response.backstory);
+            setWorldResponse(response);
             setLoading(false);
         }
     }, [response]);
 
-    return !name ? (
+    return !character ? (
         <div>
             <Loader2 className="h-40 2-40 animate-spin"></Loader2>
         </div>
@@ -475,7 +504,7 @@ const CharacterView = ({
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {response || character ? (
+                        {worldResponse || characterResponse ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}
@@ -521,6 +550,16 @@ const CharacterView = ({
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                             <div>Save</div>
+                        )}
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onClick={() => deleteCharacter({ id: entityid })}
+                    >
+                        {deletingCharacter === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Trash className="h-4 w-4" />
                         )}
                     </Button>
                 </>

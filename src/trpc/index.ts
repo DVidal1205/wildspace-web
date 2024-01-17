@@ -1125,7 +1125,9 @@ export const appRouter = router({
                         .describe("Backstory of the Character (3-5 Sentences)"),
                     quirks: z
                         .string()
-                        .describe("Quirks of the Character for roleplaying. Be specific with mannerisms or behaviors. (2-3 Sentences)"),
+                        .describe(
+                            "Quirks of the Character for roleplaying. Be specific with mannerisms or behaviors. (2-3 Sentences)"
+                        ),
                     fashion: z
                         .string()
                         .describe(
@@ -1282,6 +1284,70 @@ export const appRouter = router({
 
             return character;
         }),
+    updateCharacter: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                race: z.string(),
+                cClass: z.string(),
+                subclass: z.string(),
+                alignment: z.string(),
+                age: z.string(),
+                build: z.string(),
+                gender: z.string(),
+                hair: z.string(),
+                height: z.string(),
+                backstory: z.string(),
+                quirks: z.string(),
+                fashion: z.string(),
+                goals: z.string(),
+                worldID: z.string(),
+                imageURL: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const updatedCharacter = await db.character.update({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+                data: {
+                    name: input.name,
+                    race: input.race,
+                    class: input.cClass,
+                    subclass: input.subclass,
+                    alignment: input.alignment,
+                    age: input.age,
+                    build: input.build,
+                    gender: input.gender,
+                    hair: input.hair,
+                    height: input.height,
+                    backstory: input.backstory,
+                    quirks: input.quirks,
+                    fashion: input.fashion,
+                    goals: input.goals,
+                    worldID: input.worldID,
+                    image: input.imageURL,
+                },
+            });
+
+            return updatedCharacter;
+        }),
+    deleteCharacter: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+        const { userId } = ctx;
+
+        const deletedCharacter = await db.character.delete({
+            where: {
+                id: input.id,
+                userId,
+            },
+        });
+
+        return deletedCharacter;
+    }),
 });
 
 export type AppRouter = typeof appRouter;
