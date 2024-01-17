@@ -69,6 +69,7 @@ const CharacterView = ({
     const [characterResponse, setCharacterResponse] = useState<any>("");
     const [deletingCharacter, setCurrentlyDeletingCharacter] =
         useState<boolean>(false);
+    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
 
     const router = useRouter();
 
@@ -233,8 +234,8 @@ const CharacterView = ({
                     save to update the character.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-5 gap-4">
-                <div className="gap-4 col-span-2 grid grid-cols-2">
+            <CardContent className="grid lg:grid-cols-5 gap-4">
+                <div className="gap-4 lg:col-span-2 grid lg:grid-cols-2">
                     <div className="space-y-1">
                         <Label htmlFor="name">Name</Label>
                         <div className="flex space-x-2 items-center">
@@ -494,13 +495,28 @@ const CharacterView = ({
                     <Label>Image</Label>
                     <Card className="aspect-square">
                         {image && (
-                            <Image
-                                height={1024}
-                                width={1024}
-                                src={image}
-                                alt="character image"
-                                className="rounded-xl"
-                            ></Image>
+                            <div
+                                className={`${
+                                    isImageFullscreen
+                                        ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    setIsImageFullscreen(!isImageFullscreen)
+                                }
+                            >
+                                <Image
+                                    height={1024}
+                                    width={1024}
+                                    src={image}
+                                    alt="character image"
+                                    className={`rounded-xl ${
+                                        isImageFullscreen
+                                            ? "h-[85vh] w-auto"
+                                            : ""
+                                    }`}
+                                ></Image>
+                            </div>
                         )}
                     </Card>
                     <div className="flex justify-center">
@@ -529,7 +545,7 @@ const CharacterView = ({
                         autoComplete="off"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="w-[400px]"
+                        className="w-[50vw] lg:w-[30vw]"
                     />
                 </div>
 

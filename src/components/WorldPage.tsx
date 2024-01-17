@@ -23,8 +23,8 @@ const WorldPage = ({ world }: { world: World }) => {
 
     return (
         <main className="mx-auto md:p-10">
-            <div className="grid md:grid-cols-8">
-                <div className="md:col-span-1 h-max md:mr-4 my-2 md:my-0">
+            <div className="grid lg:grid-cols-8">
+                <div className="lg:col-span-1 h-max lg:mr-4 my-2 lg:my-0">
                     <Sidebar world={world} characters={characters || []} />
                 </div>
                 <div className="md:col-span-7">

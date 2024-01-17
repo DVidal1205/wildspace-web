@@ -37,7 +37,7 @@ const GalleryPage = ({
     return (
         <main className="mx-auto md:p-10">
             <Button
-                className="mb-2"
+                className="my-2"
                 onClick={() => router.push(`/dashboard/${world.id}`)}
             >
                 <ArrowLeft className="h-4 w-4" /> Back

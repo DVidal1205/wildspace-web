@@ -38,6 +38,7 @@ const Character = ({ world }: { world: World }) => {
     const [currentlySavingCharacter, setCurrentlySavingCharacter] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
+    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
 
     const [name, setName] = useState<string>("");
     const [race, setRace] = useState<string>("");
@@ -434,40 +435,49 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                 </div>
-                <div className="space-y-1 sm:flex sm:justify-center">
-                    <div>
-                        <Label>Image</Label>
-                        <div className="flex flex-col justify-center sm:w-[50vw] sm:h-auto md:w-[12vw]">
-                            <Card className="aspect-square sm:w-[50vw] sm:h-auto md:w-full">
-                                {image && (
-                                    <Image
-                                        height={1024}
-                                        width={1024}
-                                        src={image}
-                                        alt="character image"
-                                        className="rounded-xl"
-                                    ></Image>
-                                )}
-                            </Card>
-                            <div>
-                                {responseData ? (
-                                    <Button
-                                        className="mt-2"
-                                        onClick={() => handleImage()}
-                                    >
-                                        {imageLoading ? (
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <div>Generate Image</div>
-                                        )}
-                                    </Button>
-                                ) : (
-                                    <p className="text-center mt-2">
-                                        Please Generate a Character First...
-                                    </p>
-                                )}
+                <div className="space-y-1">
+                    <Label>Image</Label>
+                    <Card className="aspect-square">
+                        {image && (
+                            <div
+                                className={`${
+                                    isImageFullscreen
+                                        ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    setIsImageFullscreen(!isImageFullscreen)
+                                }
+                            >
+                                <Image
+                                    height={1024}
+                                    width={1024}
+                                    src={image}
+                                    alt="character image"
+                                    className={`rounded-xl ${
+                                        isImageFullscreen
+                                            ? "h-[85vh] w-auto"
+                                            : ""
+                                    }`}
+                                ></Image>
                             </div>
-                        </div>
+                        )}
+                    </Card>
+                    <div className="flex justify-center">
+                        {responseData ? (
+                            <Button
+                                className="mt-2"
+                                onClick={() => handleImage()}
+                            >
+                                {imageLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <div>Generate Image</div>
+                                )}
+                            </Button>
+                        ) : (
+                            <p>Please Generate Character First...</p>
+                        )}
                     </div>
                 </div>
             </CardContent>
