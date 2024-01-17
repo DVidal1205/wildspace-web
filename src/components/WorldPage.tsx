@@ -23,11 +23,11 @@ const WorldPage = ({ world }: { world: World }) => {
 
     return (
         <main className="mx-auto md:p-10">
-            <div className="grid grid-cols-8">
-                <div className="col-span-1 h-max mr-4">
+            <div className="grid md:grid-cols-8">
+                <div className="md:col-span-1 h-max md:mr-4 my-2 md:my-0">
                     <Sidebar world={world} characters={characters || []} />
                 </div>
-                <div className="col-span-7">
+                <div className="md:col-span-7">
                     <Tabs defaultValue="character" className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="character">

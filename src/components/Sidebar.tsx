@@ -15,13 +15,13 @@ interface SidebarProps {
 
 const Sidebar = ({ world, characters }: SidebarProps) => {
     return (
-        <div>
+        <div className="sm:w-[98vw] sm:px-6 md:w-full md:px-0">
             <div className="flex justify-between mb-2">
                 <div>{world.name}</div>
                 <WorldButton world={world} />
             </div>
             <Separator />
-            <Accordion type="multiple" className="w-full">
+            <Accordion type="multiple" className="">
                 <AccordionItem value="item-1">
                     <AccordionTrigger>Characters</AccordionTrigger>
                     <AccordionContent>

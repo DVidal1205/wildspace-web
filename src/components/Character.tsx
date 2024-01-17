@@ -17,7 +17,6 @@ import { useState, useEffect } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { World } from "@prisma/client";
-import { set } from "date-fns";
 import Image from "next/image";
 
 const Character = ({ world }: { world: World }) => {
@@ -172,8 +171,8 @@ const Character = ({ world }: { world: World }) => {
           generate details, or fill in properties and check them to set them.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-5 gap-4">
-        <div className="gap-4 col-span-2 grid grid-cols-2">
+      <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
+        <div className="gap-4 md:col-span-2 grid md:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="name">Name</Label>
             <div className="flex space-x-2 items-center">
@@ -333,7 +332,7 @@ const Character = ({ world }: { world: World }) => {
             </div>
           </div>
         </div>
-        <div className="gap-4 space-y-2 col-span-2">
+        <div className="gap-4 space-y-2 md:col-span-2">
           <div className="space-y-1">
             <Label htmlFor="fashion">Fashion</Label>
             <div className="flex space-x-2 items-center">
@@ -403,31 +402,37 @@ const Character = ({ world }: { world: World }) => {
             </div>
           </div>
         </div>
-        <div className="space-y-1">
-          <Label>Image</Label>
-          <Card className="aspect-square">
-            {image && (
-              <Image
-                height={1024}
-                width={1024}
-                src={image}
-                alt="character image"
-                className="rounded-xl"
-              ></Image>
-            )}
-          </Card>
-          <div className="flex justify-center">
-            {responseData ? (
-              <Button className="mt-2" onClick={() => handleImage()}>
-                {imageLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <div>Generate Image</div>
+        <div className="space-y-1 sm:flex sm:justify-center">
+          <div>
+            <Label>Image</Label>
+            <div className="flex flex-col justify-center sm:w-[50vw] sm:h-auto md:w-full">
+              <Card className="aspect-square sm:w-[50vw] sm:h-auto md:w-auto">
+                {image && (
+                  <Image
+                    height={1024}
+                    width={1024}
+                    src={image}
+                    alt="character image"
+                    className="rounded-xl"
+                  ></Image>
                 )}
-              </Button>
-            ) : (
-              <p>Please Generate Character First...</p>
-            )}
+              </Card>
+              <div>
+                {responseData ? (
+                  <Button className="mt-2" onClick={() => handleImage()}>
+                    {imageLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <div>Generate Image</div>
+                    )}
+                  </Button>
+                ) : (
+                  <p className="text-center mt-2">
+                    Please Generate a Character First...
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
@@ -439,7 +444,7 @@ const Character = ({ world }: { world: World }) => {
             autoComplete="off"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="w-[400px]"
+            className="sm:w-[50vw] md:w-[30vw]"
           />
         </div>
 
