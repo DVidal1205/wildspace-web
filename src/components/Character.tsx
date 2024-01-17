@@ -13,7 +13,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
 import { Check, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { World } from "@prisma/client";
@@ -98,6 +98,22 @@ const Character = ({ world }: { world: World }) => {
         },
         onSettled() {
             setCurrentlySavingCharacter(false);
+            setName("");
+            setRace("");
+            setClass("");
+            setSubclass("");
+            setAlignment("");
+            setAge("");
+            setBuild("");
+            setGender("");
+            setHair("");
+            setHeight("");
+            setFashion("");
+            setQuirks("");
+            setGoals("");
+            setBackstory("");
+            setImage("");
+            setPrompt("");
         },
     });
 
@@ -175,7 +191,7 @@ const Character = ({ world }: { world: World }) => {
                 <CardDescription>
                     Let&apos;s come up with a character! Leave the fields blank
                     to generate details, or fill in properties and check them to
-                    set them.
+                    set them. Press the save button to save the character to your gallery.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">

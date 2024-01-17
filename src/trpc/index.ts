@@ -181,7 +181,7 @@ export const appRouter = router({
             );
 
             const promptTemplate = `You are an expert in writing prompts for image generation. You are writing a prompt for an image of concept art based on an input JSON object with various fields, such as fantasy race, or architecture.
-            Be as descriptive as possible in your prompt, aiming for an image that is detailed and unique. Strongly specify no text in the image at the start of the generation prompt.
+            Be as descriptive as possible in your prompt, aiming for an image that is detailed and unique. Strongly specify no text in the image at the start of the generation prompt. If it is a character, specify no background in the nature of concept art.
             Generate the prompt for a {type} based on the following input JSON object:
     
             Input JSON Object

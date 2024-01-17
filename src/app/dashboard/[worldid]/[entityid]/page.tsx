@@ -28,8 +28,6 @@ interface PageProps {
 const Gallery = async ({ params }: PageProps) => {
     const { worldid, entityid } = params;
 
-    console.log("World: ", worldid, "Entity: ", entityid);
-
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 

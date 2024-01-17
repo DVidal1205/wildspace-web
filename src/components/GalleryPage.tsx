@@ -32,7 +32,6 @@ const GalleryPage = ({
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = searchParams.get("type");
-    console.log("in Gallery:", type);
 
     return (
         <main className="mx-auto md:p-10">
