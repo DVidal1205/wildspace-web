@@ -54,7 +54,9 @@ model Character {
   quirks    String @db.VarChar(1000)
   goals     String @db.VarChar(1000)
   backstory String @db.VarChar(1000)
-  image     String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
 
   World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
   worldID String

@@ -96,7 +96,7 @@ const CharacterView = ({
             setQuirks(character.quirks);
             setGoals(character.goals);
             setBackstory(character.backstory);
-            setImage(character.image);
+            setImage(character.imageURL);
             setCharacterResponse(character);
         }
     }, [character]);
@@ -186,7 +186,7 @@ const CharacterView = ({
             quirks: quirks,
             goals: goals,
             backstory: backstory,
-            imageURL: image,
+            imageb64: image,
             worldID: world.id,
             id: entityid,
         });
@@ -194,8 +194,7 @@ const CharacterView = ({
 
     useEffect(() => {
         if (imageResponse) {
-            setImage(imageResponse);
-            console.log(imageResponse);
+            setImage(`data:image/png;base64,${imageResponse}`);
             setImageLoading(false);
         }
     }, [imageResponse]);

@@ -9,8 +9,10 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { Character } from "@prisma/client";
-import fs from "fs";
 import { OpenAI as MyOpenAI } from "openai";
+import { useUploadThing } from "@/lib/uploadthing";
+import axios from "axios";
+import { utapi } from "@/server/uploadthing";
 
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
@@ -209,11 +211,13 @@ export const appRouter = router({
                 prompt: response.prompt,
                 n: 1,
                 size: "1024x1024",
+                response_format: "b64_json",
             });
 
-            const image_url = imageResponse.data[0].url;
+            const imageb64 = imageResponse.data[0].b64_json;
+            console.log("Image Thread Complete: ", imageb64);
 
-            return image_url;
+            return imageb64;
         }),
     generateCharacter: privateProcedure
         .input(
@@ -1233,36 +1237,74 @@ export const appRouter = router({
                 fashion: z.string(),
                 goals: z.string(),
                 worldID: z.string(),
-                imageURL: z.string(),
+                imageb64: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
-            const character = await db.character.create({
-                data: {
-                    name: input.name,
-                    race: input.race,
-                    class: input.cClass,
-                    subclass: input.subclass,
-                    alignment: input.alignment,
-                    age: input.age,
-                    build: input.build,
-                    gender: input.gender,
-                    hair: input.hair,
-                    height: input.height,
-                    backstory: input.backstory,
-                    quirks: input.quirks,
-                    fashion: input.fashion,
-                    goals: input.goals,
-                    worldID: input.worldID,
-                    image: input.imageURL,
-                    userId,
-                },
-            });
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            const imageBlob = b64toBlob(input.imageb64, "image/png");
+            const response = await utapi.uploadFiles(imageBlob);
+            const imageKey = response.data?.key;
+            const imageURL = `https://utfs.io/f/${imageKey}`;
+            console.log("Image URL: ", imageURL);
+            console.log("Image Key: ", imageKey);
+
+            let character;
+            if (imageURL && imageKey) {
+                character = await db.character.create({
+                    data: {
+                        name: input.name,
+                        race: input.race,
+                        class: input.cClass,
+                        subclass: input.subclass,
+                        alignment: input.alignment,
+                        age: input.age,
+                        build: input.build,
+                        gender: input.gender,
+                        hair: input.hair,
+                        height: input.height,
+                        backstory: input.backstory,
+                        quirks: input.quirks,
+                        fashion: input.fashion,
+                        goals: input.goals,
+                        worldID: input.worldID,
+                        imageURL: imageURL,
+                        imageKey: imageKey,
+                        userId,
+                    },
+                });
+            }
 
             return character;
         }),
+
     getCharacter: privateProcedure
         .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
@@ -1302,12 +1344,56 @@ export const appRouter = router({
                 fashion: z.string(),
                 goals: z.string(),
                 worldID: z.string(),
-                imageURL: z.string(),
+                imageb64: z.string(),
                 id: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let imageBlob;
+            let response;
+            let imageKey;
+            let imageURL;
+            let updateImageInfo;
+
+            if (input.imageb64.length > 100) {
+                console.log("NEEDS NEW IMAGE");
+                imageBlob = b64toBlob(input.imageb64, "image/png");
+                response = await utapi.uploadFiles(imageBlob);
+                imageKey = response.data?.key;
+                imageURL = `https://utfs.io/f/${imageKey}`;
+                console.log("NEEDS NEW IMAGE: Image URL: ", imageURL);
+                updateImageInfo = true;
+            } else {
+                updateImageInfo = false;
+            }
 
             const updatedCharacter = await db.character.update({
                 where: {
@@ -1330,24 +1416,32 @@ export const appRouter = router({
                     fashion: input.fashion,
                     goals: input.goals,
                     worldID: input.worldID,
-                    image: input.imageURL,
+                    ...(updateImageInfo
+                        ? {
+                              imageKey: imageKey,
+                              imageURL: imageURL,
+                          }
+                        : {}),
                 },
             });
 
+            console.log("update: ", updatedCharacter);
             return updatedCharacter;
         }),
-    deleteCharacter: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-        const { userId } = ctx;
+    deleteCharacter: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
 
-        const deletedCharacter = await db.character.delete({
-            where: {
-                id: input.id,
-                userId,
-            },
-        });
+            const deletedCharacter = await db.character.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
 
-        return deletedCharacter;
-    }),
+            return deletedCharacter;
+        }),
 });
 
 export type AppRouter = typeof appRouter;

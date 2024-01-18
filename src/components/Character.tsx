@@ -149,7 +149,7 @@ const Character = ({ world }: { world: World }) => {
             quirks: quirks,
             goals: goals,
             backstory: backstory,
-            imageURL: image,
+            imageb64: image,
             worldID: world.id,
         });
     };
@@ -191,7 +191,8 @@ const Character = ({ world }: { world: World }) => {
                 <CardDescription>
                     Let&apos;s come up with a character! Leave the fields blank
                     to generate details, or fill in properties and check them to
-                    set them. Press the save button to save the character to your gallery.
+                    set them. Press the save button to save the character to
+                    your gallery.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
@@ -468,7 +469,7 @@ const Character = ({ world }: { world: World }) => {
                                 <Image
                                     height={1024}
                                     width={1024}
-                                    src={image}
+                                    src={`data:image/png;base64,${image}`}
                                     alt="character image"
                                     className={`rounded-xl ${
                                         isImageFullscreen
