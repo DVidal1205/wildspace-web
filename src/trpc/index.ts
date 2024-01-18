@@ -1269,15 +1269,8 @@ export const appRouter = router({
                 return new Blob(byteArrays, { type: contentType });
             }
 
-            const imageBlob = b64toBlob(input.imageb64, "image/png");
-            const response = await utapi.uploadFiles(imageBlob);
-            const imageKey = response.data?.key;
-            const imageURL = `https://utfs.io/f/${imageKey}`;
-            console.log("Image URL: ", imageURL);
-            console.log("Image Key: ", imageKey);
-
             let character;
-            if (imageURL && imageKey) {
+            if (input.imageb64 === "") {
                 character = await db.character.create({
                     data: {
                         name: input.name,
@@ -1295,11 +1288,52 @@ export const appRouter = router({
                         fashion: input.fashion,
                         goals: input.goals,
                         worldID: input.worldID,
-                        imageURL: imageURL,
-                        imageKey: imageKey,
+                        imageURL: "",
+                        imageKey: "",
                         userId,
                     },
                 });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File(
+                    [imageBlob],
+                    `${filename}-character.png`,
+                    {
+                        type: "image/png",
+                    }
+                );
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    character = await db.character.create({
+                        data: {
+                            name: input.name,
+                            race: input.race,
+                            class: input.cClass,
+                            subclass: input.subclass,
+                            alignment: input.alignment,
+                            age: input.age,
+                            build: input.build,
+                            gender: input.gender,
+                            hair: input.hair,
+                            height: input.height,
+                            backstory: input.backstory,
+                            quirks: input.quirks,
+                            fashion: input.fashion,
+                            goals: input.goals,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
             }
 
             return character;
@@ -1377,61 +1411,115 @@ export const appRouter = router({
                 return new Blob(byteArrays, { type: contentType });
             }
 
-            let imageBlob;
-            let response;
-            let imageKey;
-            let imageURL;
-            let updateImageInfo;
+            let updatedCharacter;
 
-            if (input.imageb64.length > 100) {
-                console.log("NEEDS NEW IMAGE");
-                imageBlob = b64toBlob(input.imageb64, "image/png");
-                response = await utapi.uploadFiles(imageBlob);
-                imageKey = response.data?.key;
-                imageURL = `https://utfs.io/f/${imageKey}`;
-                console.log("NEEDS NEW IMAGE: Image URL: ", imageURL);
-                updateImageInfo = true;
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.character.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    console.log("Deleting!!!");
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                        console.log("Deleted!!!");
+                    }
+                }
+
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File(
+                    [imageBlob],
+                    `${filename}-character.png`,
+                    {
+                        type: "image/png",
+                    }
+                );
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedCharacter = await db.character.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            race: input.race,
+                            class: input.cClass,
+                            subclass: input.subclass,
+                            alignment: input.alignment,
+                            age: input.age,
+                            build: input.build,
+                            gender: input.gender,
+                            hair: input.hair,
+                            height: input.height,
+                            backstory: input.backstory,
+                            quirks: input.quirks,
+                            fashion: input.fashion,
+                            goals: input.goals,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                    console.log("Updated with new image");
+                }
             } else {
-                updateImageInfo = false;
+                updatedCharacter = await db.character.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        race: input.race,
+                        class: input.cClass,
+                        subclass: input.subclass,
+                        alignment: input.alignment,
+                        age: input.age,
+                        build: input.build,
+                        gender: input.gender,
+                        hair: input.hair,
+                        height: input.height,
+                        backstory: input.backstory,
+                        quirks: input.quirks,
+                        fashion: input.fashion,
+                        goals: input.goals,
+                        worldID: input.worldID,
+                    },
+                });
+                console.log("Updated without new image");
             }
 
-            const updatedCharacter = await db.character.update({
-                where: {
-                    id: input.id,
-                    userId,
-                },
-                data: {
-                    name: input.name,
-                    race: input.race,
-                    class: input.cClass,
-                    subclass: input.subclass,
-                    alignment: input.alignment,
-                    age: input.age,
-                    build: input.build,
-                    gender: input.gender,
-                    hair: input.hair,
-                    height: input.height,
-                    backstory: input.backstory,
-                    quirks: input.quirks,
-                    fashion: input.fashion,
-                    goals: input.goals,
-                    worldID: input.worldID,
-                    ...(updateImageInfo
-                        ? {
-                              imageKey: imageKey,
-                              imageURL: imageURL,
-                          }
-                        : {}),
-                },
-            });
-
-            console.log("update: ", updatedCharacter);
             return updatedCharacter;
         }),
     deleteCharacter: privateProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            const character = await db.character.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (character) {
+                const imageKey = character.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
 
             const deletedCharacter = await db.character.delete({
                 where: {

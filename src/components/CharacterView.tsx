@@ -98,6 +98,7 @@ const CharacterView = ({
             setBackstory(character.backstory);
             setImage(character.imageURL);
             setCharacterResponse(character);
+            setWorldResponse(character);
         }
     }, [character]);
 
@@ -156,7 +157,7 @@ const CharacterView = ({
 
     const { data: imageResponse, refetch: imageFetch } =
         trpc.generateImage.useQuery(
-            { object: response, type: "Character/Person" },
+            { object: worldResponse, type: "Character/Person" },
             { enabled: false }
         );
 
@@ -201,6 +202,7 @@ const CharacterView = ({
 
     useEffect(() => {
         if (response) {
+            setWorldResponse(response);
             setName(response.name);
             setRace(response.race);
             setClass(response.class);

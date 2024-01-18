@@ -184,6 +184,25 @@ const Character = ({ world }: { world: World }) => {
         }
     }, [response]);
 
+    useEffect(() => {
+        setName("");
+        setRace("");
+        setClass("");
+        setSubclass("");
+        setAlignment("");
+        setAge("");
+        setBuild("");
+        setGender("");
+        setHair("");
+        setHeight("");
+        setFashion("");
+        setQuirks("");
+        setGoals("");
+        setBackstory("");
+        setImage("");
+        setPrompt("");
+    }, []);
+
     return (
         <Card>
             <CardHeader>
@@ -469,7 +488,11 @@ const Character = ({ world }: { world: World }) => {
                                 <Image
                                     height={1024}
                                     width={1024}
-                                    src={`data:image/png;base64,${image}`}
+                                    src={
+                                        image
+                                            ? `data:image/png;base64,${image}`
+                                            : ""
+                                    }
                                     alt="character image"
                                     className={`rounded-xl ${
                                         isImageFullscreen
