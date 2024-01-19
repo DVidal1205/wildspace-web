@@ -92,12 +92,6 @@ const Character = ({ world }: { world: World }) => {
                 title: "Character Saved",
                 description: "Your character has been saved.",
             });
-        },
-        onMutate: () => {
-            setCurrentlySavingCharacter(true);
-        },
-        onSettled() {
-            setCurrentlySavingCharacter(false);
             setName("");
             setRace("");
             setClass("");
@@ -114,6 +108,12 @@ const Character = ({ world }: { world: World }) => {
             setBackstory("");
             setImage("");
             setPrompt("");
+        },
+        onMutate: () => {
+            setCurrentlySavingCharacter(true);
+        },
+        onSettled() {
+            setCurrentlySavingCharacter(false);
         },
     });
 
@@ -183,25 +183,6 @@ const Character = ({ world }: { world: World }) => {
             setLoading(false);
         }
     }, [response]);
-
-    useEffect(() => {
-        setName("");
-        setRace("");
-        setClass("");
-        setSubclass("");
-        setAlignment("");
-        setAge("");
-        setBuild("");
-        setGender("");
-        setHair("");
-        setHeight("");
-        setFashion("");
-        setQuirks("");
-        setGoals("");
-        setBackstory("");
-        setImage("");
-        setPrompt("");
-    }, []);
 
     return (
         <Card>
@@ -516,7 +497,7 @@ const Character = ({ world }: { world: World }) => {
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate Character First...</p>
+                            <p>Please Generate a Character First...</p>
                         )}
                     </div>
                 </div>

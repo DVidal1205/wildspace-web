@@ -12,13 +12,14 @@ model User {
   id    String @id @unique
   email String @unique
 
-  World World[]
+  World     World[]
+  Character Character[]
+  City      City[]
 
-  stripeCustomerId       String?     @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId   String?     @unique @map(name: "stripe_subscription_id")
-  stripePriceId          String?     @unique @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime?   @map(name: "stripe_current_period_end")
-  Character              Character[]
+  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?   @unique @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
 
 model World {
@@ -30,6 +31,7 @@ model World {
   techLevel   String
 
   Characters Character[]
+  Cities     City[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -54,6 +56,33 @@ model Character {
   quirks    String @db.VarChar(1000)
   goals     String @db.VarChar(1000)
   backstory String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
+
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
+  worldID String
+
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model City {
+  id           String @id @default(cuid())
+  name         String
+  population   String
+  sprawl       String
+  architecture String
+  industries   String
+  climate      String
+  safety       String
+  education    String
+  modernity   String
+  wealth       String
+  governance  String @db.VarChar(1000)
+  lore        String @db.VarChar(1000)
+  quests      String @db.VarChar(1000)
+  description String @db.VarChar(1000)
 
   imageURL String @db.VarChar(1000)
   imageKey String

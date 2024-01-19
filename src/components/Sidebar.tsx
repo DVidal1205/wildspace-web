@@ -1,5 +1,5 @@
 "use client";
-import { Character, World } from "@prisma/client";
+import { Character, City, World } from "@prisma/client";
 import { Separator } from "./ui/separator";
 import {
     Accordion,
@@ -14,9 +14,10 @@ import Link from "next/link";
 interface SidebarProps {
     world: World;
     characters: Character[];
+    cities: City[];
 }
 
-const Sidebar = ({ world, characters }: SidebarProps) => {
+const Sidebar = ({ world, characters, cities }: SidebarProps) => {
     const router = useRouter();
     return (
         <div className="sm:w-[98vw] sm:px-6 md:w-full md:px-0">
@@ -50,14 +51,30 @@ const Sidebar = ({ world, characters }: SidebarProps) => {
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
-                    <AccordionTrigger>Buildings</AccordionTrigger>
+                    <AccordionTrigger>Cities</AccordionTrigger>
                     <AccordionContent>
-                        Yes. It comes with default styles that matches the other
-                        components&apos; aesthetic.
+                        <ul>
+                            {cities.length === 0 ? (
+                                <div>No cities...</div>
+                            ) : (
+                                cities.map((city) => (
+                                    <li
+                                        key={city.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${city.id}?type=city`}
+                                        >
+                                            {city.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3">
-                    <AccordionTrigger>Cities</AccordionTrigger>
+                    <AccordionTrigger>Test</AccordionTrigger>
                     <AccordionContent>
                         Yes. It&apos;s animated by default, but you can disable
                         it if you prefer.

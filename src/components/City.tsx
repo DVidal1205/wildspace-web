@@ -12,152 +12,119 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2, Trash } from "lucide-react";
-import { useState, useEffect, useMemo, use } from "react";
+import { Check, Loader2 } from "lucide-react";
+import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { ToastAction } from "./ui/toast";
 import { World } from "@prisma/client";
-import { set } from "date-fns";
 import Image from "next/image";
-import { router } from "@/trpc/trpc";
-import { useRouter } from "next/navigation";
 
-const CharacterView = ({
-    world,
-    entityid,
-}: {
-    world: World;
-    entityid: string;
-}) => {
+const City = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
-    const [raceDisabled, setRaceDisabled] = useState<boolean>(false);
-    const [classDisabled, setClassDisabled] = useState<boolean>(false);
-    const [subclassDisabled, setSubclassDisabled] = useState<boolean>(false);
-    const [alignmentDisabled, setAlignmentDisabled] = useState<boolean>(false);
-    const [ageDisabled, setAgeDisabled] = useState<boolean>(false);
-    const [buildDisabled, setBuildDisabled] = useState<boolean>(false);
-    const [genderDisabled, setGenderDisabled] = useState<boolean>(false);
-    const [hairDisabled, setHairDisabled] = useState<boolean>(false);
-    const [heightDisabled, setHeightDisabled] = useState<boolean>(false);
-    const [fashionDisabled, setFashionDisabled] = useState<boolean>(false);
-    const [quirksDisabled, setQuirksDisabled] = useState<boolean>(false);
-    const [goalsDisabled, setGoalsDisabled] = useState<boolean>(false);
-    const [backstoryDisabled, setBackstoryDisabled] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [currentlySavingCharacter, setCurrentlySavingCharacter] =
+    const [populationDisabled, setPopulationDisabled] =
         useState<boolean>(false);
-    const [imageLoading, setImageLoading] = useState<boolean>(false);
+    const [sprawlDisabled, setSprawlDisabled] = useState<boolean>(false);
+    const [architectureDisabled, setArchitectureDisabled] =
+        useState<boolean>(false);
+    const [industriesDisabled, setIndustriesDisabled] =
+        useState<boolean>(false);
+    const [climateDisabled, setClimateDisabled] = useState<boolean>(false);
+    const [safetyDisabled, setSafetyDisabled] = useState<boolean>(false);
+    const [educationDisabled, setEducationDisabled] = useState<boolean>(false);
+    const [modernityDisabled, setModernityDisabled] = useState<boolean>(false);
+    const [wealthDisabled, setWealthDisabled] = useState<boolean>(false);
+    const [descriptionDisabled, setDescriptionDisabled] =
+        useState<boolean>(false);
+    const [loreDisabled, setLoreDisabled] = useState<boolean>(false);
+    const [governanceDisabled, setGovernanceDisabled] =
+        useState<boolean>(false);
+    const [questsDisabled, setQuestsDisabled] = useState<boolean>(false);
 
     const [name, setName] = useState<string>("");
-    const [race, setRace] = useState<string>("");
-    const [pclass, setClass] = useState<string>("");
-    const [subclass, setSubclass] = useState<string>("");
-    const [alignment, setAlignment] = useState<string>("");
-    const [age, setAge] = useState<string>("");
-    const [build, setBuild] = useState<string>("");
-    const [gender, setGender] = useState<string>("");
-    const [hair, setHair] = useState<string>("");
-    const [height, setHeight] = useState<string>("");
-    const [fashion, setFashion] = useState<string>("");
-    const [quirks, setQuirks] = useState<string>("");
-    const [goals, setGoals] = useState<string>("");
-    const [backstory, setBackstory] = useState<string>("");
-    const [prompt, setPrompt] = useState<string>("");
-    const [image, setImage] = useState<string>("");
-    const [worldResponse, setWorldResponse] = useState<any>("");
-    const [characterResponse, setCharacterResponse] = useState<any>("");
-    const [deletingCharacter, setCurrentlyDeletingCharacter] =
-        useState<boolean>(false);
-    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+    const [population, setPopulation] = useState<string>("");
+    const [sprawl, setSprawl] = useState<string>("");
+    const [architecture, setArchitecture] = useState<string>("");
+    const [industries, setIndustries] = useState<string>("");
+    const [climate, setClimate] = useState<string>("");
+    const [safety, setSafety] = useState<string>("");
+    const [education, setEducation] = useState<string>("");
+    const [modernity, setModernity] = useState<string>("");
+    const [wealth, setWealth] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [lore, setLore] = useState<string>("");
+    const [governance, setGovernance] = useState<string>("");
+    const [quests, setQuests] = useState<string>("");
 
-    const router = useRouter();
+    const [prompt, setPrompt] = useState<string>("");
+    const [imageLoading, setImageLoading] = useState<boolean>(false);
+    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+    const [image, setImage] = useState<string>("");
+    const [responseData, setResponseData] = useState<any>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [currentySavingCity, setCurrentlySavingCity] =
+        useState<boolean>(false);
 
     const { toast } = useToast();
     const utils = trpc.useContext();
 
-    const { data: character } = trpc.getCharacter.useQuery({
-        id: entityid,
-    });
-
-    useEffect(() => {
-        if (character) {
-            setName(character.name);
-            setRace(character.race);
-            setClass(character.class);
-            setSubclass(character.subclass);
-            setAlignment(character.alignment);
-            setAge(character.age);
-            setBuild(character.build);
-            setGender(character.gender);
-            setHair(character.hair);
-            setHeight(character.height);
-            setFashion(character.fashion);
-            setQuirks(character.quirks);
-            setGoals(character.goals);
-            setBackstory(character.backstory);
-            setImage(character.imageURL);
-            setCharacterResponse(character);
-            setWorldResponse(character);
+    const { data: response, refetch: genFetch } = trpc.generateCity.useQuery(
+        {
+            name: nameDisabled ? name : "",
+            population: populationDisabled ? population : "",
+            sprawl: sprawlDisabled ? sprawl : "",
+            architecture: architectureDisabled ? architecture : "",
+            industries: industriesDisabled ? industries : "",
+            climate: climateDisabled ? climate : "",
+            safety: safetyDisabled ? safety : "",
+            education: educationDisabled ? education : "",
+            modernity: modernityDisabled ? modernity : "",
+            wealth: wealthDisabled ? wealth : "",
+            description: descriptionDisabled ? description : "",
+            lore: loreDisabled ? lore : "",
+            governance: governanceDisabled ? governance : "",
+            quests: questsDisabled ? quests : "",
+            prompt: prompt,
+            worldInfo: world?.description,
+        },
+        {
+            enabled: false,
         }
-    }, [character]);
-
-    const { data: response, refetch: genFetch } =
-        trpc.generateCharacter.useQuery(
-            {
-                name: nameDisabled ? name : "",
-                cClass: classDisabled ? pclass : "",
-                race: raceDisabled ? race : "",
-                subclass: subclassDisabled ? subclass : "",
-                alignment: alignmentDisabled ? alignment : "",
-                age: ageDisabled ? age : "",
-                build: buildDisabled ? build : "",
-                gender: genderDisabled ? gender : "",
-                hair: hairDisabled ? hair : "",
-                height: heightDisabled ? height : "",
-                fashion: fashionDisabled ? fashion : "",
-                quirks: quirksDisabled ? quirks : "",
-                goals: goalsDisabled ? goals : "",
-                backstory: backstoryDisabled ? backstory : "",
-                prompt: prompt,
-                worldInfo: world?.description,
-            },
-            {
-                enabled: false,
-            }
-        );
-    const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
+    );
+    const { mutate: saveCity } = trpc.saveCity.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
+            utils.getWorldCities.invalidate();
             toast({
-                title: "Character Updated!",
-                description: "Your character has been updated.",
+                title: "City Saved",
+                description: "Your city has been saved.",
             });
+            setName("");
+            setPopulation("");
+            setSprawl("");
+            setArchitecture("");
+            setIndustries("");
+            setClimate("");
+            setSafety("");
+            setEducation("");
+            setModernity("");
+            setWealth("");
+            setDescription("");
+            setLore("");
+            setGovernance("");
+            setQuests("");
+            setImage("");
+            setPrompt("");
         },
         onMutate: () => {
-            setCurrentlySavingCharacter(true);
+            setCurrentlySavingCity(true);
         },
         onSettled() {
-            setCurrentlySavingCharacter(false);
-        },
-    });
-
-    const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
-        onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
-            router.push(`/dashboard/${world.id}`);
-        },
-        onMutate: () => {
-            setCurrentlyDeletingCharacter(true);
-        },
-        onSettled() {
-            setCurrentlyDeletingCharacter(false);
+            setCurrentlySavingCity(false);
         },
     });
 
     const { data: imageResponse, refetch: imageFetch } =
         trpc.generateImage.useQuery(
-            { object: worldResponse, type: "Character/Person" },
+            { object: response, type: "City/Town" },
             { enabled: false }
         );
 
@@ -172,71 +139,69 @@ const CharacterView = ({
     };
 
     const handleSave = () => {
-        updateCharacter({
+        saveCity({
             name: name,
-            race: race,
-            cClass: pclass,
-            subclass: subclass,
-            alignment: alignment,
-            age: age,
-            build: build,
-            gender: gender,
-            hair: hair,
-            height: height,
-            fashion: fashion,
-            quirks: quirks,
-            goals: goals,
-            backstory: backstory,
+            population: population,
+            sprawl: sprawl,
+            architecture: architecture,
+            industries: industries,
+            climate: climate,
+            safety: safety,
+            education: education,
+            modernity: modernity,
+            wealth: wealth,
+            description: description,
+            lore: lore,
+            governance: governance,
+            quests: quests,
             imageb64: image,
             worldID: world.id,
-            id: entityid,
         });
     };
 
     useEffect(() => {
         if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
+            setImage(imageResponse);
+            console.log(imageResponse);
             setImageLoading(false);
         }
     }, [imageResponse]);
 
     useEffect(() => {
         if (response) {
-            setWorldResponse(response);
+            console.log(response);
+            setResponseData(response);
             setName(response.name);
-            setRace(response.race);
-            setClass(response.class);
-            setSubclass(response.subclass);
-            setAlignment(response.alignment);
-            setAge(response.age);
-            setBuild(response.build);
-            setGender(response.gender);
-            setHair(response.hair);
-            setHeight(response.height);
-            setFashion(response.fashion);
-            setQuirks(response.quirks);
-            setGoals(response.goals);
-            setBackstory(response.backstory);
-            setWorldResponse(response);
+            setPopulation(response.population);
+            setSprawl(response.sprawl);
+            setArchitecture(response.architecture);
+            setIndustries(response.industries);
+            setClimate(response.climate);
+            setSafety(response.safety);
+            setEducation(response.education);
+            setModernity(response.modernity);
+            setWealth(response.wealth);
+            setDescription(response.description);
+            setLore(response.lore);
+            setGovernance(response.governance);
+            setQuests(response.quests);
             setLoading(false);
         }
     }, [response]);
 
-    return !character ? (
-        <div className="flex items-center justify-center">
-            <Loader2 className="h-40 w-40 animate-spin"></Loader2>
-        </div>
-    ) : (
+    return (
         <Card>
             <CardHeader>
-                <CardTitle>{name}</CardTitle>
+                <CardTitle>City Generation</CardTitle>
                 <CardDescription>
-                    View your character information for {name} here, or edit and
-                    save to update the character.
+                    Let&apos;s come up with a city! Leave the fields blank to
+                    generate details, or fill in properties and check them to
+                    set them. Press the save button to save the city to your
+                    gallery.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid lg:grid-cols-5 gap-4">
-                <div className="gap-4 lg:col-span-2 grid lg:grid-cols-2">
+            <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
+                <div className="gap-4 md:col-span-2 grid md:grid-cols-2">
                     <div className="space-y-1">
                         <Label htmlFor="name">Name</Label>
                         <div className="flex space-x-2 items-center">
@@ -255,52 +220,18 @@ const CharacterView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="race">Race</Label>
+                        <Label htmlFor="population">Population</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="race"
+                                id="population"
                                 autoComplete="off"
-                                value={race}
-                                onChange={(e) => setRace(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setRaceDisabled(!raceDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="class">Class</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="class"
-                                autoComplete="off"
-                                value={pclass}
-                                onChange={(e) => setClass(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setClassDisabled(!classDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="subclass">Subclass</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="subclass"
-                                autoComplete="off"
-                                value={subclass}
-                                onChange={(e) => setSubclass(e.target.value)}
+                                value={population}
+                                onChange={(e) => setPopulation(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setSubclassDisabled(!subclassDisabled)
+                                    setPopulationDisabled(!populationDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -308,18 +239,18 @@ const CharacterView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="alignment">Alignment</Label>
+                        <Label htmlFor="sprawl">Sprawl</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="alignment"
+                                id="sprawl"
                                 autoComplete="off"
-                                value={alignment}
-                                onChange={(e) => setAlignment(e.target.value)}
+                                value={sprawl}
+                                onChange={(e) => setSprawl(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setAlignmentDisabled(!alignmentDisabled)
+                                    setSprawlDisabled(!sprawlDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -327,52 +258,22 @@ const CharacterView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="age">Age</Label>
+                        <Label htmlFor="architecture">Architecture</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="age"
+                                id="architecture"
                                 autoComplete="off"
-                                value={age}
-                                onChange={(e) => setAge(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setAgeDisabled(!ageDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="build">Build</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="build"
-                                autoComplete="off"
-                                value={build}
-                                onChange={(e) => setBuild(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setBuildDisabled(!buildDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="gender">Gender</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="gender"
-                                autoComplete="off"
-                                value={gender}
-                                onChange={(e) => setGender(e.target.value)}
+                                value={architecture}
+                                onChange={(e) =>
+                                    setArchitecture(e.target.value)
+                                }
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setGenderDisabled(!genderDisabled)
+                                    setArchitectureDisabled(
+                                        !architectureDisabled
+                                    )
                                 }
                             >
                                 <Check></Check>
@@ -380,35 +281,113 @@ const CharacterView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="hair">Hair</Label>
+                        <Label htmlFor="industries">Industries</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="hair"
+                                id="industries"
                                 autoComplete="off"
-                                value={hair}
-                                onChange={(e) => setHair(e.target.value)}
+                                value={industries}
+                                onChange={(e) => setIndustries(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setHairDisabled(!hairDisabled)}
+                                onClick={() =>
+                                    setIndustriesDisabled(!industriesDisabled)
+                                }
                             >
                                 <Check></Check>
                             </Toggle>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="height">Height</Label>
+                        <Label htmlFor="climate">Climate</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="height"
+                                id="climate"
                                 autoComplete="off"
-                                value={height}
-                                onChange={(e) => setHeight(e.target.value)}
+                                value={climate}
+                                onChange={(e) => setClimate(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setHeightDisabled(!heightDisabled)
+                                    setClimateDisabled(!climateDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="safety">Safety</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="safety"
+                                autoComplete="off"
+                                value={safety}
+                                onChange={(e) => setSafety(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setSafetyDisabled(!safetyDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="education">Education</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="education"
+                                autoComplete="off"
+                                value={education}
+                                onChange={(e) => setEducation(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setEducationDisabled(!educationDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="modernity">Modernity</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="modernity"
+                                autoComplete="off"
+                                value={modernity}
+                                onChange={(e) => setModernity(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setModernityDisabled(!modernityDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="wealth">Wealth</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="wealth"
+                                autoComplete="off"
+                                value={wealth}
+                                onChange={(e) => setWealth(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setWealthDisabled(!wealthDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -416,20 +395,20 @@ const CharacterView = ({
                         </div>
                     </div>
                 </div>
-                <div className="gap-4 space-y-2 col-span-2">
+                <div className="gap-4 space-y-2 md:col-span-2">
                     <div className="space-y-1">
-                        <Label htmlFor="fashion">Fashion</Label>
+                        <Label htmlFor="description">Description</Label>
                         <div className="flex space-x-2 items-center">
                             <Textarea
-                                id="fashion"
+                                id="description"
                                 autoComplete="off"
-                                value={fashion}
-                                onChange={(e) => setFashion(e.target.value)}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setFashionDisabled(!fashionDisabled)
+                                    setDescriptionDisabled(!descriptionDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -437,18 +416,35 @@ const CharacterView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="quirks">Quirks</Label>
+                        <Label htmlFor="lore">Lore</Label>
                         <div className="flex space-x-2 items-center">
                             <Textarea
-                                id="quirks"
+                                id="lore"
                                 autoComplete="off"
-                                value={quirks}
-                                onChange={(e) => setQuirks(e.target.value)}
+                                value={lore}
+                                onChange={(e) => setLore(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() => setLoreDisabled(!loreDisabled)}
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="governance">Governance</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Textarea
+                                id="governance"
+                                autoComplete="off"
+                                value={governance}
+                                onChange={(e) => setGovernance(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setQuirksDisabled(!quirksDisabled)
+                                    setGovernanceDisabled(!governanceDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -456,35 +452,18 @@ const CharacterView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="goals">Goals</Label>
+                        <Label htmlFor="quests">Quests</Label>
                         <div className="flex space-x-2 items-center">
                             <Textarea
-                                id="goals"
+                                id="quests"
                                 autoComplete="off"
-                                value={goals}
-                                onChange={(e) => setGoals(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setGoalsDisabled(!goalsDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="backstory">Backstory</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="backstory"
-                                autoComplete="off"
-                                value={backstory}
-                                onChange={(e) => setBackstory(e.target.value)}
+                                value={quests}
+                                onChange={(e) => setQuests(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setBackstoryDisabled(!backstoryDisabled)
+                                    setQuestsDisabled(!questsDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -509,7 +488,11 @@ const CharacterView = ({
                                 <Image
                                     height={1024}
                                     width={1024}
-                                    src={image}
+                                    src={
+                                        image
+                                            ? `data:image/png;base64,${image}`
+                                            : ""
+                                    }
                                     alt="character image"
                                     className={`rounded-xl ${
                                         isImageFullscreen
@@ -521,7 +504,7 @@ const CharacterView = ({
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {worldResponse || characterResponse ? (
+                        {responseData ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}
@@ -533,7 +516,7 @@ const CharacterView = ({
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate a Character First...</p>
+                            <p>Please Generate a City First...</p>
                         )}
                     </div>
                 </div>
@@ -546,7 +529,7 @@ const CharacterView = ({
                         autoComplete="off"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="w-[50vw] lg:w-[30vw]"
+                        className="sm:w-[50vw] md:w-[30vw]"
                     />
                 </div>
 
@@ -563,20 +546,10 @@ const CharacterView = ({
                         )}
                     </Button>
                     <Button onClick={() => handleSave()}>
-                        {currentlySavingCharacter === true ? (
+                        {currentySavingCity === true ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                             <div>Save</div>
-                        )}
-                    </Button>
-                    <Button
-                        variant="destructive"
-                        onClick={() => deleteCharacter({ id: entityid })}
-                    >
-                        {deletingCharacter === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Trash className="h-4 w-4" />
                         )}
                     </Button>
                 </>
@@ -585,4 +558,4 @@ const CharacterView = ({
     );
 };
 
-export default CharacterView;
+export default City;

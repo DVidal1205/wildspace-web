@@ -63,6 +63,17 @@ export const appRouter = router({
 
             return characters;
         }),
+    getWorldCities: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ input }) => {
+            const cities = await db.city.findMany({
+                where: {
+                    worldID: input.worldID,
+                },
+            });
+
+            return cities;
+        }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
@@ -74,6 +85,30 @@ export const appRouter = router({
                     userId,
                 },
             });
+
+            const characters = await db.character.findMany({
+                where: {
+                    worldID: input.id,
+                },
+            });
+
+            const cities = await db.city.findMany({
+                where: {
+                    worldID: input.id,
+                },
+            });
+
+            for (const character of characters) {
+                if (character.imageKey) {
+                    await utapi.deleteFiles(character.imageKey);
+                }
+            }
+
+            for (const city of cities) {
+                if (city.imageKey) {
+                    await utapi.deleteFiles(city.imageKey);
+                }
+            }
 
             if (!world) {
                 throw new TRPCError({
@@ -170,8 +205,6 @@ export const appRouter = router({
     generateImage: privateProcedure
         .input(z.object({ object: z.any(), type: z.string() }))
         .query(async ({ input }) => {
-            console.log("Entered generateImage");
-
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     prompt: z
@@ -203,8 +236,6 @@ export const appRouter = router({
                 formatInstructions: parser.getFormatInstructions(),
             });
 
-            console.log("Beginning Image Thread: ", response);
-
             const openai = new MyOpenAI();
             const imageResponse = await openai.images.generate({
                 model: "dall-e-3",
@@ -215,7 +246,6 @@ export const appRouter = router({
             });
 
             const imageb64 = imageResponse.data[0].b64_json;
-            console.log("Image Thread Complete: ", imageb64);
 
             return imageb64;
         }),
@@ -1126,7 +1156,9 @@ export const appRouter = router({
                     height: z.string().describe("Height of the Character"),
                     backstory: z
                         .string()
-                        .describe("Backstory of the Character (3-5 Sentences)"),
+                        .describe(
+                            "Backstory of the Character. Go into depth about where the character grew up, how they got their abilities, and what led them to become who they are now. (3-5 Sentences)"
+                        ),
                     quirks: z
                         .string()
                         .describe(
@@ -1139,7 +1171,9 @@ export const appRouter = router({
                         ),
                     goals: z
                         .string()
-                        .describe("Goals of the Character (3-5 Sentences)"),
+                        .describe(
+                            "Goals of the Character. Be sure to tie these into the backstory of the character, and make these goals in depth. (3-5 Sentences)"
+                        ),
                 })
             );
 
@@ -1166,8 +1200,10 @@ export const appRouter = router({
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a character concept for an NPC your party may encounter using the following information.  
         When making this character, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the character.
-        Your generation Prompt: {question}
+        Your generation Prompt: 
+        {question}
         
+        World Information:
         {worldInfo}
 
         Only generate information in the character fields that are empty. For example, if the character already has a name (i.e. Name: David Stridebreaker), do not generate a new name. Only generate for the fields that are empty (i.e. Goals: ) Use the fields from the character information that are present to populate the JSON you will return.
@@ -1194,8 +1230,6 @@ export const appRouter = router({
                 new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
                 parser,
             ]);
-
-            console.log(JSON.stringify(characterInfo));
 
             const response = await chain.invoke({
                 question: input.prompt,
@@ -1301,7 +1335,7 @@ export const appRouter = router({
 
                 const file = new File(
                     [imageBlob],
-                    `${filename}-character.png`,
+                    `character-${filename}.png`,
                     {
                         type: "image/png",
                     }
@@ -1422,21 +1456,19 @@ export const appRouter = router({
                 });
                 if (preMutate) {
                     const imageKey = preMutate.imageKey;
-                    console.log("Deleting!!!");
                     if (imageKey) {
                         await utapi.deleteFiles(imageKey);
-                        console.log("Deleted!!!");
                     }
                 }
-
-                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
                 const filename = input.name
                     ? input.name.toLowerCase().replace(/ /g, "_")
                     : "default";
 
                 const file = new File(
                     [imageBlob],
-                    `${filename}-character.png`,
+                    `character-${filename}.png`,
                     {
                         type: "image/png",
                     }
@@ -1471,7 +1503,6 @@ export const appRouter = router({
                             imageURL: imageURL,
                         },
                     });
-                    console.log("Updated with new image");
                 }
             } else {
                 updatedCharacter = await db.character.update({
@@ -1497,7 +1528,6 @@ export const appRouter = router({
                         worldID: input.worldID,
                     },
                 });
-                console.log("Updated without new image");
             }
 
             return updatedCharacter;
@@ -1529,6 +1559,460 @@ export const appRouter = router({
             });
 
             return deletedCharacter;
+        }),
+    generateCity: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                population: z.string(),
+                sprawl: z.string(),
+                architecture: z.string(),
+                industries: z.string(),
+                climate: z.string(),
+                safety: z.string(),
+                education: z.string(),
+                modernity: z.string(),
+                wealth: z.string(),
+                governance: z.string(),
+                lore: z.string(),
+                quests: z.string(),
+                description: z.string(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the City"),
+                    population: z
+                        .string()
+                        .describe(
+                            "Population of the City (Add a range, and the numbers should be rounded and not evenly rounded off: i.e 135,196 instead of 135,000)"
+                        ),
+                    sprawl: z
+                        .string()
+                        .describe("Sprawl of the City (1-3 Words)"),
+                    architecture: z
+                        .string()
+                        .describe("Architecture of the City (1-5 Words only)"),
+                    industries: z
+                        .string()
+                        .describe("Industries of the City (1-5 Words only)"),
+                    climate: z
+                        .string()
+                        .describe("Climate of the City (1-5 Words only)"),
+                    safety: z
+                        .string()
+                        .describe("Safety of the City (1-5 Words only)"),
+                    education: z
+                        .string()
+                        .describe("Education of the City (1-5 Words only)"),
+                    modernity: z
+                        .string()
+                        .describe("modernity of the City (1-5 Words only)"),
+                    wealth: z
+                        .string()
+                        .describe("Wealth of the City (1-5 Words only)"),
+                    governance: z
+                        .string()
+                        .describe(
+                            "Governance of the City. Detail the governing bodies structure and type (democracy, oligarchy, etc), influence over the city, and other practices they may have. Be sure to name the governing body (i.e. instead of saying council, perhaps something like the Grand Morellan Magistrate, etc.) (2-3 Sentences)"
+                        ),
+                    lore: z
+                        .string()
+                        .describe(
+                            "Lore of the City. Describe the founding of the city, the foundations it was built upon, and how it has changed over time (2-3 Sentences)"
+                        ),
+                    quests: z
+                        .string()
+                        .describe(
+                            "Quests of the City. Describe the quests that can be found in the city, and other plot lines for a potential session. Please be specific, using things like rumors or questboards to detail specific people or places where these plotlines can originate. (3-5 Sentences)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the City. Describe the city in detail, including the layout, the people, and the culture (3-5 Sentences)"
+                        ),
+                })
+            );
+
+            const cityInfo = {
+                name: input.name,
+                population: input.population,
+                sprawl: input.sprawl,
+                architecture: input.architecture,
+                industries: input.industries,
+                climate: input.climate,
+                safety: input.safety,
+                education: input.education,
+                modernity: input.modernity,
+                wealth: input.wealth,
+                governance: input.governance,
+                lore: input.lore,
+                quests: input.quests,
+                description: input.description,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a city concept for an location your party may travel to using the following information.  
+        When making this city, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the city.
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Only generate information in the city fields that are empty. For example, if the city already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Lore: ) Use the fields from the city information that are present to populate the JSON you will return.
+        Existing Character Information:
+        Name: {name}
+        Population: {population}
+        Sprawl: {sprawl}
+        Architecture: {architecture}
+        Industries: {industries}
+        Climate: {climate}
+        Safety: {safety}
+        Education: {education}
+        Modernity: {modernity}
+        Wealth: {wealth}
+        Governance: {governance}
+        Lore: {lore}
+        Quests: {quests}
+        Description: {description}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: cityInfo.name,
+                population: cityInfo.population,
+                sprawl: cityInfo.sprawl,
+                architecture: cityInfo.architecture,
+                industries: cityInfo.industries,
+                climate: cityInfo.climate,
+                safety: cityInfo.safety,
+                education: cityInfo.education,
+                modernity: cityInfo.modernity,
+                wealth: cityInfo.wealth,
+                governance: cityInfo.governance,
+                lore: cityInfo.lore,
+                quests: cityInfo.quests,
+                description: cityInfo.description,
+            });
+
+            return response;
+        }),
+    saveCity: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                population: z.string(),
+                sprawl: z.string(),
+                architecture: z.string(),
+                industries: z.string(),
+                climate: z.string(),
+                safety: z.string(),
+                education: z.string(),
+                modernity: z.string(),
+                wealth: z.string(),
+                governance: z.string(),
+                lore: z.string(),
+                quests: z.string(),
+                description: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let character;
+            if (input.imageb64 === "") {
+                character = await db.city.create({
+                    data: {
+                        name: input.name,
+                        population: input.population,
+                        sprawl: input.sprawl,
+                        architecture: input.architecture,
+                        industries: input.industries,
+                        climate: input.climate,
+                        safety: input.safety,
+                        education: input.education,
+                        modernity: input.modernity,
+                        wealth: input.wealth,
+                        governance: input.governance,
+                        lore: input.lore,
+                        quests: input.quests,
+                        description: input.description,
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `city-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    character = await db.city.create({
+                        data: {
+                            name: input.name,
+                            population: input.population,
+                            sprawl: input.sprawl,
+                            architecture: input.architecture,
+                            industries: input.industries,
+                            climate: input.climate,
+                            safety: input.safety,
+                            education: input.education,
+                            modernity: input.modernity,
+                            wealth: input.wealth,
+                            governance: input.governance,
+                            lore: input.lore,
+                            quests: input.quests,
+                            description: input.description,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return character;
+        }),
+    deleteCity: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const city = await db.city.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (city) {
+                const imageKey = city.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedCity = await db.city.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedCity;
+        }),
+    getCity: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const city = await db.city.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!city) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Character not found",
+                });
+            }
+
+            return city;
+        }),
+    updateCity: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                population: z.string(),
+                sprawl: z.string(),
+                architecture: z.string(),
+                industries: z.string(),
+                climate: z.string(),
+                safety: z.string(),
+                education: z.string(),
+                modernity: z.string(),
+                wealth: z.string(),
+                governance: z.string(),
+                lore: z.string(),
+                quests: z.string(),
+                description: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedCity;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.city.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                console.log("test?");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `city-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedCity = await db.city.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            population: input.population,
+                            sprawl: input.sprawl,
+                            architecture: input.architecture,
+                            industries: input.industries,
+                            climate: input.climate,
+                            safety: input.safety,
+                            education: input.education,
+                            modernity: input.modernity,
+                            wealth: input.wealth,
+                            governance: input.governance,
+                            lore: input.lore,
+                            quests: input.quests,
+                            description: input.description,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedCity = await db.city.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        population: input.population,
+                        sprawl: input.sprawl,
+                        architecture: input.architecture,
+                        industries: input.industries,
+                        climate: input.climate,
+                        safety: input.safety,
+                        education: input.education,
+                        modernity: input.modernity,
+                        wealth: input.wealth,
+                        governance: input.governance,
+                        lore: input.lore,
+                        quests: input.quests,
+                        description: input.description,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedCity;
         }),
 });
 
