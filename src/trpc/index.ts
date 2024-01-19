@@ -52,12 +52,36 @@ export const appRouter = router({
             },
         });
     }),
-    getWorldCharacters: privateProcedure
+    getWorldEntities: privateProcedure
         .input(z.object({ worldID: z.string() }))
-        .query(async ({ input }) => {
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
             const characters = await db.character.findMany({
                 where: {
                     worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            const cities = await db.city.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return { characters, cities };
+        }),
+    getWorldCharacters: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const characters = await db.character.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
                 },
             });
 
@@ -65,10 +89,13 @@ export const appRouter = router({
         }),
     getWorldCities: privateProcedure
         .input(z.object({ worldID: z.string() }))
-        .query(async ({ input }) => {
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
             const cities = await db.city.findMany({
                 where: {
                     worldID: input.worldID,
+                    userId,
                 },
             });
 
@@ -89,12 +116,14 @@ export const appRouter = router({
             const characters = await db.character.findMany({
                 where: {
                     worldID: input.id,
+                    userId,
                 },
             });
 
             const cities = await db.city.findMany({
                 where: {
                     worldID: input.id,
+                    userId,
                 },
             });
 
@@ -120,6 +149,7 @@ export const appRouter = router({
             await db.world.delete({
                 where: {
                     id: input.id,
+                    userId,
                 },
             });
 
@@ -266,6 +296,7 @@ export const appRouter = router({
                 quirks: z.string(),
                 fashion: z.string(),
                 goals: z.string(),
+                context: z.any(),
                 worldInfo: z.string(),
                 prompt: z.string(),
             })
@@ -1199,12 +1230,15 @@ export const appRouter = router({
             const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a character concept for an NPC your party may encounter using the following information.  
-        When making this character, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the character.
+        When making this character, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the character. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
         Your generation Prompt: 
         {question}
         
         World Information:
         {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
 
         Only generate information in the character fields that are empty. For example, if the character already has a name (i.e. Name: David Stridebreaker), do not generate a new name. Only generate for the fields that are empty (i.e. Goals: ) Use the fields from the character information that are present to populate the JSON you will return.
         Existing Character Information:
@@ -1249,6 +1283,7 @@ export const appRouter = router({
                 quirks: characterInfo.quirks,
                 fashion: characterInfo.fashion,
                 goals: characterInfo.goals,
+                context: JSON.stringify(input.context),
             });
 
             return response;
@@ -1577,6 +1612,7 @@ export const appRouter = router({
                 lore: z.string(),
                 quests: z.string(),
                 description: z.string(),
+                context: z.any(),
                 prompt: z.string(),
                 worldInfo: z.string(),
             })
@@ -1659,12 +1695,15 @@ export const appRouter = router({
             const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a city concept for an location your party may travel to using the following information.  
-        When making this city, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the city.
+        When making this city, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the city. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
         Your generation Prompt: 
         {question}
         
         World Information:
         {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
 
         Only generate information in the city fields that are empty. For example, if the city already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Lore: ) Use the fields from the city information that are present to populate the JSON you will return.
         Existing Character Information:
@@ -1709,6 +1748,7 @@ export const appRouter = router({
                 lore: cityInfo.lore,
                 quests: cityInfo.quests,
                 description: cityInfo.description,
+                context: JSON.stringify(input.context),
             });
 
             return response;

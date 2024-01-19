@@ -16,9 +16,10 @@ import { Check, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { World } from "@prisma/client";
+import { Character, City, World } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ContextCombo from "./ContextCombo";
 
 const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -66,6 +67,9 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
         useState<boolean>(false);
     const [cityData, setCityData] = useState<any>("");
     const [deletingCity, setCurrentlyDeletingCity] = useState<boolean>(false);
+    const [contextEntity, setContextEntity] = useState<Character | City | null>(
+        null
+    );
 
     const router = useRouter();
 
@@ -113,6 +117,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
             quests: questsDisabled ? quests : "",
             prompt: prompt,
             worldInfo: world?.description,
+            context: contextEntity,
         },
         {
             enabled: false,
@@ -121,6 +126,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { mutate: updateCity } = trpc.updateCity.useMutation({
         onSuccess: () => {
             utils.getWorldCities.invalidate();
+            utils.getWorldEntities.invalidate();
             toast({
                 title: "City Updated",
                 description: "Your city has been updated.",
@@ -137,6 +143,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { mutate: deleteCity } = trpc.deleteCity.useMutation({
         onSuccess: () => {
             utils.getWorldCities.invalidate();
+            utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -554,37 +561,38 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                         className="sm:w-[50vw] md:w-[30vw]"
                     />
                 </div>
-
-                <>
-                    <Button
-                        onClick={() => {
-                            handleSubmit();
-                        }}
-                    >
-                        {loading === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <div>Generate</div>
-                        )}
-                    </Button>
-                    <Button onClick={() => handleSave()}>
-                        {currentySavingCity === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <div>Save</div>
-                        )}
-                    </Button>
-                    <Button
-                        variant="destructive"
-                        onClick={() => deleteCity({ id: entityid })}
-                    >
-                        {deletingCity === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Trash className="h-4 w-4" />
-                        )}
-                    </Button>
-                </>
+                <ContextCombo
+                    setContextEntity={setContextEntity}
+                    worldID={{ worldID: world.id }}
+                />
+                <Button
+                    onClick={() => {
+                        handleSubmit();
+                    }}
+                >
+                    {loading === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <div>Generate</div>
+                    )}
+                </Button>
+                <Button onClick={() => handleSave()}>
+                    {currentySavingCity === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <div>Save</div>
+                    )}
+                </Button>
+                <Button
+                    variant="destructive"
+                    onClick={() => deleteCity({ id: entityid })}
+                >
+                    {deletingCity === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <Trash className="h-4 w-4" />
+                    )}
+                </Button>
             </CardFooter>
         </Card>
     );

@@ -17,11 +17,12 @@ import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
-import { World } from "@prisma/client";
+import { Character, City, World } from "@prisma/client";
 import { set } from "date-fns";
 import Image from "next/image";
 import { router } from "@/trpc/trpc";
 import { useRouter } from "next/navigation";
+import ContextCombo from "./ContextCombo";
 
 const CharacterView = ({
     world,
@@ -70,6 +71,11 @@ const CharacterView = ({
     const [deletingCharacter, setCurrentlyDeletingCharacter] =
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+    const [contextEntity, setContextEntity] = useState<Character | City | null>(
+        null
+    );
+
+
 
     const router = useRouter();
 
@@ -119,6 +125,7 @@ const CharacterView = ({
                 quirks: quirksDisabled ? quirks : "",
                 goals: goalsDisabled ? goals : "",
                 backstory: backstoryDisabled ? backstory : "",
+                context: contextEntity,
                 prompt: prompt,
                 worldInfo: world?.description,
             },
@@ -129,6 +136,7 @@ const CharacterView = ({
     const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldCharacters.invalidate();
+            utils.getWorldEntities.invalidate();
             toast({
                 title: "Character Updated!",
                 description: "Your character has been updated.",
@@ -145,6 +153,7 @@ const CharacterView = ({
     const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldCharacters.invalidate();
+            utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -550,36 +559,38 @@ const CharacterView = ({
                     />
                 </div>
 
-                <>
-                    <Button
-                        onClick={() => {
-                            handleSubmit();
-                        }}
-                    >
-                        {loading === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <div>Generate</div>
-                        )}
-                    </Button>
-                    <Button onClick={() => handleSave()}>
-                        {currentlySavingCharacter === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <div>Save</div>
-                        )}
-                    </Button>
-                    <Button
-                        variant="destructive"
-                        onClick={() => deleteCharacter({ id: entityid })}
-                    >
-                        {deletingCharacter === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Trash className="h-4 w-4" />
-                        )}
-                    </Button>
-                </>
+                <ContextCombo
+                    setContextEntity={setContextEntity}
+                    worldID={{ worldID: world.id }}
+                />
+                <Button
+                    onClick={() => {
+                        handleSubmit();
+                    }}
+                >
+                    {loading === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <div>Generate</div>
+                    )}
+                </Button>
+                <Button onClick={() => handleSave()}>
+                    {currentlySavingCharacter === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <div>Save</div>
+                    )}
+                </Button>
+                <Button
+                    variant="destructive"
+                    onClick={() => deleteCharacter({ id: entityid })}
+                >
+                    {deletingCharacter === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <Trash className="h-4 w-4" />
+                    )}
+                </Button>
             </CardFooter>
         </Card>
     );

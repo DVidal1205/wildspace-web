@@ -16,8 +16,9 @@ import { Check, Loader2 } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { World } from "@prisma/client";
+import { Character, City, World } from "@prisma/client";
 import Image from "next/image";
+import ContextCombo from "./ContextCombo";
 
 const Character = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -57,6 +58,9 @@ const Character = ({ world }: { world: World }) => {
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
+    const [contextEntity, setContextEntity] = useState<Character | City | null>(
+        null
+    );
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -80,6 +84,7 @@ const Character = ({ world }: { world: World }) => {
                 backstory: backstoryDisabled ? backstory : "",
                 prompt: prompt,
                 worldInfo: world?.description,
+                context: contextEntity,
             },
             {
                 enabled: false,
@@ -88,6 +93,7 @@ const Character = ({ world }: { world: World }) => {
     const { mutate: saveCharacter } = trpc.saveCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldCharacters.invalidate();
+            utils.getWorldEntities.invalidate();
             toast({
                 title: "Character Saved",
                 description: "Your character has been saved.",
@@ -513,27 +519,28 @@ const Character = ({ world }: { world: World }) => {
                         className="sm:w-[50vw] md:w-[30vw]"
                     />
                 </div>
-
-                <>
-                    <Button
-                        onClick={() => {
-                            handleSubmit();
-                        }}
-                    >
-                        {loading === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <div>Generate</div>
-                        )}
-                    </Button>
-                    <Button onClick={() => handleSave()}>
-                        {currentlySavingCharacter === true ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <div>Save</div>
-                        )}
-                    </Button>
-                </>
+                <ContextCombo
+                    setContextEntity={setContextEntity}
+                    worldID={{ worldID: world.id }}
+                />
+                <Button
+                    onClick={() => {
+                        handleSubmit();
+                    }}
+                >
+                    {loading === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <div>Generate</div>
+                    )}
+                </Button>
+                <Button onClick={() => handleSave()}>
+                    {currentlySavingCharacter === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <div>Save</div>
+                    )}
+                </Button>
             </CardFooter>
         </Card>
     );
