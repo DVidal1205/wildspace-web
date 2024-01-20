@@ -18,6 +18,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import CharacterView from "./CharacterView";
 import CityView from "./CityView";
+import FactionView from "./FactionView";
 
 const GalleryPage = ({
     world,
@@ -46,6 +47,9 @@ const GalleryPage = ({
                 <CharacterView world={world} entityid={entityid} />
             )}
             {type === "city" && <CityView world={world} entityid={entityid} />}
+            {type === "faction" && (
+                <FactionView world={world} entityid={entityid} />
+            )}
         </main>
     );
 };

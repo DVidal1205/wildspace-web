@@ -71,7 +71,14 @@ export const appRouter = router({
                 },
             });
 
-            return { characters, cities };
+            const factions = await db.faction.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return { characters, cities, factions };
         }),
     getWorldCharacters: privateProcedure
         .input(z.object({ worldID: z.string() }))
@@ -100,6 +107,20 @@ export const appRouter = router({
             });
 
             return cities;
+        }),
+    getWorldFactions: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const factions = await db.faction.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return factions;
         }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
@@ -246,7 +267,13 @@ export const appRouter = router({
             );
 
             const promptTemplate = `You are an expert in writing prompts for image generation. You are writing a prompt for an image of concept art based on an input JSON object with various fields, such as fantasy race, or architecture.
-            Be as descriptive as possible in your prompt, aiming for an image that is detailed and unique. Strongly specify no text in the image at the start of the generation prompt. If it is a character, specify no background in the nature of concept art.
+            Be as descriptive as possible in your prompt, aiming for an image that is detailed and unique. Strongly specify no text in the image at the start of the generation prompt. 
+            
+            If it is a character, specify no background in the nature of concept art.
+
+            If it is an organization, specify the image to be of the organization crest, alongside what a typical member of the organization would look like.
+            
+            
             Generate the prompt for a {type} based on the following input JSON object:
     
             Input JSON Object
@@ -1142,27 +1169,6 @@ export const appRouter = router({
                 getRandomClass();
             const randomSubclass = getRandomSubclass(randomSubclasses);
 
-            const alignmentList = [
-                "Chaotic Neutral",
-                "Chaotic Evil",
-                "Chaotic Good",
-                "True Neutral",
-                "Neutral Good",
-                "Neutral Evil",
-                "Lawful Good",
-                "Lawful Neutral",
-                "Lawful Evil",
-            ];
-
-            function getRandomAlignment(): string {
-                const randomIndex = Math.floor(
-                    Math.random() * alignmentList.length
-                );
-                return alignmentList[randomIndex];
-            }
-
-            const randomAlignment = getRandomAlignment();
-
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z
@@ -1213,7 +1219,7 @@ export const appRouter = router({
                 race: input.race || randomRace,
                 class: input.cClass || randomClass,
                 subclass: input.subclass || randomSubclass,
-                alignment: input.alignment || randomAlignment,
+                alignment: input.alignment,
                 age: input.age || randomAge,
                 build: input.build,
                 gender: input.gender,
@@ -1231,6 +1237,7 @@ export const appRouter = router({
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a character concept for an NPC your party may encounter using the following information.  
         When making this character, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the character. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
         Your generation Prompt: 
         {question}
         
@@ -1407,7 +1414,6 @@ export const appRouter = router({
 
             return character;
         }),
-
     getCharacter: privateProcedure
         .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
@@ -1696,6 +1702,7 @@ export const appRouter = router({
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a city concept for an location your party may travel to using the following information.  
         When making this city, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the city. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
         Your generation Prompt: 
         {question}
         
@@ -1803,9 +1810,9 @@ export const appRouter = router({
                 return new Blob(byteArrays, { type: contentType });
             }
 
-            let character;
+            let city;
             if (input.imageb64 === "") {
-                character = await db.city.create({
+                city = await db.city.create({
                     data: {
                         name: input.name,
                         population: input.population,
@@ -1841,7 +1848,7 @@ export const appRouter = router({
                 const imageURL = `https://utfs.io/f/${imageKey}`;
 
                 if (imageKey && imageURL) {
-                    character = await db.city.create({
+                    city = await db.city.create({
                         data: {
                             name: input.name,
                             population: input.population,
@@ -1866,7 +1873,7 @@ export const appRouter = router({
                 }
             }
 
-            return character;
+            return city;
         }),
     deleteCity: privateProcedure
         .input(z.object({ id: z.string() }))
@@ -2053,6 +2060,419 @@ export const appRouter = router({
             }
 
             return updatedCity;
+        }),
+    generateFaction: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                population: z.string(),
+                alignment: z.string(),
+                presence: z.string(),
+                devotion: z.string(),
+                description: z.string(),
+                goals: z.string(),
+                lore: z.string(),
+                traits: z.string(),
+                context: z.any(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the City"),
+                    population: z
+                        .string()
+                        .describe(
+                            "Population of the Faction (Add a range, and the numbers should be rounded and not evenly rounded off: i.e 135,196 instead of 135,000)"
+                        ),
+                    type: z
+                        .string()
+                        .describe(
+                            "Type of the Faction, such as legislative body, cult, royal family, activism group, etc (1-5 Words)"
+                        ),
+                    alignment: z
+                        .string()
+                        .describe("Moral Alignment of the Faction"),
+                    presence: z
+                        .string()
+                        .describe(
+                            "Presence of the Faction, such as malicious, auspicious, guiding, etc. Capture the presence of this faction in the world (1-5 Words)"
+                        ),
+                    devotion: z
+                        .string()
+                        .describe(
+                            "Average level of Devotion tp the Faction, such as fanatic, moderate belief, etc. Capture the devotion the average member has (1-5 Words)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the Faction. Describe the faction in detail, including the layout, the people, the structure, and the culture (3-5 Sentences)"
+                        ),
+                    goals: z
+                        .string()
+                        .describe(
+                            "Goals of the Faction. Describe the goals that the faction has, and how they plan to achieve them. (3-5 Sentences)"
+                        ),
+                    lore: z
+                        .string()
+                        .describe(
+                            "Lore of the Faction. Describe the founding of the faction, the foundations it was built upon, and how it has changed over time (2-3 Sentences)"
+                        ),
+                    traits: z
+                        .string()
+                        .describe(
+                            "Traits of the Faction. Describe the traits that the faction has, such as mannerisms of members, actions, or perhaps vanity items like clothing or jewelry (2-3 Sentences)"
+                        ),
+                })
+            );
+
+            const factionInfo = {
+                name: input.name,
+                population: input.population,
+                type: input.type,
+                alignment: input.alignment,
+                presence: input.presence,
+                devotion: input.devotion,
+                description: input.description,
+                goals: input.goals,
+                lore: input.lore,
+                traits: input.traits,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a faction concept for a faction your party may encounter the following information.  
+        When making this faction, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the faction. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
+
+        Only generate information in the city fields that are empty. For example, if the city already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Lore: ) Use the fields from the city information that are present to populate the JSON you will return.
+        Existing Character Information:
+        Name: {name}
+        Population: {population}
+        Type: {type}
+        Alignment: {alignment}
+        Presence: {presence}
+        Devotion: {devotion}
+        Description: {description}
+        Goals: {goals}
+        Lore: {lore}
+        Traits: {traits}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: factionInfo.name,
+                population: factionInfo.population,
+                type: factionInfo.type,
+                alignment: factionInfo.alignment,
+                presence: factionInfo.presence,
+                devotion: factionInfo.devotion,
+                description: factionInfo.description,
+                goals: factionInfo.goals,
+                lore: factionInfo.lore,
+                traits: factionInfo.traits,
+                context: JSON.stringify(input.context),
+            });
+
+            return response;
+        }),
+    saveFaction: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                population: z.string(),
+                type: z.string(),
+                alignment: z.string(),
+                presence: z.string(),
+                devotion: z.string(),
+                description: z.string(),
+                goals: z.string(),
+                lore: z.string(),
+                traits: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let faction;
+            if (input.imageb64 === "") {
+                faction = await db.faction.create({
+                    data: {
+                        name: input.name,
+                        population: input.population,
+                        type: input.type,
+                        alignment: input.alignment,
+                        presence: input.presence,
+                        devotion: input.devotion,
+                        description: input.description,
+                        goals: input.goals,
+                        lore: input.lore,
+                        traits: input.traits,
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `faction-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    faction = await db.faction.create({
+                        data: {
+                            name: input.name,
+                            population: input.population,
+                            type: input.type,
+                            alignment: input.alignment,
+                            presence: input.presence,
+                            devotion: input.devotion,
+                            description: input.description,
+                            goals: input.goals,
+                            lore: input.lore,
+                            traits: input.traits,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return faction;
+        }),
+    deleteFaction: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const faction = await db.faction.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (faction) {
+                const imageKey = faction.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedFaction = await db.faction.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedFaction;
+        }),
+    getFaction: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const faction = await db.faction.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!faction) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Character not found",
+                });
+            }
+
+            return faction;
+        }),
+    updateFaction: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                population: z.string(),
+                type: z.string(),
+                alignment: z.string(),
+                presence: z.string(),
+                devotion: z.string(),
+                goals: z.string(),
+                lore: z.string(),
+                traits: z.string(),
+                description: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedFaction;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.faction.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `faction-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedFaction = await db.faction.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            population: input.population,
+                            type: input.type,
+                            alignment: input.alignment,
+                            presence: input.presence,
+                            devotion: input.devotion,
+                            description: input.description,
+                            goals: input.goals,
+                            lore: input.lore,
+                            traits: input.traits,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedFaction = await db.faction.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        population: input.population,
+                        type: input.type,
+                        alignment: input.alignment,
+                        presence: input.presence,
+                        devotion: input.devotion,
+                        description: input.description,
+                        goals: input.goals,
+                        lore: input.lore,
+                        traits: input.traits,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedFaction;
         }),
 });
 

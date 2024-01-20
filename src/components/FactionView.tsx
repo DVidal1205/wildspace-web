@@ -12,120 +12,139 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { Character, City, Faction, World } from "@prisma/client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
 
-const Character = ({ world }: { world: World }) => {
+const FactionView = ({
+    world,
+    entityid,
+}: {
+    world: World;
+    entityid: string;
+}) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
-    const [raceDisabled, setRaceDisabled] = useState<boolean>(false);
-    const [classDisabled, setClassDisabled] = useState<boolean>(false);
-    const [subclassDisabled, setSubclassDisabled] = useState<boolean>(false);
+    const [typeDisabled, setTypeDisabled] = useState<boolean>(false);
     const [alignmentDisabled, setAlignmentDisabled] = useState<boolean>(false);
-    const [ageDisabled, setAgeDisabled] = useState<boolean>(false);
-    const [buildDisabled, setBuildDisabled] = useState<boolean>(false);
-    const [genderDisabled, setGenderDisabled] = useState<boolean>(false);
-    const [hairDisabled, setHairDisabled] = useState<boolean>(false);
-    const [heightDisabled, setHeightDisabled] = useState<boolean>(false);
-    const [fashionDisabled, setFashionDisabled] = useState<boolean>(false);
-    const [quirksDisabled, setQuirksDisabled] = useState<boolean>(false);
-    const [goalsDisabled, setGoalsDisabled] = useState<boolean>(false);
-    const [backstoryDisabled, setBackstoryDisabled] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [currentlySavingCharacter, setCurrentlySavingCharacter] =
+    const [populationDisabled, setPopulationDisabled] =
         useState<boolean>(false);
-    const [imageLoading, setImageLoading] = useState<boolean>(false);
-    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+    const [presenceDisabled, setPresenceDisabled] = useState<boolean>(false);
+    const [devotionDisabled, setDevotionDisabled] = useState<boolean>(false);
+    const [goalsDisabled, setGoalsDisabled] = useState<boolean>(false);
+    const [descriptionDisabled, setDescriptionDisabled] =
+        useState<boolean>(false);
+    const [loreDisabled, setLoreDisabled] = useState<boolean>(false);
+    const [traitsDisabled, setTraitsDisabled] = useState<boolean>(false);
 
     const [name, setName] = useState<string>("");
-    const [race, setRace] = useState<string>("");
-    const [pclass, setClass] = useState<string>("");
-    const [subclass, setSubclass] = useState<string>("");
+    const [type, setType] = useState<string>("");
     const [alignment, setAlignment] = useState<string>("");
-    const [age, setAge] = useState<string>("");
-    const [build, setBuild] = useState<string>("");
-    const [gender, setGender] = useState<string>("");
-    const [hair, setHair] = useState<string>("");
-    const [height, setHeight] = useState<string>("");
-    const [fashion, setFashion] = useState<string>("");
-    const [quirks, setQuirks] = useState<string>("");
+    const [population, setPopulation] = useState<string>("");
+    const [presence, setPresence] = useState<string>("");
+    const [devotion, setDevotion] = useState<string>("");
     const [goals, setGoals] = useState<string>("");
-    const [backstory, setBackstory] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [lore, setLore] = useState<string>("");
+    const [traits, setTraits] = useState<string>("");
+
     const [prompt, setPrompt] = useState<string>("");
+    const [imageLoading, setImageLoading] = useState<boolean>(false);
+    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [currentlySavingFaction, setCurrentlySavingFaction] =
+        useState<boolean>(false);
+    const [cityData, setCityData] = useState<any>("");
+    const [deletingFaction, setCurrentlyDeletingFaction] =
+        useState<boolean>(false);
     const [contextEntity, setContextEntity] = useState<
         Character | City | Faction | null
     >(null);
 
+    const router = useRouter();
+
     const { toast } = useToast();
     const utils = trpc.useContext();
 
-    const { data: response, refetch: genFetch } =
-        trpc.generateCharacter.useQuery(
-            {
-                name: nameDisabled ? name : "",
-                cClass: classDisabled ? pclass : "",
-                race: raceDisabled ? race : "",
-                subclass: subclassDisabled ? subclass : "",
-                alignment: alignmentDisabled ? alignment : "",
-                age: ageDisabled ? age : "",
-                build: buildDisabled ? build : "",
-                gender: genderDisabled ? gender : "",
-                hair: hairDisabled ? hair : "",
-                height: heightDisabled ? height : "",
-                fashion: fashionDisabled ? fashion : "",
-                quirks: quirksDisabled ? quirks : "",
-                goals: goalsDisabled ? goals : "",
-                backstory: backstoryDisabled ? backstory : "",
-                prompt: prompt,
-                worldInfo: world?.description,
-                context: contextEntity,
-            },
-            {
-                enabled: false,
-            }
-        );
-    const { mutate: saveCharacter } = trpc.saveCharacter.useMutation({
+    const { data: faction } = trpc.getFaction.useQuery({ id: entityid });
+
+    useEffect(() => {
+        if (faction) {
+            setName(faction.name);
+            setType(faction.type);
+            setAlignment(faction.alignment);
+            setPopulation(faction.population);
+            setPresence(faction.presence);
+            setDevotion(faction.devotion);
+            setGoals(faction.goals);
+            setDescription(faction.description);
+            setLore(faction.lore);
+            setTraits(faction.traits);
+            setImage(faction.imageURL);
+            setResponseData(faction);
+        }
+    }, [faction]);
+
+    const { data: response, refetch: genFetch } = trpc.generateFaction.useQuery(
+        {
+            name: nameDisabled ? name : "",
+            type: typeDisabled ? type : "",
+            alignment: alignmentDisabled ? alignment : "",
+            population: populationDisabled ? population : "",
+            presence: presenceDisabled ? presence : "",
+            devotion: devotionDisabled ? devotion : "",
+            goals: goalsDisabled ? goals : "",
+            description: descriptionDisabled ? description : "",
+            lore: loreDisabled ? lore : "",
+            traits: traitsDisabled ? traits : "",
+            prompt: prompt,
+            worldInfo: world?.description,
+            context: contextEntity,
+        },
+        {
+            enabled: false,
+        }
+    );
+    const { mutate: updateFaction } = trpc.updateFaction.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
+            utils.getWorldFactions.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
-                title: "Character Saved",
-                description: "Your character has been saved.",
+                title: "Faction Updated",
+                description: "Your faction has been updated.",
             });
-            setName("");
-            setRace("");
-            setClass("");
-            setSubclass("");
-            setAlignment("");
-            setAge("");
-            setBuild("");
-            setGender("");
-            setHair("");
-            setHeight("");
-            setFashion("");
-            setQuirks("");
-            setGoals("");
-            setBackstory("");
-            setImage("");
-            setPrompt("");
         },
         onMutate: () => {
-            setCurrentlySavingCharacter(true);
+            setCurrentlySavingFaction(true);
         },
         onSettled() {
-            setCurrentlySavingCharacter(false);
+            setCurrentlySavingFaction(false);
+        },
+    });
+
+    const { mutate: deleteFaction } = trpc.deleteFaction.useMutation({
+        onSuccess: () => {
+            utils.getWorldFactions.invalidate();
+            utils.getWorldEntities.invalidate();
+            router.push(`/dashboard/${world.id}`);
+        },
+        onMutate: () => {
+            setCurrentlyDeletingFaction(true);
+        },
+        onSettled() {
+            setCurrentlyDeletingFaction(false);
         },
     });
 
     const { data: imageResponse, refetch: imageFetch } =
         trpc.generateImage.useQuery(
-            { object: response, type: "Character/Person" },
+            { object: responseData ? responseData : faction, type: "Faction" },
             { enabled: false }
         );
 
@@ -140,65 +159,58 @@ const Character = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
-        saveCharacter({
+        updateFaction({
             name: name,
-            race: race,
-            cClass: pclass,
-            subclass: subclass,
+            population: population,
+            type: type,
             alignment: alignment,
-            age: age,
-            build: build,
-            gender: gender,
-            hair: hair,
-            height: height,
-            fashion: fashion,
-            quirks: quirks,
+            presence: presence,
+            devotion: devotion,
             goals: goals,
-            backstory: backstory,
+            description: description,
+            lore: lore,
+            traits: traits,
             imageb64: image,
             worldID: world.id,
+            id: entityid,
         });
     };
 
     useEffect(() => {
         if (imageResponse) {
-            setImage(imageResponse);
-            console.log(imageResponse);
+            setImage(`data:image/png;base64,${imageResponse}`);
             setImageLoading(false);
         }
     }, [imageResponse]);
 
     useEffect(() => {
         if (response) {
-            console.log(response);
             setResponseData(response);
             setName(response.name);
-            setRace(response.race);
-            setClass(response.class);
-            setSubclass(response.subclass);
+            setPopulation(response.population);
+            setType(response.type);
             setAlignment(response.alignment);
-            setAge(response.age);
-            setBuild(response.build);
-            setGender(response.gender);
-            setHair(response.hair);
-            setHeight(response.height);
-            setFashion(response.fashion);
-            setQuirks(response.quirks);
+            setPresence(response.presence);
+            setDevotion(response.devotion);
             setGoals(response.goals);
-            setBackstory(response.backstory);
+            setDescription(response.description);
+            setLore(response.lore);
+            setTraits(response.traits);
             setLoading(false);
         }
     }, [response]);
 
-    return (
+    return !faction ? (
+        <div className="flex items-center justify-center">
+            <Loader2 className="h-40 w-40 animate-spin"></Loader2>
+        </div>
+    ) : (
         <Card>
             <CardHeader>
-                <CardTitle>Character Generation</CardTitle>
+                <CardTitle>{name}</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with a character! Leave the fields blank
-                    to generate details, or fill in properties and check them to
-                    set them. Press the save button to save the character to
-                    your gallery.
+                    View your city information for {name} here, or edit and save
+                    to update the character.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
@@ -221,52 +233,35 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="race">Race</Label>
+                        <Label htmlFor="type">Type</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="race"
+                                id="type"
                                 autoComplete="off"
-                                value={race}
-                                onChange={(e) => setRace(e.target.value)}
+                                value={type}
+                                onChange={(e) => setType(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setRaceDisabled(!raceDisabled)}
+                                onClick={() => setTypeDisabled(!typeDisabled)}
                             >
                                 <Check></Check>
                             </Toggle>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="class">Class</Label>
+                        <Label htmlFor="population">Population</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="class"
+                                id="population"
                                 autoComplete="off"
-                                value={pclass}
-                                onChange={(e) => setClass(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setClassDisabled(!classDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="subclass">Subclass</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="subclass"
-                                autoComplete="off"
-                                value={subclass}
-                                onChange={(e) => setSubclass(e.target.value)}
+                                value={population}
+                                onChange={(e) => setPopulation(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setSubclassDisabled(!subclassDisabled)
+                                    setPopulationDisabled(!populationDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -293,52 +288,18 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="age">Age</Label>
+                        <Label htmlFor="presence">Presence</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="age"
+                                id="presence"
                                 autoComplete="off"
-                                value={age}
-                                onChange={(e) => setAge(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setAgeDisabled(!ageDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="build">Build</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="build"
-                                autoComplete="off"
-                                value={build}
-                                onChange={(e) => setBuild(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setBuildDisabled(!buildDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="gender">Gender</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="gender"
-                                autoComplete="off"
-                                value={gender}
-                                onChange={(e) => setGender(e.target.value)}
+                                value={presence}
+                                onChange={(e) => setPresence(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setGenderDisabled(!genderDisabled)
+                                    setPresenceDisabled(!presenceDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -346,35 +307,18 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="hair">Hair</Label>
+                        <Label htmlFor="devotion">Devotion</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="hair"
+                                id="devotion"
                                 autoComplete="off"
-                                value={hair}
-                                onChange={(e) => setHair(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setHairDisabled(!hairDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="height">Height</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="height"
-                                autoComplete="off"
-                                value={height}
-                                onChange={(e) => setHeight(e.target.value)}
+                                value={devotion}
+                                onChange={(e) => setDevotion(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setHeightDisabled(!heightDisabled)
+                                    setDevotionDisabled(!devotionDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -384,18 +328,18 @@ const Character = ({ world }: { world: World }) => {
                 </div>
                 <div className="gap-4 space-y-2 md:col-span-2">
                     <div className="space-y-1">
-                        <Label htmlFor="fashion">Fashion</Label>
+                        <Label htmlFor="description">Description</Label>
                         <div className="flex space-x-2 items-center">
                             <Textarea
-                                id="fashion"
+                                id="description"
                                 autoComplete="off"
-                                value={fashion}
-                                onChange={(e) => setFashion(e.target.value)}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setFashionDisabled(!fashionDisabled)
+                                    setDescriptionDisabled(!descriptionDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -403,19 +347,17 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="quirks">Quirks</Label>
+                        <Label htmlFor="lore">Lore</Label>
                         <div className="flex space-x-2 items-center">
                             <Textarea
-                                id="quirks"
+                                id="lore"
                                 autoComplete="off"
-                                value={quirks}
-                                onChange={(e) => setQuirks(e.target.value)}
+                                value={lore}
+                                onChange={(e) => setLore(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() =>
-                                    setQuirksDisabled(!quirksDisabled)
-                                }
+                                onClick={() => setLoreDisabled(!loreDisabled)}
                             >
                                 <Check></Check>
                             </Toggle>
@@ -439,18 +381,18 @@ const Character = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="backstory">Backstory</Label>
+                        <Label htmlFor="traits">Traits</Label>
                         <div className="flex space-x-2 items-center">
                             <Textarea
-                                id="backstory"
+                                id="traits"
                                 autoComplete="off"
-                                value={backstory}
-                                onChange={(e) => setBackstory(e.target.value)}
+                                value={traits}
+                                onChange={(e) => setTraits(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setBackstoryDisabled(!backstoryDisabled)
+                                    setTraitsDisabled(!traitsDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -475,12 +417,8 @@ const Character = ({ world }: { world: World }) => {
                                 <Image
                                     height={1024}
                                     width={1024}
-                                    src={
-                                        image
-                                            ? `data:image/png;base64,${image}`
-                                            : ""
-                                    }
-                                    alt="character image"
+                                    src={image ? `${image}` : ""}
+                                    alt="faction image"
                                     className={`rounded-xl ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
@@ -491,7 +429,7 @@ const Character = ({ world }: { world: World }) => {
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {responseData ? (
+                        {responseData || faction ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}
@@ -503,7 +441,7 @@ const Character = ({ world }: { world: World }) => {
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate a Character First...</p>
+                            <p>Please Generate a Faction First...</p>
                         )}
                     </div>
                 </div>
@@ -535,10 +473,20 @@ const Character = ({ world }: { world: World }) => {
                     )}
                 </Button>
                 <Button onClick={() => handleSave()}>
-                    {currentlySavingCharacter === true ? (
+                    {currentlySavingFaction === true ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <div>Save</div>
+                    )}
+                </Button>
+                <Button
+                    variant="destructive"
+                    onClick={() => deleteFaction({ id: entityid })}
+                >
+                    {deletingFaction === true ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <Trash className="h-4 w-4" />
                     )}
                 </Button>
             </CardFooter>
@@ -546,4 +494,4 @@ const Character = ({ world }: { world: World }) => {
     );
 };
 
-export default Character;
+export default FactionView;

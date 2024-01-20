@@ -17,7 +17,7 @@ import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
-import { Character, City, World } from "@prisma/client";
+import { Character, City, Faction, World } from "@prisma/client";
 import { set } from "date-fns";
 import Image from "next/image";
 import { router } from "@/trpc/trpc";
@@ -71,11 +71,9 @@ const CharacterView = ({
     const [deletingCharacter, setCurrentlyDeletingCharacter] =
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-    const [contextEntity, setContextEntity] = useState<Character | City | null>(
-        null
-    );
-
-
+    const [contextEntity, setContextEntity] = useState<
+        Character | City | Faction | null
+    >(null);
 
     const router = useRouter();
 
@@ -166,7 +164,10 @@ const CharacterView = ({
 
     const { data: imageResponse, refetch: imageFetch } =
         trpc.generateImage.useQuery(
-            { object: worldResponse, type: "Character/Person" },
+            {
+                object: worldResponse ? worldResponse : character,
+                type: "Character/Person",
+            },
             { enabled: false }
         );
 
@@ -547,7 +548,7 @@ const CharacterView = ({
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="gap-4 justify-center mt-12">
+            <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
                 <Label htmlFor="race">Prompt</Label>
                 <div className="flex space-x-2 items-center">
                     <Input
@@ -555,7 +556,7 @@ const CharacterView = ({
                         autoComplete="off"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="w-[50vw] lg:w-[30vw]"
+                        className="w-[30vw]"
                     />
                 </div>
 

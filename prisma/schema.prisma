@@ -15,6 +15,7 @@ model User {
   World     World[]
   Character Character[]
   City      City[]
+  Faction   Faction[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -32,11 +33,12 @@ model World {
 
   Characters Character[]
   Cities     City[]
+  Factions   Faction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  User   User?   @relation(fields: [userId], references: [id])
+  User   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
 }
 
@@ -63,7 +65,7 @@ model Character {
   World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
   worldID String
 
-  User   User   @relation(fields: [userId], references: [id])
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 }
 
@@ -77,12 +79,12 @@ model City {
   climate      String
   safety       String
   education    String
-  modernity   String
+  modernity    String
   wealth       String
-  governance  String @db.VarChar(1000)
-  lore        String @db.VarChar(1000)
-  quests      String @db.VarChar(1000)
-  description String @db.VarChar(1000)
+  governance   String @db.VarChar(1000)
+  lore         String @db.VarChar(1000)
+  quests       String @db.VarChar(1000)
+  description  String @db.VarChar(1000)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -90,6 +92,29 @@ model City {
   World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
   worldID String
 
-  User   User   @relation(fields: [userId], references: [id])
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Faction {
+  id          String @id @default(cuid())
+  name        String
+  type        String
+  population  String
+  alignment   String
+  presence    String
+  devotion    String
+  description String @db.VarChar(1000)
+  goals       String @db.VarChar(1000)
+  lore        String @db.VarChar(1000)
+  traits      String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
+
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
+  worldID String
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 }

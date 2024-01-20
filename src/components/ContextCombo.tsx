@@ -19,10 +19,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { trpc } from "@/app/_trpc/client";
-import { Character, City } from "@prisma/client";
+import { Character, City, Faction } from "@prisma/client";
 
 type Entity = {
-    value: Character | City;
+    value: Character | City | Faction;
     label: string;
 };
 
@@ -30,7 +30,7 @@ const ContextCombo = ({
     setContextEntity,
     worldID,
 }: {
-    setContextEntity: (status: Character | City | null) => void;
+    setContextEntity: (status: Character | City | Faction | null) => void;
     worldID: { worldID: string };
 }) => {
     const [open, setOpen] = React.useState(false);
@@ -47,6 +47,10 @@ const ContextCombo = ({
             label: entity.name,
         })) || []),
         ...(entities.data?.cities?.map((entity: City) => ({
+            value: entity,
+            label: entity.name,
+        })) || []),
+        ...(entities.data?.factions?.map((entity: Faction) => ({
             value: entity,
             label: entity.name,
         })) || []),
@@ -73,7 +77,10 @@ const ContextCombo = ({
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0" align="start">
+                <PopoverContent
+                    className="w-[200px] h-[300px] p-0"
+                    align="start"
+                >
                     <StatusList
                         setOpen={setOpen}
                         setSelectedStatus={setSelectedEntity}
@@ -87,7 +94,10 @@ const ContextCombo = ({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <Button variant="outline" className="w-[150px] justify-start overflow-hidden">
+                <Button
+                    variant="outline"
+                    className="w-[150px] justify-start overflow-hidden"
+                >
                     {selectedEntity ? (
                         <>{selectedEntity.label}</>
                     ) : (
@@ -126,14 +136,12 @@ function StatusList({
                     {statuses.map((status) => (
                         <CommandItem
                             key={status.value.id}
-                            value={status.value.id}
+                            value={status.value.name}
                             onSelect={(value) => {
                                 setSelectedStatus(
                                     statuses.find(
                                         (priority) =>
-                                            typeof priority.value ===
-                                                "object" &&
-                                            priority.value.id === value
+                                            priority.value.name === value
                                     ) || null
                                 );
                                 setOpen(false);

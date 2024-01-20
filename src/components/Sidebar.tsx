@@ -1,5 +1,5 @@
 "use client";
-import { Character, City, World } from "@prisma/client";
+import { Character, City, Faction, World } from "@prisma/client";
 import { Separator } from "./ui/separator";
 import {
     Accordion,
@@ -15,9 +15,10 @@ interface SidebarProps {
     world: World;
     characters: Character[];
     cities: City[];
+    factions: Faction[];
 }
 
-const Sidebar = ({ world, characters, cities }: SidebarProps) => {
+const Sidebar = ({ world, characters, cities, factions }: SidebarProps) => {
     const router = useRouter();
     return (
         <div className="sm:w-[98vw] sm:px-6 md:w-full md:px-0">
@@ -74,10 +75,26 @@ const Sidebar = ({ world, characters, cities }: SidebarProps) => {
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3">
-                    <AccordionTrigger>Test</AccordionTrigger>
+                    <AccordionTrigger>Factions</AccordionTrigger>
                     <AccordionContent>
-                        Yes. It&apos;s animated by default, but you can disable
-                        it if you prefer.
+                        <ul>
+                            {factions.length === 0 ? (
+                                <div>No factions...</div>
+                            ) : (
+                                factions.map((faction) => (
+                                    <li
+                                        key={faction.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${faction.id}?type=faction`}
+                                        >
+                                            {faction.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

@@ -16,7 +16,7 @@ import { Check, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { Character, City, World } from "@prisma/client";
+import { Character, City, Faction, World } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
@@ -67,9 +67,9 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
         useState<boolean>(false);
     const [cityData, setCityData] = useState<any>("");
     const [deletingCity, setCurrentlyDeletingCity] = useState<boolean>(false);
-    const [contextEntity, setContextEntity] = useState<Character | City | null>(
-        null
-    );
+    const [contextEntity, setContextEntity] = useState<
+        Character | City | Faction | null
+    >(null);
 
     const router = useRouter();
 
@@ -156,7 +156,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     const { data: imageResponse, refetch: imageFetch } =
         trpc.generateImage.useQuery(
-            { object: response, type: "City/Town" },
+            { object: response ? response : city, type: "City/Town" },
             { enabled: false }
         );
 
@@ -533,7 +533,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {responseData ? (
+                        {responseData || city ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}
@@ -550,7 +550,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="gap-4 justify-center mt-12">
+            <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
                 <Label htmlFor="race">Prompt</Label>
                 <div className="flex space-x-2 items-center">
                     <Input
@@ -558,7 +558,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                         autoComplete="off"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="sm:w-[50vw] md:w-[30vw]"
+                        className="w-[30vw]"
                     />
                 </div>
                 <ContextCombo
