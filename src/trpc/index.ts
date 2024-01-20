@@ -1293,6 +1293,7 @@ export const appRouter = router({
                 context: JSON.stringify(input.context),
             });
 
+            console.log(response);
             return response;
         }),
     saveCharacter: privateProcedure

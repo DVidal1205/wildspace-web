@@ -135,13 +135,13 @@ function StatusList({
                 <CommandGroup>
                     {statuses.map((status) => (
                         <CommandItem
-                            key={status.value.id}
-                            value={status.value.name}
+                            key={status.value.name}
+                            value={status.value.id}
                             onSelect={(value) => {
                                 setSelectedStatus(
                                     statuses.find(
                                         (priority) =>
-                                            priority.value.name === value
+                                            priority.value.id === value
                                     ) || null
                                 );
                                 setOpen(false);
