@@ -19,6 +19,7 @@ import { ArrowLeft } from "lucide-react";
 import CharacterView from "./CharacterView";
 import CityView from "./CityView";
 import FactionView from "./FactionView";
+import QuestView from "./QuestView";
 
 const GalleryPage = ({
     world,
@@ -49,6 +50,9 @@ const GalleryPage = ({
             {type === "city" && <CityView world={world} entityid={entityid} />}
             {type === "faction" && (
                 <FactionView world={world} entityid={entityid} />
+            )}
+            {type === "quest" && (
+                <QuestView world={world} entityid={entityid} />
             )}
         </main>
     );

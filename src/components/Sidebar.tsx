@@ -1,5 +1,5 @@
 "use client";
-import { Character, City, Faction, World } from "@prisma/client";
+import { Character, City, Faction, Quest, World } from "@prisma/client";
 import { Separator } from "./ui/separator";
 import {
     Accordion,
@@ -16,9 +16,16 @@ interface SidebarProps {
     characters: Character[];
     cities: City[];
     factions: Faction[];
+    quests: Quest[];
 }
 
-const Sidebar = ({ world, characters, cities, factions }: SidebarProps) => {
+const Sidebar = ({
+    world,
+    characters,
+    cities,
+    factions,
+    quests,
+}: SidebarProps) => {
     const router = useRouter();
     return (
         <div className="sm:w-[98vw] sm:px-6 md:w-full md:px-0">
@@ -90,6 +97,29 @@ const Sidebar = ({ world, characters, cities, factions }: SidebarProps) => {
                                             href={`/dashboard/${world.id}/${faction.id}?type=faction`}
                                         >
                                             {faction.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-4">
+                    <AccordionTrigger>Quests</AccordionTrigger>
+                    <AccordionContent>
+                        <ul>
+                            {quests.length === 0 ? (
+                                <div>No quests...</div>
+                            ) : (
+                                quests.map((quest) => (
+                                    <li
+                                        key={quest.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${quest.id}?type=quest`}
+                                        >
+                                            {quest.name}
                                         </Link>
                                     </li>
                                 ))

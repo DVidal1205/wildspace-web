@@ -78,7 +78,14 @@ export const appRouter = router({
                 },
             });
 
-            return { characters, cities, factions };
+            const quests = await db.quest.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return { characters, cities, factions, quests };
         }),
     getWorldCharacters: privateProcedure
         .input(z.object({ worldID: z.string() }))
@@ -121,6 +128,20 @@ export const appRouter = router({
             });
 
             return factions;
+        }),
+    getWorldQuests: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const quests = await db.quest.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return quests;
         }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
@@ -273,7 +294,8 @@ export const appRouter = router({
 
             If it is an organization, specify the image to be of the organization crest, alongside what a typical member of the organization would look like.
             
-            
+            If it is a questline, specify the image to be of a scene from the questline.
+
             Generate the prompt for a {type} based on the following input JSON object:
     
             Input JSON Object
@@ -1293,7 +1315,6 @@ export const appRouter = router({
                 context: JSON.stringify(input.context),
             });
 
-            console.log(response);
             return response;
         }),
     saveCharacter: privateProcedure
@@ -2083,7 +2104,7 @@ export const appRouter = router({
         .query(async ({ ctx, input }) => {
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
-                    name: z.string().describe("Name of the City"),
+                    name: z.string().describe("Name of the Faction"),
                     population: z
                         .string()
                         .describe(
@@ -2474,6 +2495,393 @@ export const appRouter = router({
             }
 
             return updatedFaction;
+        }),
+    generateQuest: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                difficulty: z.string(),
+                description: z.string(),
+                discovery: z.string(),
+                objective: z.string(),
+                consequences: z.string(),
+                rewards: z.string(),
+                outcomes: z.string(),
+                context: z.any(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the Quest"),
+                    difficulty: z
+                        .string()
+                        .describe(
+                            "Difficulty of the Quest (1-5 Words, i.e. Easy, Hard, etc)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the Quest. Describe the quest in detail, including the layout, the people, and the process. Pay great attention to the steps the party must do to complete the quests, as if you are taking notes for the session as a DM (3-5 Sentences)"
+                        ),
+                    discovery: z
+                        .string()
+                        .describe(
+                            "Discovery of the Quest. Describe how the quest is discovered, and how the party may find it, as well as who or where the quest is hosted. Also, detail the information the party will know, which should not be the full picture (3-5 Sentences)"
+                        ),
+                    objective: z
+                        .string()
+                        .describe(
+                            "Objective of the Quest. Describe the objective of the quest, and how the party may complete it (3-5 Sentences)"
+                        ),
+                    consequences: z
+                        .string()
+                        .describe(
+                            "Consequences of the Quest. Describe the consequences of the quest, and how the party may be affected by it (3-5 Sentences)"
+                        ),
+                    rewards: z
+                        .string()
+                        .describe(
+                            "Rewards of the Quest. Describe the rewards of the quest, and how the party may be rewarded by it (3-5 Sentences)"
+                        ),
+                    outcomes: z
+                        .string()
+                        .describe(
+                            "Outcomes of the Quest. Describe the outcomes of the quest, and how the party may be affected by it (3-5 Sentences)"
+                        ),
+                })
+            );
+
+            const questInfo = {
+                name: input.name,
+                difficulty: input.difficulty,
+                description: input.description,
+                discovery: input.discovery,
+                objective: input.objective,
+                consequences: input.consequences,
+                rewards: input.rewards,
+                outcomes: input.outcomes,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a quest/plotline concept for a quest your party may encounter the following information.  
+        When making this quest, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the faction. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
+
+        Only generate information in the city fields that are empty. For example, if the quest already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        
+        Existing Quest Information:
+        Name: {name}
+        Difficulty: {difficulty}
+        Description: {description}
+        Discovery: {discovery}
+        Objective: {objective}
+        Consequences: {consequences}
+        Rewards: {rewards}
+        Outcomes: {outcomes}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: questInfo.name,
+                difficulty: questInfo.difficulty,
+                description: questInfo.description,
+                discovery: questInfo.discovery,
+                objective: questInfo.objective,
+                consequences: questInfo.consequences,
+                rewards: questInfo.rewards,
+                outcomes: questInfo.outcomes,
+                context: JSON.stringify(input.context),
+            });
+
+            return response;
+        }),
+    saveQuest: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                difficulty: z.string(),
+                description: z.string(),
+                discovery: z.string(),
+                objective: z.string(),
+                consequences: z.string(),
+                rewards: z.string(),
+                outcomes: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let quest;
+            if (input.imageb64 === "") {
+                quest = await db.quest.create({
+                    data: {
+                        name: input.name,
+                        difficulty: input.difficulty,
+                        description: input.description,
+                        discovery: input.discovery,
+                        objective: input.objective,
+                        consequences: input.consequences,
+                        rewards: input.rewards,
+                        outcomes: input.outcomes,
+
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `quest-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    quest = await db.quest.create({
+                        data: {
+                            name: input.name,
+                            difficulty: input.difficulty,
+                            description: input.description,
+                            discovery: input.discovery,
+                            objective: input.objective,
+                            consequences: input.consequences,
+                            rewards: input.rewards,
+                            outcomes: input.outcomes,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return quest;
+        }),
+    deleteQuest: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const quest = await db.quest.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (quest) {
+                const imageKey = quest.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedQuest = await db.quest.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedQuest;
+        }),
+    getQuest: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const quest = await db.quest.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!quest) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Quest not found",
+                });
+            }
+
+            return quest;
+        }),
+    updateQuest: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                difficulty: z.string(),
+                description: z.string(),
+                discovery: z.string(),
+                objective: z.string(),
+                consequences: z.string(),
+                rewards: z.string(),
+                outcomes: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedQuest;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.quest.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `quest-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedQuest = await db.quest.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            difficulty: input.difficulty,
+                            description: input.description,
+                            discovery: input.discovery,
+                            objective: input.objective,
+                            consequences: input.consequences,
+                            rewards: input.rewards,
+                            outcomes: input.outcomes,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedQuest = await db.quest.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        difficulty: input.difficulty,
+                        description: input.description,
+                        discovery: input.discovery,
+                        objective: input.objective,
+                        consequences: input.consequences,
+                        rewards: input.rewards,
+                        outcomes: input.outcomes,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedQuest;
         }),
 });
 

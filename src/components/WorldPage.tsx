@@ -17,6 +17,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import City from "./City";
 import Faction from "./Faction";
+import Quest from "./Quest";
 
 const WorldPage = ({ world }: { world: World }) => {
     const { data: characters } = trpc.getWorldCharacters.useQuery({
@@ -26,6 +27,9 @@ const WorldPage = ({ world }: { world: World }) => {
         worldID: world.id,
     });
     const { data: factions } = trpc.getWorldFactions.useQuery({
+        worldID: world.id,
+    });
+    const { data: quests } = trpc.getWorldQuests.useQuery({
         worldID: world.id,
     });
 
@@ -38,16 +42,24 @@ const WorldPage = ({ world }: { world: World }) => {
                         characters={characters || []}
                         cities={cities || []}
                         factions={factions || []}
+                        quests={quests || []}
                     />
                 </div>
                 <div className="md:col-span-7 w-screen md:w-auto">
                     <Tabs defaultValue="character" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="character">
+                        <TabsList className="flex justify-evenly">
+                            <TabsTrigger value="character" className="w-full">
                                 Character
                             </TabsTrigger>
-                            <TabsTrigger value="city">City</TabsTrigger>
-                            <TabsTrigger value="faction">Faction</TabsTrigger>
+                            <TabsTrigger value="city" className="w-full">
+                                City
+                            </TabsTrigger>
+                            <TabsTrigger value="faction" className="w-full">
+                                Faction
+                            </TabsTrigger>
+                            <TabsTrigger value="quest" className="w-full">
+                                Quest
+                            </TabsTrigger>
                         </TabsList>
                         <TabsContent value="character">
                             <Character world={world} />
@@ -57,6 +69,9 @@ const WorldPage = ({ world }: { world: World }) => {
                         </TabsContent>
                         <TabsContent value="faction">
                             <Faction world={world} />
+                        </TabsContent>
+                        <TabsContent value="quest">
+                            <Quest world={world} />
                         </TabsContent>
                     </Tabs>
                 </div>

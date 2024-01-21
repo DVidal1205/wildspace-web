@@ -16,6 +16,7 @@ model User {
   Character Character[]
   City      City[]
   Faction   Faction[]
+  Quest     Quest[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -34,6 +35,7 @@ model World {
   Characters Character[]
   Cities     City[]
   Factions   Faction[]
+  Quests     Quest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -108,6 +110,27 @@ model Faction {
   goals       String @db.VarChar(1000)
   lore        String @db.VarChar(1000)
   traits      String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
+
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
+  worldID String
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Quest {
+  id           String @id @default(cuid())
+  name         String
+  difficulty   String
+  description  String @db.VarChar(1000)
+  discovery    String @db.VarChar(1000)
+  objective    String @db.VarChar(1000)
+  consequences String @db.VarChar(1000)
+  rewards      String @db.VarChar(1000)
+  outcomes     String @db.VarChar(1000)
 
   imageURL String @db.VarChar(1000)
   imageKey String
