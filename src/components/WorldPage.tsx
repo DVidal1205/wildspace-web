@@ -18,6 +18,7 @@ import { Button } from "./ui/button";
 import City from "./City";
 import Faction from "./Faction";
 import Quest from "./Quest";
+import Building from "./Building";
 
 const WorldPage = ({ world }: { world: World }) => {
     const { data: characters } = trpc.getWorldCharacters.useQuery({
@@ -60,6 +61,9 @@ const WorldPage = ({ world }: { world: World }) => {
                             <TabsTrigger value="quest" className="w-full">
                                 Quest
                             </TabsTrigger>
+                            <TabsTrigger value="building" className="w-full">
+                                Building
+                            </TabsTrigger>
                         </TabsList>
                         <TabsContent value="character">
                             <Character world={world} />
@@ -72,6 +76,9 @@ const WorldPage = ({ world }: { world: World }) => {
                         </TabsContent>
                         <TabsContent value="quest">
                             <Quest world={world} />
+                        </TabsContent>
+                        <TabsContent value="building">
+                            <Building world={world} />
                         </TabsContent>
                     </Tabs>
                 </div>

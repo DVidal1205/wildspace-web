@@ -85,7 +85,14 @@ export const appRouter = router({
                 },
             });
 
-            return { characters, cities, factions, quests };
+            const buildings = await db.building.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return { characters, cities, factions, quests, buildings };
         }),
     getWorldCharacters: privateProcedure
         .input(z.object({ worldID: z.string() }))
@@ -135,6 +142,20 @@ export const appRouter = router({
             const { userId } = ctx;
 
             const quests = await db.quest.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return quests;
+        }),
+    getWorldBuildings: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const quests = await db.building.findMany({
                 where: {
                     worldID: input.worldID,
                     userId,
@@ -315,6 +336,8 @@ export const appRouter = router({
                 formatInstructions: parser.getFormatInstructions(),
             });
 
+            console.log(response.prompt);
+
             const openai = new MyOpenAI();
             const imageResponse = await openai.images.generate({
                 model: "dall-e-3",
@@ -322,6 +345,7 @@ export const appRouter = router({
                 n: 1,
                 size: "1024x1024",
                 response_format: "b64_json",
+                quality: "standard",
             });
 
             const imageb64 = imageResponse.data[0].b64_json;
@@ -2613,6 +2637,402 @@ export const appRouter = router({
                 consequences: questInfo.consequences,
                 rewards: questInfo.rewards,
                 outcomes: questInfo.outcomes,
+                context: JSON.stringify(input.context),
+            });
+
+            return response;
+        }),
+    saveQuest: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                difficulty: z.string(),
+                description: z.string(),
+                discovery: z.string(),
+                objective: z.string(),
+                consequences: z.string(),
+                rewards: z.string(),
+                outcomes: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let quest;
+            if (input.imageb64 === "") {
+                quest = await db.quest.create({
+                    data: {
+                        name: input.name,
+                        difficulty: input.difficulty,
+                        description: input.description,
+                        discovery: input.discovery,
+                        objective: input.objective,
+                        consequences: input.consequences,
+                        rewards: input.rewards,
+                        outcomes: input.outcomes,
+
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `quest-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    quest = await db.quest.create({
+                        data: {
+                            name: input.name,
+                            difficulty: input.difficulty,
+                            description: input.description,
+                            discovery: input.discovery,
+                            objective: input.objective,
+                            consequences: input.consequences,
+                            rewards: input.rewards,
+                            outcomes: input.outcomes,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return quest;
+        }),
+    deleteQuest: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const quest = await db.quest.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (quest) {
+                const imageKey = quest.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedQuest = await db.quest.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedQuest;
+        }),
+    getQuest: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const quest = await db.quest.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!quest) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Quest not found",
+                });
+            }
+
+            return quest;
+        }),
+    updateQuest: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                difficulty: z.string(),
+                description: z.string(),
+                discovery: z.string(),
+                objective: z.string(),
+                consequences: z.string(),
+                rewards: z.string(),
+                outcomes: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedQuest;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.quest.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `quest-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedQuest = await db.quest.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            difficulty: input.difficulty,
+                            description: input.description,
+                            discovery: input.discovery,
+                            objective: input.objective,
+                            consequences: input.consequences,
+                            rewards: input.rewards,
+                            outcomes: input.outcomes,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedQuest = await db.quest.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        difficulty: input.difficulty,
+                        description: input.description,
+                        discovery: input.discovery,
+                        objective: input.objective,
+                        consequences: input.consequences,
+                        rewards: input.rewards,
+                        outcomes: input.outcomes,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedQuest;
+        }),
+    generateBuilding: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                size: z.string(),
+                ambience: z.string(),
+                architecture: z.string(),
+                traffic: z.string(),
+                description: z.string(),
+                vendor: z.string(),
+                goods: z.string(),
+                context: z.any(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the Quest"),
+                    type: z
+                        .string()
+                        .describe(
+                            "Type of the Building, such as commercial, industrial, etc. If goods or services are offered, specify what type of building (Ex. Library, Tavern, Antique Shop, etc). (1-5 Words)"
+                        ),
+                    size: z
+                        .string()
+                        .describe(
+                            "Size of the Building, such as small, large, etc. (1-5 Words)"
+                        ),
+                    architecture: z
+                        .string()
+                        .describe(
+                            "Architecture of the Building, such as modern, gothic, etc. (1-5 Words)"
+                        ),
+                    ambience: z
+                        .string()
+                        .describe(
+                            "Ambience of the Building, such as busy, quiet, etc. (1-5 Words)"
+                        ),
+                    traffic: z
+                        .string()
+                        .describe(
+                            "Foot traffic of the Building, such as busy, quiet, etc. (1-5 Words)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the Building. Describe the building in detail, including the layout, the people, and the scene upon entering (3-5 Sentences)"
+                        ),
+                    vendor: z
+                        .string()
+                        .describe(
+                            "Vendor of the Building. Describe the vendor of the building, what they offer, and how they interact with people in the building. Be sure to give a name and a fantasy race when describing the vendor. (3-5 Sentences)"
+                        ),
+                    goods: z
+                        .string()
+                        .describe(
+                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Price | Item | \\n | ---- | ---- | \\n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should not be followd be \\n  (Markdown Table, with 10-15 rows, 2 columns)"
+                        ),
+                })
+            );
+
+            const buildingInfo = {
+                name: input.name,
+                type: input.type,
+                size: input.size,
+                ambience: input.ambience,
+                architecture: input.architecture,
+                traffic: input.traffic,
+                description: input.description,
+                vendor: input.vendor,
+                goods: input.goods,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a building/shop concept for a building your party may encounter the following information.  
+        When making this quest, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the building. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
+
+        Only generate information in the city fields that are empty. For example, if the quest already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        
+        Existing Quest Information:
+        Name: {name}
+        Type: {type}
+        Size: {size}
+        Ambience: {ambience}
+        Architecture: {architecture}
+        Traffic: {traffic}
+        Description: {description}
+        Vendor: {vendor}
+        Goods: {goods}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: buildingInfo.name,
+                type: buildingInfo.type,
+                size: buildingInfo.size,
+                ambience: buildingInfo.ambience,
+                architecture: buildingInfo.architecture,
+                traffic: buildingInfo.traffic,
+                description: buildingInfo.description,
+                vendor: buildingInfo.vendor,
+                goods: buildingInfo.goods,
                 context: JSON.stringify(input.context),
             });
 

@@ -19,10 +19,10 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { trpc } from "@/app/_trpc/client";
-import { Character, City, Faction } from "@prisma/client";
+import { Character, City, Faction, Quest } from "@prisma/client";
 
 type Entity = {
-    value: Character | City | Faction;
+    value: Character | City | Faction | Quest;
     label: string;
 };
 
@@ -30,7 +30,9 @@ const ContextCombo = ({
     setContextEntity,
     worldID,
 }: {
-    setContextEntity: (status: Character | City | Faction | null) => void;
+    setContextEntity: (
+        status: Character | City | Faction | Quest | null
+    ) => void;
     worldID: { worldID: string };
 }) => {
     const [open, setOpen] = React.useState(false);
@@ -51,6 +53,10 @@ const ContextCombo = ({
             label: entity.name,
         })) || []),
         ...(entities.data?.factions?.map((entity: Faction) => ({
+            value: entity,
+            label: entity.name,
+        })) || []),
+        ...(entities.data?.quests?.map((entity: Quest) => ({
             value: entity,
             label: entity.name,
         })) || []),

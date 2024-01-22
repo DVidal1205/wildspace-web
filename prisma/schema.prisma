@@ -14,6 +14,7 @@ model User {
 
   World     World[]
   Character Character[]
+  Building  Building[]
   City      City[]
   Faction   Faction[]
   Quest     Quest[]
@@ -33,6 +34,7 @@ model World {
   techLevel   String
 
   Characters Character[]
+  Buildings  Building[]
   Cities     City[]
   Factions   Faction[]
   Quests     Quest[]
@@ -60,6 +62,28 @@ model Character {
   quirks    String @db.VarChar(1000)
   goals     String @db.VarChar(1000)
   backstory String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
+
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
+  worldID String
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Building {
+  id           String @id @default(cuid())
+  name         String
+  type         String
+  size         String
+  architecture String
+  ambience     String
+  traffic      String
+  description  String @db.VarChar(1000)
+  vendor       String @db.VarChar(1000)
+  goods        String @db.VarChar(1000)
 
   imageURL String @db.VarChar(1000)
   imageKey String
