@@ -13,6 +13,7 @@ import { OpenAI as MyOpenAI } from "openai";
 import { useUploadThing } from "@/lib/uploadthing";
 import axios from "axios";
 import { utapi } from "@/server/uploadthing";
+import build from "next/dist/build";
 
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
@@ -2965,7 +2966,7 @@ export const appRouter = router({
                     goods: z
                         .string()
                         .describe(
-                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Price | Item | \\n | ---- | ---- | \\n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should not be followd be \\n  (Markdown Table, with 10-15 rows, 2 columns)"
+                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Price | Item | \\n | ---- | ---- | \\n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should not be followd be \\n. Make sure the \\n is padded with a space on the left and right  (Markdown Table, with 10-15 rows, 2 columns)"
                         ),
                 })
             );
@@ -3037,17 +3038,18 @@ export const appRouter = router({
 
             return response;
         }),
-    saveQuest: privateProcedure
+    saveBuilding: privateProcedure
         .input(
             z.object({
                 name: z.string(),
-                difficulty: z.string(),
+                type: z.string(),
+                size: z.string(),
+                ambience: z.string(),
+                architecture: z.string(),
+                traffic: z.string(),
                 description: z.string(),
-                discovery: z.string(),
-                objective: z.string(),
-                consequences: z.string(),
-                rewards: z.string(),
-                outcomes: z.string(),
+                vendor: z.string(),
+                goods: z.string(),
                 worldID: z.string(),
                 imageb64: z.string(),
             })
@@ -3081,19 +3083,19 @@ export const appRouter = router({
                 return new Blob(byteArrays, { type: contentType });
             }
 
-            let quest;
+            let building;
             if (input.imageb64 === "") {
-                quest = await db.quest.create({
+                building = await db.building.create({
                     data: {
                         name: input.name,
-                        difficulty: input.difficulty,
+                        type: input.type,
+                        size: input.size,
+                        ambience: input.ambience,
+                        architecture: input.architecture,
+                        traffic: input.traffic,
                         description: input.description,
-                        discovery: input.discovery,
-                        objective: input.objective,
-                        consequences: input.consequences,
-                        rewards: input.rewards,
-                        outcomes: input.outcomes,
-
+                        vendor: input.vendor,
+                        goods: input.goods,
                         worldID: input.worldID,
                         imageURL: "",
                         imageKey: "",
@@ -3106,7 +3108,7 @@ export const appRouter = router({
                     ? input.name.toLowerCase().replace(/ /g, "_")
                     : "default";
 
-                const file = new File([imageBlob], `quest-${filename}.png`, {
+                const file = new File([imageBlob], `building-${filename}.png`, {
                     type: "image/png",
                 });
                 const response = await utapi.uploadFiles(file);
@@ -3114,16 +3116,17 @@ export const appRouter = router({
                 const imageURL = `https://utfs.io/f/${imageKey}`;
 
                 if (imageKey && imageURL) {
-                    quest = await db.quest.create({
+                    building = await db.building.create({
                         data: {
                             name: input.name,
-                            difficulty: input.difficulty,
+                            type: input.type,
+                            size: input.size,
+                            ambience: input.ambience,
+                            architecture: input.architecture,
+                            traffic: input.traffic,
                             description: input.description,
-                            discovery: input.discovery,
-                            objective: input.objective,
-                            consequences: input.consequences,
-                            rewards: input.rewards,
-                            outcomes: input.outcomes,
+                            vendor: input.vendor,
+                            goods: input.goods,
                             worldID: input.worldID,
                             imageURL: imageURL,
                             imageKey: imageKey,
@@ -3133,68 +3136,69 @@ export const appRouter = router({
                 }
             }
 
-            return quest;
+            return building;
         }),
-    deleteQuest: privateProcedure
+    deleteBuilding: privateProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
-            const quest = await db.quest.findFirst({
+            const building = await db.building.findFirst({
                 where: {
                     id: input.id,
                     userId,
                 },
             });
 
-            if (quest) {
-                const imageKey = quest.imageKey;
+            if (building) {
+                const imageKey = building.imageKey;
                 if (imageKey) {
                     await utapi.deleteFiles(imageKey);
                 }
             }
 
-            const deletedQuest = await db.quest.delete({
+            const deletedBuilding = await db.building.delete({
                 where: {
                     id: input.id,
                     userId,
                 },
             });
 
-            return deletedQuest;
+            return deletedBuilding;
         }),
-    getQuest: privateProcedure
+    getBuilding: privateProcedure
         .input(z.object({ id: z.string() }))
         .query(async ({ ctx, input }) => {
             const { userId } = ctx;
 
-            const quest = await db.quest.findFirst({
+            const building = await db.building.findFirst({
                 where: {
                     id: input.id,
                     userId,
                 },
             });
 
-            if (!quest) {
+            if (!building) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
                     message: "Quest not found",
                 });
             }
 
-            return quest;
+            return building;
         }),
-    updateQuest: privateProcedure
+    updateBuilding: privateProcedure
         .input(
             z.object({
                 name: z.string(),
-                difficulty: z.string(),
+                type: z.string(),
+                size: z.string(),
+                ambience: z.string(),
+                architecture: z.string(),
+                traffic: z.string(),
                 description: z.string(),
-                discovery: z.string(),
-                objective: z.string(),
-                consequences: z.string(),
-                rewards: z.string(),
-                outcomes: z.string(),
+                vendor: z.string(),
+                goods: z.string(),
                 worldID: z.string(),
                 imageb64: z.string(),
                 id: z.string(),
@@ -3229,10 +3233,10 @@ export const appRouter = router({
                 return new Blob(byteArrays, { type: contentType });
             }
 
-            let updatedQuest;
+            let updatedBuilding;
 
             if (input.imageb64.startsWith("data:image/png;base64,")) {
-                const preMutate = await db.quest.findFirst({
+                const preMutate = await db.building.findFirst({
                     where: {
                         id: input.id,
                         userId,
@@ -3252,7 +3256,7 @@ export const appRouter = router({
                     ? input.name.toLowerCase().replace(/ /g, "_")
                     : "default";
 
-                const file = new File([imageBlob], `quest-${filename}.png`, {
+                const file = new File([imageBlob], `building-${filename}.png`, {
                     type: "image/png",
                 });
                 const response = await utapi.uploadFiles(file);
@@ -3260,20 +3264,21 @@ export const appRouter = router({
                 const imageURL = `https://utfs.io/f/${imageKey}`;
 
                 if (imageKey && imageURL) {
-                    updatedQuest = await db.quest.update({
+                    updatedBuilding = await db.building.update({
                         where: {
                             id: input.id,
                             userId,
                         },
                         data: {
                             name: input.name,
-                            difficulty: input.difficulty,
+                            type: input.type,
+                            size: input.size,
+                            ambience: input.ambience,
+                            architecture: input.architecture,
+                            traffic: input.traffic,
                             description: input.description,
-                            discovery: input.discovery,
-                            objective: input.objective,
-                            consequences: input.consequences,
-                            rewards: input.rewards,
-                            outcomes: input.outcomes,
+                            vendor: input.vendor,
+                            goods: input.goods,
                             worldID: input.worldID,
                             imageKey: imageKey,
                             imageURL: imageURL,
@@ -3281,26 +3286,27 @@ export const appRouter = router({
                     });
                 }
             } else {
-                updatedQuest = await db.quest.update({
+                updatedBuilding = await db.building.update({
                     where: {
                         id: input.id,
                         userId,
                     },
                     data: {
                         name: input.name,
-                        difficulty: input.difficulty,
+                        type: input.type,
+                        size: input.size,
+                        ambience: input.ambience,
+                        architecture: input.architecture,
+                        traffic: input.traffic,
                         description: input.description,
-                        discovery: input.discovery,
-                        objective: input.objective,
-                        consequences: input.consequences,
-                        rewards: input.rewards,
-                        outcomes: input.outcomes,
+                        vendor: input.vendor,
+                        goods: input.goods,
                         worldID: input.worldID,
                     },
                 });
             }
 
-            return updatedQuest;
+            return updatedBuilding;
         }),
 });
 

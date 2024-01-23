@@ -20,6 +20,7 @@ import CharacterView from "./CharacterView";
 import CityView from "./CityView";
 import FactionView from "./FactionView";
 import QuestView from "./QuestView";
+import BuildingView from "./BuildingView";
 
 const GalleryPage = ({
     world,
@@ -28,10 +29,6 @@ const GalleryPage = ({
     world: World;
     entityid: string;
 }) => {
-    const { data: characters } = trpc.getWorldCharacters.useQuery({
-        worldID: world.id,
-    });
-
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = searchParams.get("type");
@@ -53,6 +50,9 @@ const GalleryPage = ({
             )}
             {type === "quest" && (
                 <QuestView world={world} entityid={entityid} />
+            )}
+            {type === "building" && (
+                <BuildingView world={world} entityid={entityid} />
             )}
         </main>
     );

@@ -16,7 +16,7 @@ import { Check, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { Character, City, Faction, Quest, World } from "@prisma/client";
+import { Building, Character, City, Faction, Quest, World } from "@prisma/client";
 import Image from "next/image";
 import ContextCombo from "./ContextCombo";
 
@@ -51,7 +51,7 @@ const Quest = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const { toast } = useToast();
@@ -350,7 +350,7 @@ const Quest = ({ world }: { world: World }) => {
                                             : ""
                                     }
                                     alt="character image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""

@@ -563,7 +563,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                     width={1024}
                                     src={image}
                                     alt="character image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""

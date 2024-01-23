@@ -459,7 +459,7 @@ const FactionView = ({
                                     width={1024}
                                     src={image ? `${image}` : ""}
                                     alt="faction image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""

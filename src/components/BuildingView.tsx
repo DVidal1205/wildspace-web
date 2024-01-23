@@ -17,12 +17,21 @@ import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
-import { Character, City, Faction, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import { set } from "date-fns";
 import Image from "next/image";
 import { router } from "@/trpc/trpc";
 import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const BuildingView = ({
     world,
@@ -32,47 +41,39 @@ const BuildingView = ({
     entityid: string;
 }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
-    const [raceDisabled, setRaceDisabled] = useState<boolean>(false);
-    const [classDisabled, setClassDisabled] = useState<boolean>(false);
-    const [subclassDisabled, setSubclassDisabled] = useState<boolean>(false);
-    const [alignmentDisabled, setAlignmentDisabled] = useState<boolean>(false);
-    const [ageDisabled, setAgeDisabled] = useState<boolean>(false);
-    const [buildDisabled, setBuildDisabled] = useState<boolean>(false);
-    const [genderDisabled, setGenderDisabled] = useState<boolean>(false);
-    const [hairDisabled, setHairDisabled] = useState<boolean>(false);
-    const [heightDisabled, setHeightDisabled] = useState<boolean>(false);
-    const [fashionDisabled, setFashionDisabled] = useState<boolean>(false);
-    const [quirksDisabled, setQuirksDisabled] = useState<boolean>(false);
-    const [goalsDisabled, setGoalsDisabled] = useState<boolean>(false);
-    const [backstoryDisabled, setBackstoryDisabled] = useState<boolean>(false);
+    const [typeDisabled, setTypeDisabled] = useState<boolean>(false);
+    const [sizeDisabled, setSizeDisabled] = useState<boolean>(false);
+    const [architectureDisabled, setArchitectureDisabled] =
+        useState<boolean>(false);
+    const [ambienceDisabled, setAmbienceDisabled] = useState<boolean>(false);
+    const [trafficDisabled, setTrafficDisabled] = useState<boolean>(false);
+    const [descriptionDisabled, setDescriptionDisabled] =
+        useState<boolean>(false);
+    const [vendorDisabled, setVendorDisabled] = useState<boolean>(false);
+    const [goodsDisabled, setGoodsDisabled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [currentlySavingCharacter, setCurrentlySavingCharacter] =
+    const [currentlySavingBuilding, setCurrentlySavingBuilding] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
 
     const [name, setName] = useState<string>("");
-    const [race, setRace] = useState<string>("");
-    const [pclass, setClass] = useState<string>("");
-    const [subclass, setSubclass] = useState<string>("");
-    const [alignment, setAlignment] = useState<string>("");
-    const [age, setAge] = useState<string>("");
-    const [build, setBuild] = useState<string>("");
-    const [gender, setGender] = useState<string>("");
-    const [hair, setHair] = useState<string>("");
-    const [height, setHeight] = useState<string>("");
-    const [fashion, setFashion] = useState<string>("");
-    const [quirks, setQuirks] = useState<string>("");
-    const [goals, setGoals] = useState<string>("");
-    const [backstory, setBackstory] = useState<string>("");
+    const [type, setType] = useState<string>("");
+    const [size, setSize] = useState<string>("");
+    const [architecture, setArchitecture] = useState<string>("");
+    const [ambience, setAmbience] = useState<string>("");
+    const [traffic, setTraffic] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [vendor, setVendor] = useState<string>("");
+    const [goods, setGoods] = useState<string>("");
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
     const [worldResponse, setWorldResponse] = useState<any>("");
-    const [characterResponse, setCharacterResponse] = useState<any>("");
-    const [deletingCharacter, setCurrentlyDeletingCharacter] =
+    const [buildingResponse, setBuildingResponse] = useState<any>("");
+    const [deletingBuilding, setCurrentlyDeletingBuilding] =
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const router = useRouter();
@@ -80,96 +81,117 @@ const BuildingView = ({
     const { toast } = useToast();
     const utils = trpc.useContext();
 
-    const { data: character } = trpc.getCharacter.useQuery({
+    const { data: building } = trpc.getBuilding.useQuery({
         id: entityid,
     });
 
     useEffect(() => {
-        if (character) {
-            setName(character.name);
-            setRace(character.race);
-            setClass(character.class);
-            setSubclass(character.subclass);
-            setAlignment(character.alignment);
-            setAge(character.age);
-            setBuild(character.build);
-            setGender(character.gender);
-            setHair(character.hair);
-            setHeight(character.height);
-            setFashion(character.fashion);
-            setQuirks(character.quirks);
-            setGoals(character.goals);
-            setBackstory(character.backstory);
-            setImage(character.imageURL);
-            setCharacterResponse(character);
-            setWorldResponse(character);
+        if (building) {
+            setName(building.name);
+            setType(building.type);
+            setSize(building.size);
+            setArchitecture(building.architecture);
+            setAmbience(building.ambience);
+            setTraffic(building.traffic);
+            setDescription(building.description);
+            setVendor(building.vendor);
+            setGoods(building.goods);
+            setImage(building.imageURL);
+            setBuildingResponse(building);
         }
-    }, [character]);
+    }, [building]);
 
-    const { data: response, refetch: genFetch } =
-        trpc.generateCharacter.useQuery(
-            {
-                name: nameDisabled ? name : "",
-                cClass: classDisabled ? pclass : "",
-                race: raceDisabled ? race : "",
-                subclass: subclassDisabled ? subclass : "",
-                alignment: alignmentDisabled ? alignment : "",
-                age: ageDisabled ? age : "",
-                build: buildDisabled ? build : "",
-                gender: genderDisabled ? gender : "",
-                hair: hairDisabled ? hair : "",
-                height: heightDisabled ? height : "",
-                fashion: fashionDisabled ? fashion : "",
-                quirks: quirksDisabled ? quirks : "",
-                goals: goalsDisabled ? goals : "",
-                backstory: backstoryDisabled ? backstory : "",
-                context: contextEntity,
-                prompt: prompt,
-                worldInfo: world?.description,
-            },
-            {
-                enabled: false,
-            }
-        );
-    const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
+    const {
+        data: response,
+        refetch: genFetch,
+        error: error,
+    } = trpc.generateBuilding.useQuery(
+        {
+            name: nameDisabled ? name : "",
+            type: typeDisabled ? type : "",
+            size: sizeDisabled ? size : "",
+            architecture: architectureDisabled ? architecture : "",
+            ambience: ambienceDisabled ? ambience : "",
+            traffic: trafficDisabled ? traffic : "",
+            description: descriptionDisabled ? description : "",
+            vendor: vendorDisabled ? vendor : "",
+            goods: goodsDisabled ? goods : "",
+            prompt: prompt,
+            context: contextEntity,
+            worldInfo: world?.description,
+        },
+        {
+            enabled: false,
+        }
+    );
+    const { mutate: updateBuilding } = trpc.updateBuilding.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
+            utils.getWorldBuildings.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
-                title: "Character Updated!",
-                description: "Your character has been updated.",
+                title: "Building Updated!",
+                description: "Your building has been updated.",
             });
         },
         onMutate: () => {
-            setCurrentlySavingCharacter(true);
+            setCurrentlySavingBuilding(true);
         },
         onSettled() {
-            setCurrentlySavingCharacter(false);
+            setCurrentlySavingBuilding(false);
         },
     });
 
-    const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
+    const { mutate: deleteBuilding } = trpc.deleteBuilding.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
+            utils.getWorldBuildings.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
-            setCurrentlyDeletingCharacter(true);
+            setCurrentlyDeletingBuilding(true);
         },
         onSettled() {
-            setCurrentlyDeletingCharacter(false);
+            setCurrentlyDeletingBuilding(false);
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
-        trpc.generateImage.useQuery(
-            {
-                object: worldResponse ? worldResponse : character,
-                type: "Character/Person",
-            },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        {
+            object: worldResponse ? worldResponse : building,
+            type: "Character/Person",
+        },
+        { enabled: false }
+    );
+
+    useEffect(() => {
+        if (error) {
+            const message = error.message;
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            const message = imageError.message;
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -182,21 +204,16 @@ const BuildingView = ({
     };
 
     const handleSave = () => {
-        updateCharacter({
+        updateBuilding({
             name: name,
-            race: race,
-            cClass: pclass,
-            subclass: subclass,
-            alignment: alignment,
-            age: age,
-            build: build,
-            gender: gender,
-            hair: hair,
-            height: height,
-            fashion: fashion,
-            quirks: quirks,
-            goals: goals,
-            backstory: backstory,
+            type: type,
+            size: size,
+            architecture: architecture,
+            ambience: ambience,
+            traffic: traffic,
+            description: description,
+            vendor: vendor,
+            goods: goods,
             imageb64: image,
             worldID: world.id,
             id: entityid,
@@ -214,39 +231,36 @@ const BuildingView = ({
         if (response) {
             setWorldResponse(response);
             setName(response.name);
-            setRace(response.race);
-            setClass(response.class);
-            setSubclass(response.subclass);
-            setAlignment(response.alignment);
-            setAge(response.age);
-            setBuild(response.build);
-            setGender(response.gender);
-            setHair(response.hair);
-            setHeight(response.height);
-            setFashion(response.fashion);
-            setQuirks(response.quirks);
-            setGoals(response.goals);
-            setBackstory(response.backstory);
+            setType(response.type);
+            setSize(response.size);
+            setArchitecture(response.architecture);
+            setAmbience(response.ambience);
+            setTraffic(response.traffic);
+            setDescription(response.description);
+            setVendor(response.vendor);
+            setGoods(response.goods);
             setWorldResponse(response);
             setLoading(false);
         }
     }, [response]);
 
-    return !character ? (
+    return !building ? (
         <div className="flex items-center justify-center">
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
         </div>
     ) : (
         <Card>
             <CardHeader>
-                <CardTitle>{name}</CardTitle>
+                <CardTitle>Building Generation</CardTitle>
                 <CardDescription>
-                    View your character information for {name} here, or edit and
-                    save to update the character.
+                    Let&apos;s come up with a building! Leave the fields blank
+                    to generate details, or fill in properties and check them to
+                    set them. Press the save button to save the building to your
+                    gallery.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid lg:grid-cols-5 gap-4">
-                <div className="gap-4 lg:col-span-2 grid lg:grid-cols-2">
+            <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
+                <div className="gap-4 md:col-span-3 grid md:grid-cols-2">
                     <div className="space-y-1">
                         <Label htmlFor="name">Name</Label>
                         <div className="flex space-x-2 items-center">
@@ -265,52 +279,56 @@ const BuildingView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="race">Race</Label>
+                        <Label htmlFor="type">Type</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="race"
+                                id="type"
                                 autoComplete="off"
-                                value={race}
-                                onChange={(e) => setRace(e.target.value)}
+                                value={type}
+                                onChange={(e) => setType(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setRaceDisabled(!raceDisabled)}
+                                onClick={() => setTypeDisabled(!typeDisabled)}
                             >
                                 <Check></Check>
                             </Toggle>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="class">Class</Label>
+                        <Label htmlFor="size">Size</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="class"
+                                id="size"
                                 autoComplete="off"
-                                value={pclass}
-                                onChange={(e) => setClass(e.target.value)}
+                                value={size}
+                                onChange={(e) => setSize(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setClassDisabled(!classDisabled)}
+                                onClick={() => setSizeDisabled(!sizeDisabled)}
                             >
                                 <Check></Check>
                             </Toggle>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="subclass">Subclass</Label>
+                        <Label htmlFor="architecture">Architecture</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="subclass"
+                                id="architecture"
                                 autoComplete="off"
-                                value={subclass}
-                                onChange={(e) => setSubclass(e.target.value)}
+                                value={architecture}
+                                onChange={(e) =>
+                                    setArchitecture(e.target.value)
+                                }
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setSubclassDisabled(!subclassDisabled)
+                                    setArchitectureDisabled(
+                                        !architectureDisabled
+                                    )
                                 }
                             >
                                 <Check></Check>
@@ -318,18 +336,18 @@ const BuildingView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="alignment">Alignment</Label>
+                        <Label htmlFor="ambience">Ambience</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="alignment"
+                                id="ambience"
                                 autoComplete="off"
-                                value={alignment}
-                                onChange={(e) => setAlignment(e.target.value)}
+                                value={ambience}
+                                onChange={(e) => setAmbience(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setAlignmentDisabled(!alignmentDisabled)
+                                    setAmbienceDisabled(!ambienceDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -337,52 +355,18 @@ const BuildingView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="age">Age</Label>
+                        <Label htmlFor="traffic">Traffic</Label>
                         <div className="flex space-x-2 items-center">
                             <Input
-                                id="age"
+                                id="traffic"
                                 autoComplete="off"
-                                value={age}
-                                onChange={(e) => setAge(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setAgeDisabled(!ageDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="build">Build</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="build"
-                                autoComplete="off"
-                                value={build}
-                                onChange={(e) => setBuild(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setBuildDisabled(!buildDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="gender">Gender</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="gender"
-                                autoComplete="off"
-                                value={gender}
-                                onChange={(e) => setGender(e.target.value)}
+                                value={traffic}
+                                onChange={(e) => setTraffic(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setGenderDisabled(!genderDisabled)
+                                    setTrafficDisabled(!trafficDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -390,35 +374,37 @@ const BuildingView = ({
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="hair">Hair</Label>
+                        <Label htmlFor="description">Description</Label>
                         <div className="flex space-x-2 items-center">
-                            <Input
-                                id="hair"
+                            <Textarea
+                                id="description"
                                 autoComplete="off"
-                                value={hair}
-                                onChange={(e) => setHair(e.target.value)}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setHairDisabled(!hairDisabled)}
+                                onClick={() =>
+                                    setDescriptionDisabled(!descriptionDisabled)
+                                }
                             >
                                 <Check></Check>
                             </Toggle>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="height">Height</Label>
+                        <Label htmlFor="vendor">Vendor</Label>
                         <div className="flex space-x-2 items-center">
-                            <Input
-                                id="height"
+                            <Textarea
+                                id="vendor"
                                 autoComplete="off"
-                                value={height}
-                                onChange={(e) => setHeight(e.target.value)}
+                                value={vendor}
+                                onChange={(e) => setVendor(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setHeightDisabled(!heightDisabled)
+                                    setVendorDisabled(!vendorDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -426,80 +412,26 @@ const BuildingView = ({
                         </div>
                     </div>
                 </div>
-                <div className="gap-4 space-y-2 col-span-2">
-                    <div className="space-y-1">
-                        <Label htmlFor="fashion">Fashion</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="fashion"
-                                autoComplete="off"
-                                value={fashion}
-                                onChange={(e) => setFashion(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setFashionDisabled(!fashionDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="quirks">Quirks</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="quirks"
-                                autoComplete="off"
-                                value={quirks}
-                                onChange={(e) => setQuirks(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setQuirksDisabled(!quirksDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="goals">Goals</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="goals"
-                                autoComplete="off"
-                                value={goals}
-                                onChange={(e) => setGoals(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setGoalsDisabled(!goalsDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="backstory">Backstory</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="backstory"
-                                autoComplete="off"
-                                value={backstory}
-                                onChange={(e) => setBackstory(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setBackstoryDisabled(!backstoryDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
+                <div className="space-y-1">
+                    <Label htmlFor="height">Goods/Services</Label>
+                    <div className="flex flex-col">
+                        <Card className="aspect-square overflow-y-auto">
+                            <div className="p-4">
+                                <Markdown
+                                    remarkPlugins={[remarkGfm]}
+                                    className="prose"
+                                >
+                                    {goods}
+                                </Markdown>
+                            </div>
+                        </Card>
+                        <Toggle
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => setGoodsDisabled(!goodsDisabled)}
+                        >
+                            <Check></Check>
+                        </Toggle>
                     </div>
                 </div>
                 <div className="space-y-1">
@@ -521,7 +453,7 @@ const BuildingView = ({
                                     width={1024}
                                     src={image}
                                     alt="character image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""
@@ -531,7 +463,7 @@ const BuildingView = ({
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {worldResponse || characterResponse ? (
+                        {worldResponse || buildingResponse ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}
@@ -543,7 +475,7 @@ const BuildingView = ({
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate a Character First...</p>
+                            <p>Please Generate a Building First...</p>
                         )}
                     </div>
                 </div>
@@ -576,7 +508,7 @@ const BuildingView = ({
                     )}
                 </Button>
                 <Button onClick={() => handleSave()}>
-                    {currentlySavingCharacter === true ? (
+                    {currentlySavingBuilding === true ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <div>Save</div>
@@ -584,9 +516,9 @@ const BuildingView = ({
                 </Button>
                 <Button
                     variant="destructive"
-                    onClick={() => deleteCharacter({ id: entityid })}
+                    onClick={() => deleteBuilding({ id: entityid })}
                 >
-                    {deletingCharacter === true ? (
+                    {deletingBuilding === true ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <Trash className="h-4 w-4" />

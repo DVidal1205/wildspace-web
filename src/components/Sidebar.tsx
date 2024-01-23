@@ -1,5 +1,12 @@
 "use client";
-import { Character, City, Faction, Quest, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import { Separator } from "./ui/separator";
 import {
     Accordion,
@@ -17,6 +24,7 @@ interface SidebarProps {
     cities: City[];
     factions: Faction[];
     quests: Quest[];
+    buildings: Building[];
 }
 
 const Sidebar = ({
@@ -25,6 +33,7 @@ const Sidebar = ({
     cities,
     factions,
     quests,
+    buildings,
 }: SidebarProps) => {
     const router = useRouter();
     return (
@@ -34,7 +43,10 @@ const Sidebar = ({
                 <WorldButton world={world} />
             </div>
             <Separator />
-            <Accordion type="multiple" className="">
+            <Accordion
+                type="multiple"
+                className="max-h-[50vh] md:max-h-[75vh] overflow-auto"
+            >
                 <AccordionItem value="item-1">
                     <AccordionTrigger>Characters</AccordionTrigger>
                     <AccordionContent>
@@ -120,6 +132,29 @@ const Sidebar = ({
                                             href={`/dashboard/${world.id}/${quest.id}?type=quest`}
                                         >
                                             {quest.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-5">
+                    <AccordionTrigger>Buildings</AccordionTrigger>
+                    <AccordionContent>
+                        <ul>
+                            {buildings.length === 0 ? (
+                                <div>No quests...</div>
+                            ) : (
+                                buildings.map((building) => (
+                                    <li
+                                        key={building.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${building.id}?type=building`}
+                                        >
+                                            {building.name}
                                         </Link>
                                     </li>
                                 ))

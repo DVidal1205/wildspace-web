@@ -17,7 +17,14 @@ import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
-import { Character, City, Faction, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import { set } from "date-fns";
 import Image from "next/image";
 import { router } from "@/trpc/trpc";
@@ -57,7 +64,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [deletingQuest, setCurrentlyDeletingQuest] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const router = useRouter();
@@ -383,7 +390,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                     width={1024}
                                     src={image}
                                     alt="character image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""

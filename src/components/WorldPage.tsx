@@ -34,6 +34,10 @@ const WorldPage = ({ world }: { world: World }) => {
         worldID: world.id,
     });
 
+    const { data: buildings } = trpc.getWorldBuildings.useQuery({
+        worldID: world.id,
+    });
+
     return (
         <main className="mx-auto md:p-10">
             <div className="grid lg:grid-cols-8">
@@ -44,6 +48,7 @@ const WorldPage = ({ world }: { world: World }) => {
                         cities={cities || []}
                         factions={factions || []}
                         quests={quests || []}
+                        buildings={buildings || []}
                     />
                 </div>
                 <div className="md:col-span-7 w-screen md:w-auto">

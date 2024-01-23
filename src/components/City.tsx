@@ -540,7 +540,7 @@ const City = ({ world }: { world: World }) => {
                                             : ""
                                     }
                                     alt="character image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""

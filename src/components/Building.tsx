@@ -16,7 +16,14 @@ import { Check, Loader2 } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { Character, City, Faction, Quest, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import Image from "next/image";
 import ContextCombo from "./ContextCombo";
 import Markdown from "react-markdown";
@@ -53,33 +60,36 @@ const Building = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const { toast } = useToast();
     const utils = trpc.useContext();
 
-    const { data: response, refetch: genFetch } =
-        trpc.generateBuilding.useQuery(
-            {
-                name: nameDisabled ? name : "",
-                type: typeDisabled ? type : "",
-                size: sizeDisabled ? size : "",
-                architecture: architectureDisabled ? architecture : "",
-                ambience: ambienceDisabled ? ambience : "",
-                traffic: trafficDisabled ? traffic : "",
-                description: descriptionDisabled ? description : "",
-                vendor: vendorDisabled ? vendor : "",
-                goods: goodsDisabled ? goods : "",
-                prompt: prompt,
-                worldInfo: world?.description,
-                context: contextEntity,
-            },
-            {
-                enabled: false,
-            }
-        );
-    const { mutate: saveCharacter } = trpc.saveBuilding.useMutation({
+    const {
+        data: response,
+        refetch: genFetch,
+        error: error,
+    } = trpc.generateBuilding.useQuery(
+        {
+            name: nameDisabled ? name : "",
+            type: typeDisabled ? type : "",
+            size: sizeDisabled ? size : "",
+            architecture: architectureDisabled ? architecture : "",
+            ambience: ambienceDisabled ? ambience : "",
+            traffic: trafficDisabled ? traffic : "",
+            description: descriptionDisabled ? description : "",
+            vendor: vendorDisabled ? vendor : "",
+            goods: goodsDisabled ? goods : "",
+            prompt: prompt,
+            worldInfo: world?.description,
+            context: contextEntity,
+        },
+        {
+            enabled: false,
+        }
+    );
+    const { mutate: saveBuilding } = trpc.saveBuilding.useMutation({
         onSuccess: () => {
             utils.getWorldBuildings.invalidate();
             utils.getWorldEntities.invalidate();
@@ -95,6 +105,7 @@ const Building = ({ world }: { world: World }) => {
             setTraffic("");
             setDescription("");
             setVendor("");
+            setGoods("");
             setImage("");
             setPrompt("");
         },
@@ -106,11 +117,40 @@ const Building = ({ world }: { world: World }) => {
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
-        trpc.generateImage.useQuery(
-            { object: response, type: "Building/Shop" },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        { object: response, type: "Building/Shop" },
+        { enabled: false }
+    );
+
+    useEffect(() => {
+        if (error) {
+            const message = error.message;
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            const message = imageError.message;
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -159,6 +199,7 @@ const Building = ({ world }: { world: World }) => {
             setVendor(response.vendor);
             setGoods(response.goods);
             setLoading(false);
+            setResponseData(response);
         }
     }, [response]);
 
@@ -371,7 +412,7 @@ const Building = ({ world }: { world: World }) => {
                                             : ""
                                     }
                                     alt="character image"
-                                    className={`rounded-xl ${
+                                    className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"
                                             : ""
@@ -393,7 +434,7 @@ const Building = ({ world }: { world: World }) => {
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate a Character First...</p>
+                            <p>Please Generate a Building First...</p>
                         )}
                     </div>
                 </div>
