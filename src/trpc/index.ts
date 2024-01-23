@@ -1317,7 +1317,6 @@ export const appRouter = router({
                 new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
                 parser,
             ]);
-
             const response = await chain.invoke({
                 question: input.prompt,
                 formatInstructions: parser.getFormatInstructions(),

@@ -16,7 +16,14 @@ import { Check, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { Character, City, Faction, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
@@ -68,7 +75,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [cityData, setCityData] = useState<any>("");
     const [deletingCity, setCurrentlyDeletingCity] = useState<boolean>(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const router = useRouter();
@@ -99,7 +106,11 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
         }
     }, [city]);
 
-    const { data: response, refetch: genFetch } = trpc.generateCity.useQuery(
+    const {
+        data: response,
+        refetch: genFetch,
+        error: error,
+    } = trpc.generateCity.useQuery(
         {
             name: nameDisabled ? name : "",
             population: populationDisabled ? population : "",
@@ -154,11 +165,14 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
-        trpc.generateImage.useQuery(
-            { object: response ? response : city, type: "City/Town" },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        { object: response ? response : city, type: "City/Town" },
+        { enabled: false }
+    );
 
     const handleSubmit = () => {
         setLoading(true);
@@ -191,6 +205,32 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
             id: entityid,
         });
     };
+
+    useEffect(() => {
+        if (error) {
+            const message = error.message;
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            const message = imageError.message;
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
 
     useEffect(() => {
         if (imageResponse) {

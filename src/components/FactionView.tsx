@@ -16,7 +16,14 @@ import { Check, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { Character, City, Faction, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
@@ -64,7 +71,7 @@ const FactionView = ({
     const [deletingFaction, setCurrentlyDeletingFaction] =
         useState<boolean>(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const router = useRouter();
@@ -91,7 +98,11 @@ const FactionView = ({
         }
     }, [faction]);
 
-    const { data: response, refetch: genFetch } = trpc.generateFaction.useQuery(
+    const {
+        data: response,
+        refetch: genFetch,
+        error: error,
+    } = trpc.generateFaction.useQuery(
         {
             name: nameDisabled ? name : "",
             type: typeDisabled ? type : "",
@@ -142,11 +153,14 @@ const FactionView = ({
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
-        trpc.generateImage.useQuery(
-            { object: responseData ? responseData : faction, type: "Faction" },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        { object: responseData ? responseData : faction, type: "Faction" },
+        { enabled: false }
+    );
 
     const handleSubmit = () => {
         setLoading(true);
@@ -182,6 +196,32 @@ const FactionView = ({
             setImageLoading(false);
         }
     }, [imageResponse]);
+
+    useEffect(() => {
+        if (error) {
+            const message = error.message;
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            const message = imageError.message;
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
 
     useEffect(() => {
         if (response) {

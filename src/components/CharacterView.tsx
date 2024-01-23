@@ -17,7 +17,14 @@ import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
-import { Character, City, Faction, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import { set } from "date-fns";
 import Image from "next/image";
 import { router } from "@/trpc/trpc";
@@ -72,7 +79,7 @@ const CharacterView = ({
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | null
+        Character | City | Faction | Quest | Building | null
     >(null);
 
     const router = useRouter();
@@ -106,31 +113,34 @@ const CharacterView = ({
         }
     }, [character]);
 
-    const { data: response, refetch: genFetch } =
-        trpc.generateCharacter.useQuery(
-            {
-                name: nameDisabled ? name : "",
-                cClass: classDisabled ? pclass : "",
-                race: raceDisabled ? race : "",
-                subclass: subclassDisabled ? subclass : "",
-                alignment: alignmentDisabled ? alignment : "",
-                age: ageDisabled ? age : "",
-                build: buildDisabled ? build : "",
-                gender: genderDisabled ? gender : "",
-                hair: hairDisabled ? hair : "",
-                height: heightDisabled ? height : "",
-                fashion: fashionDisabled ? fashion : "",
-                quirks: quirksDisabled ? quirks : "",
-                goals: goalsDisabled ? goals : "",
-                backstory: backstoryDisabled ? backstory : "",
-                context: contextEntity,
-                prompt: prompt,
-                worldInfo: world?.description,
-            },
-            {
-                enabled: false,
-            }
-        );
+    const {
+        data: response,
+        error: error,
+        refetch: genFetch,
+    } = trpc.generateCharacter.useQuery(
+        {
+            name: nameDisabled ? name : "",
+            cClass: classDisabled ? pclass : "",
+            race: raceDisabled ? race : "",
+            subclass: subclassDisabled ? subclass : "",
+            alignment: alignmentDisabled ? alignment : "",
+            age: ageDisabled ? age : "",
+            build: buildDisabled ? build : "",
+            gender: genderDisabled ? gender : "",
+            hair: hairDisabled ? hair : "",
+            height: heightDisabled ? height : "",
+            fashion: fashionDisabled ? fashion : "",
+            quirks: quirksDisabled ? quirks : "",
+            goals: goalsDisabled ? goals : "",
+            backstory: backstoryDisabled ? backstory : "",
+            context: contextEntity,
+            prompt: prompt,
+            worldInfo: world?.description,
+        },
+        {
+            enabled: false,
+        }
+    );
     const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldCharacters.invalidate();
@@ -162,14 +172,17 @@ const CharacterView = ({
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
-        trpc.generateImage.useQuery(
-            {
-                object: worldResponse ? worldResponse : character,
-                type: "Character/Person",
-            },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        {
+            object: worldResponse ? worldResponse : character,
+            type: "Character/Person",
+        },
+        { enabled: false }
+    );
 
     const handleSubmit = () => {
         setLoading(true);
@@ -209,6 +222,45 @@ const CharacterView = ({
             setImageLoading(false);
         }
     }, [imageResponse]);
+
+    useEffect(() => {
+        if (error) {
+            const message = error.message;
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            const message = imageError.message;
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            const message = imageError.message;
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
 
     useEffect(() => {
         if (response) {
