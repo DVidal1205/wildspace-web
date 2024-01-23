@@ -21,6 +21,7 @@ import {
     Character,
     City,
     Faction,
+    Item,
     Monster,
     Quest,
     World,
@@ -30,30 +31,22 @@ import ContextCombo from "./ContextCombo";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const Monster = ({ world }: { world: World }) => {
+const Item = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
     const [typeDisabled, setTypeDisabled] = useState<boolean>(false);
     const [sizeDisabled, setSizeDisabled] = useState<boolean>(false);
-    const [alignmentDisabled, setAlignmentDisabled] = useState<boolean>(false);
-    const [resistanceDisabled, setResistanceDisabled] =
-        useState<boolean>(false);
-    const [statsDisabled, setStatsDisabled] = useState<boolean>(false);
     const [abilitiesDisabled, setAbilitiesDisabled] = useState<boolean>(false);
     const [descriptionDisabled, setDescriptionDisabled] =
         useState<boolean>(false);
     const [loreDisabled, setLoreDisabled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [currentlySavingMonster, setCurrentlySavingMonster] =
+    const [currentlySavingItem, setCurrentlySavingItem] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
 
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
-    const [size, setSize] = useState<string>("");
-    const [alignment, setAlignment] = useState<string>("");
-    const [resistance, setResistance] = useState<string>("");
-    const [stats, setStats] = useState<string>("");
     const [abilities, setAbilities] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [lore, setLore] = useState<string>("");
@@ -61,7 +54,7 @@ const Monster = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | Monster | null
+        Character | City | Faction | Quest | Building | Monster | Item | null
     >(null);
 
     const { toast } = useToast();
@@ -71,14 +64,10 @@ const Monster = ({ world }: { world: World }) => {
         data: response,
         refetch: genFetch,
         error: error,
-    } = trpc.generateMonster.useQuery(
+    } = trpc.generateItem.useQuery(
         {
             name: nameDisabled ? name : "",
             type: typeDisabled ? type : "",
-            size: sizeDisabled ? size : "",
-            alignment: alignmentDisabled ? alignment : "",
-            resistances: resistanceDisabled ? resistance : "",
-            stats: statsDisabled ? stats : "",
             abilities: abilitiesDisabled ? abilities : "",
             description: descriptionDisabled ? description : "",
             lore: loreDisabled ? lore : "",
@@ -90,20 +79,16 @@ const Monster = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveMonster } = trpc.saveMonster.useMutation({
+    const { mutate: saveItem } = trpc.saveItem.useMutation({
         onSuccess: () => {
-            utils.getWorldMonsters.invalidate();
+            utils.getWorldItems.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
-                title: "Monster Saved",
-                description: "Your monster has been saved.",
+                title: "Item Saved",
+                description: "Your item has been saved.",
             });
             setName("");
             setType("");
-            setSize("");
-            setAlignment("");
-            setResistance("");
-            setStats("");
             setAbilities("");
             setDescription("");
             setLore("");
@@ -111,10 +96,10 @@ const Monster = ({ world }: { world: World }) => {
             setPrompt("");
         },
         onMutate: () => {
-            setCurrentlySavingMonster(true);
+            setCurrentlySavingItem(true);
         },
         onSettled() {
-            setCurrentlySavingMonster(false);
+            setCurrentlySavingItem(false);
         },
     });
 
@@ -123,7 +108,7 @@ const Monster = ({ world }: { world: World }) => {
         refetch: imageFetch,
         error: imageError,
     } = trpc.generateImage.useQuery(
-        { object: response, type: "Creature" },
+        { object: response, type: "Item" },
         { enabled: false }
     );
 
@@ -164,13 +149,9 @@ const Monster = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
-        saveMonster({
+        saveItem({
             name: name,
             type: type,
-            size: size,
-            alignment: alignment,
-            resistances: resistance,
-            stats: stats,
             abilities: abilities,
             description: description,
             lore: lore,
@@ -192,10 +173,6 @@ const Monster = ({ world }: { world: World }) => {
             setResponseData(response);
             setName(response.name);
             setType(response.type);
-            setSize(response.size);
-            setAlignment(response.alignment);
-            setResistance(response.resistances);
-            setStats(response.stats);
             setAbilities(response.abilities);
             setDescription(response.description);
             setLore(response.lore);
@@ -209,14 +186,14 @@ const Monster = ({ world }: { world: World }) => {
             <CardHeader>
                 <CardTitle>Monster Generation</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with a monster! Leave the fields blank to
+                    Let&apos;s come up with an item! Leave the fields blank to
                     generate details, or fill in properties and check them to
-                    set them. Press the save button to save the monster to your
+                    set them. Press the save button to save the item to your
                     gallery.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
-                <div className="gap-4 grid">
+                <div className="grid md:col-span-2 gap-4">
                     <div className="space-y-1">
                         <Label htmlFor="name">Name</Label>
                         <div className="flex space-x-2 items-center">
@@ -235,92 +212,16 @@ const Monster = ({ world }: { world: World }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="type">Type</Label>
+                        <Label htmlFor="descrption">Description</Label>
                         <div className="flex space-x-2 items-center">
-                            <Input
-                                id="type"
+                            <Textarea
+                                id="descrption"
                                 autoComplete="off"
-                                value={type}
+                                value={description}
                                 onChange={(e) => setType(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
-                                onClick={() => setTypeDisabled(!typeDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="size">Size</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="size"
-                                autoComplete="off"
-                                value={size}
-                                onChange={(e) => setSize(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setSizeDisabled(!sizeDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="alignment">Alignment</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="alignment"
-                                autoComplete="off"
-                                value={alignment}
-                                onChange={(e) => setAlignment(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setAlignmentDisabled(!alignmentDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="resistance">Resistances</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="resistance"
-                                autoComplete="off"
-                                value={resistance}
-                                onChange={(e) => setResistance(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setResistanceDisabled(!resistanceDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid gap-4">
-                    <div className="space-y-1">
-                        <Label htmlFor="description">Description</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="description"
-                                autoComplete="off"
-                                className="md:h-[17.5vh]"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            ></Textarea>
-                            <Toggle
-                                size="sm"
-                                className="mt-2"
                                 onClick={() =>
                                     setDescriptionDisabled(!descriptionDisabled)
                                 }
@@ -349,33 +250,28 @@ const Monster = ({ world }: { world: World }) => {
                         </div>
                     </div>
                 </div>
-                <div className="grid gap-4 md:col-span-2">
+                <div className="grid md:col-span-2 gap-4">
                     <div className="space-y-1">
-                        <Label htmlFor="lore">Stats</Label>
-                        <div className="flex flex-col">
-                            <Card className="w-[30vw] md:h-[17.5vh] overflow-auto">
-                                <div className="p-4">
-                                    <Markdown
-                                        remarkPlugins={[remarkGfm]}
-                                        className="prose"
-                                    >
-                                        {stats}
-                                    </Markdown>
-                                </div>
-                            </Card>
+                        <Label htmlFor="type">Type</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="type"
+                                autoComplete="off"
+                                value={type}
+                                onChange={(e) => setType(e.target.value)}
+                            />
                             <Toggle
                                 size="sm"
-                                className="mt-2"
-                                onClick={() => setStatsDisabled(!statsDisabled)}
+                                onClick={() => setTypeDisabled(!typeDisabled)}
                             >
                                 <Check></Check>
                             </Toggle>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="lore">Abilities</Label>
-                        <div className="flex flex-col">
-                            <Card className="w-[30vw] md:h-[17.5vh] overflow-auto">
+                        <Label htmlFor="abilities">Abilities</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Card className="overflow-auto h-[20vh] md:h-[30vh] w-full">
                                 <div className="p-4">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
@@ -397,7 +293,7 @@ const Monster = ({ world }: { world: World }) => {
                         </div>
                     </div>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 ml-2">
                     <Label>Image</Label>
                     <Card className="aspect-square">
                         {image && (
@@ -474,7 +370,7 @@ const Monster = ({ world }: { world: World }) => {
                     )}
                 </Button>
                 <Button onClick={() => handleSave()}>
-                    {currentlySavingMonster === true ? (
+                    {currentlySavingItem === true ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <div>Save</div>
@@ -485,4 +381,4 @@ const Monster = ({ world }: { world: World }) => {
     );
 };
 
-export default Monster;
+export default Item;

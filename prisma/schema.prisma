@@ -19,6 +19,7 @@ model User {
   Faction   Faction[]
   Quest     Quest[]
   Monster   Monster[]
+  Item      Item[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -40,6 +41,7 @@ model World {
   Factions   Faction[]
   Quests     Quest[]
   Monsters   Monster[]
+  Items      Item[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -176,9 +178,27 @@ model Monster {
   alignment   String
   resistances String
   stats       String @db.VarChar(1000)
-  abilities     String @db.VarChar(1000)
+  abilities   String @db.VarChar(1000)
   description String @db.VarChar(1000)
   lore        String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
+
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
+  worldID String
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Item {
+  id          String @id @default(cuid())
+  name        String
+  type        String
+  description String @db.VarChar(1000)
+  lore        String @db.VarChar(1000)
+  abilities   String @db.VarChar(1000)
 
   imageURL String @db.VarChar(1000)
   imageKey String

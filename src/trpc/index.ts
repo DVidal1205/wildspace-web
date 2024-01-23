@@ -100,6 +100,13 @@ export const appRouter = router({
                 },
             });
 
+            const items = await db.item.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
             return {
                 characters,
                 cities,
@@ -107,6 +114,7 @@ export const appRouter = router({
                 quests,
                 buildings,
                 monsters,
+                items,
             };
         }),
     getWorldCharacters: privateProcedure
@@ -192,6 +200,20 @@ export const appRouter = router({
             });
 
             return monsters;
+        }),
+    getWorldItems: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const items = await db.item.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return items;
         }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
@@ -3385,7 +3407,7 @@ export const appRouter = router({
                     abilities: z
                         .string()
                         .describe(
-                            "Abilities of the creature, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a four-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Name | Description | Cost | \\n | ---- | ---- | ---- | \\n | Amphibious | The creature can breathe air and water. | Passive Ability |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 2 rows and 3 columns)"
+                            "Abilities of the creature, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a three-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Name | Description | Cost | \\n | ---- | ---- | ---- | \\n | Amphibious | The creature can breathe air and water. | Passive Ability |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 2 rows and 3 columns)"
                         ),
                     description: z
                         .string()
@@ -3799,6 +3821,409 @@ export const appRouter = router({
             }
 
             return updatedMonster;
+        }),
+    generateItem: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                abilities: z.string(),
+                description: z.string(),
+                lore: z.string(),
+                context: z.any(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the Monster"),
+                    type: z
+                        .string()
+                        .describe(
+                            "Type of the item, which includes its rarity (i.e. Legendary Weapon, Uncommon Wondrous Item, etc) (1-5 Words)"
+                        ),
+                    abilities: z
+                        .string()
+                        .describe(
+                            "Abilities of the item, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a three-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Name | Description | Cost | \\n | ---- | ---- | ---- | \\n | Retraction | As a bonus action, you can retract the armblade into your forearm or extend it from there. While it is extended, you can use the weapon as if you were holding it, and you can't use that hand for other purposes. | Bonus Action |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 4-5 rows and 3 columns)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the Item. Describe the item in detail, including the physical description, nature of abilities, and the scene it is found in (3-5 Sentences)"
+                        ),
+                    lore: z
+                        .string()
+                        .describe(
+                            "Lore of the Item. Describe the lore of the item, and how it came to be. (3-5 Sentences)"
+                        ),
+                })
+            );
+
+            const itemTypes = [
+                "Weapon",
+                "Armor",
+                "Wondrous Item",
+                "Potion",
+                "Scroll",
+                "Ring",
+                "Rod",
+                "Staff",
+                "Wand",
+            ];
+
+            const itemRarities = [
+                "Common",
+                "Uncommon",
+                "Rare",
+                "Very Rare",
+                "Legendary",
+                "Artifact",
+                "Unique",
+                "Unknown",
+            ];
+
+            function getRandomRarityAndType(): string {
+                const itemTypes = [
+                    "Weapon",
+                    "Armor",
+                    "Wondrous Item",
+                    "Potion",
+                    "Scroll",
+                    "Ring",
+                    "Rod",
+                    "Staff",
+                    "Wand",
+                ];
+
+                const itemRarities = [
+                    "Common",
+                    "Uncommon",
+                    "Rare",
+                    "Very Rare",
+                    "Legendary",
+                    "Artifact",
+                    "Unique",
+                    "Unknown",
+                ];
+
+                const randomType =
+                    itemTypes[Math.floor(Math.random() * itemTypes.length)];
+                const randomRarity =
+                    itemRarities[
+                        Math.floor(Math.random() * itemRarities.length)
+                    ];
+
+                const requiresAttunement =
+                    Math.random() < 0.2 ? ", requires Attunement" : "";
+
+                return `${randomRarity} ${randomType}${requiresAttunement}`;
+            }
+
+            const randomTypeAndRarity = getRandomRarityAndType();
+
+            const monsterInfo = {
+                name: input.name,
+                type: input.type ? input.type : randomTypeAndRarity,
+                abilities: input.abilities,
+                description: input.description,
+                lore: input.lore,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a item concept for a creature your party may encounter the following information.  
+        When making this item, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the item. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
+
+        Only generate information in the monster fields that are empty. For example, if the monster already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        
+        Existing Monster Information:
+        Name: {name}
+        Type: {type}
+        Abilities: {abilities}
+        Description: {description}
+        Lore: {lore}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1500 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: monsterInfo.name,
+                type: monsterInfo.type,
+                abilities: monsterInfo.abilities,
+                description: monsterInfo.description,
+                lore: monsterInfo.lore,
+                context: JSON.stringify(input.context),
+            });
+
+            return response;
+        }),
+    saveItem: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                abilities: z.string(),
+                description: z.string(),
+                lore: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let item;
+            if (input.imageb64 === "") {
+                item = await db.item.create({
+                    data: {
+                        name: input.name,
+                        type: input.type,
+                        abilities: input.abilities,
+                        description: input.description,
+                        lore: input.lore,
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `item-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    item = await db.item.create({
+                        data: {
+                            name: input.name,
+                            type: input.type,
+                            abilities: input.abilities,
+                            description: input.description,
+                            lore: input.lore,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return item;
+        }),
+    deleteItem: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const item = await db.item.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (item) {
+                const imageKey = item.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedItem = await db.item.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedItem;
+        }),
+    getItem: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const item = await db.item.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!item) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Quest not found",
+                });
+            }
+
+            return item;
+        }),
+    updateItem: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                abilities: z.string(),
+                description: z.string(),
+                lore: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedItem;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.item.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `item-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedItem = await db.item.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            type: input.type,
+                            abilities: input.abilities,
+                            description: input.description,
+                            lore: input.lore,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedItem = await db.item.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        type: input.type,
+                        abilities: input.abilities,
+                        description: input.description,
+                        lore: input.lore,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedItem;
         }),
 });
 

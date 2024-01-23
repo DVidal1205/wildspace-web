@@ -22,6 +22,7 @@ import FactionView from "./FactionView";
 import QuestView from "./QuestView";
 import BuildingView from "./BuildingView";
 import MonsterView from "./MonsterView";
+import ItemView from "./ItemView";
 
 const GalleryPage = ({
     world,
@@ -58,6 +59,7 @@ const GalleryPage = ({
             {type === "monster" && (
                 <MonsterView world={world} entityid={entityid} />
             )}
+            {type === "item" && <ItemView world={world} entityid={entityid} />}
         </main>
     );
 };

@@ -4,6 +4,7 @@ import {
     Character,
     City,
     Faction,
+    Item,
     Monster,
     Quest,
     World,
@@ -27,6 +28,7 @@ interface SidebarProps {
     quests: Quest[];
     buildings: Building[];
     monsters: Monster[];
+    items: Item[];
 }
 
 const Sidebar = ({
@@ -37,6 +39,7 @@ const Sidebar = ({
     quests,
     buildings,
     monsters,
+    items,
 }: SidebarProps) => {
     const router = useRouter();
     return (
@@ -170,7 +173,7 @@ const Sidebar = ({
                     <AccordionContent>
                         <ul>
                             {monsters.length === 0 ? (
-                                <div>No quests...</div>
+                                <div>No monsters...</div>
                             ) : (
                                 monsters.map((monster) => (
                                     <li
@@ -181,6 +184,29 @@ const Sidebar = ({
                                             href={`/dashboard/${world.id}/${monster.id}?type=monster`}
                                         >
                                             {monster.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-7">
+                    <AccordionTrigger>Items</AccordionTrigger>
+                    <AccordionContent>
+                        <ul>
+                            {items.length === 0 ? (
+                                <div>No items...</div>
+                            ) : (
+                                items.map((item) => (
+                                    <li
+                                        key={item.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${item.id}?type=item`}
+                                        >
+                                            {item.name}
                                         </Link>
                                     </li>
                                 ))

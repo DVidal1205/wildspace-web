@@ -22,6 +22,7 @@ import {
     Character,
     City,
     Faction,
+    Monster,
     Quest,
     World,
 } from "@prisma/client";
@@ -73,7 +74,7 @@ const MonsterView = ({
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | null
+        Character | City | Faction | Quest | Building | Monster | null
     >(null);
 
     const router = useRouter();
