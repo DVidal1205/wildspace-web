@@ -2966,7 +2966,7 @@ export const appRouter = router({
                     goods: z
                         .string()
                         .describe(
-                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Price | Item | \\n | ---- | ---- | \\n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should not be followd be \\n. Make sure the \\n is padded with a space on the left and right  (Markdown Table, with 10-15 rows, 2 columns)"
+                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Price | Item | \\n | ---- | ---- | \\n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should not be followd be \\n. The \\n MUST have a space on the left and right of it in order to work  (Markdown Table, with 10-15 rows, 2 columns)"
                         ),
                 })
             );
