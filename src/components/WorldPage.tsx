@@ -19,6 +19,7 @@ import City from "./City";
 import Faction from "./Faction";
 import Quest from "./Quest";
 import Building from "./Building";
+import Monster from "./Monster";
 
 const WorldPage = ({ world }: { world: World }) => {
     const { data: characters } = trpc.getWorldCharacters.useQuery({
@@ -38,6 +39,10 @@ const WorldPage = ({ world }: { world: World }) => {
         worldID: world.id,
     });
 
+    const { data: monsters } = trpc.getWorldMonsters.useQuery({
+        worldID: world.id,
+    });
+
     return (
         <main className="mx-auto md:p-10">
             <div className="grid lg:grid-cols-8">
@@ -49,6 +54,7 @@ const WorldPage = ({ world }: { world: World }) => {
                         factions={factions || []}
                         quests={quests || []}
                         buildings={buildings || []}
+                        monsters={monsters || []}
                     />
                 </div>
                 <div className="md:col-span-7 w-screen md:w-auto">
@@ -69,6 +75,9 @@ const WorldPage = ({ world }: { world: World }) => {
                             <TabsTrigger value="building" className="w-full">
                                 Building
                             </TabsTrigger>
+                            <TabsTrigger value="monster" className="w-full">
+                                Monster
+                            </TabsTrigger>
                         </TabsList>
                         <TabsContent value="character">
                             <Character world={world} />
@@ -84,6 +93,9 @@ const WorldPage = ({ world }: { world: World }) => {
                         </TabsContent>
                         <TabsContent value="building">
                             <Building world={world} />
+                        </TabsContent>
+                        <TabsContent value="monster">
+                            <Monster world={world} />
                         </TabsContent>
                     </Tabs>
                 </div>

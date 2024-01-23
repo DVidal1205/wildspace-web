@@ -93,7 +93,21 @@ export const appRouter = router({
                 },
             });
 
-            return { characters, cities, factions, quests, buildings };
+            const monsters = await db.monster.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return {
+                characters,
+                cities,
+                factions,
+                quests,
+                buildings,
+                monsters,
+            };
         }),
     getWorldCharacters: privateProcedure
         .input(z.object({ worldID: z.string() }))
@@ -156,14 +170,28 @@ export const appRouter = router({
         .query(async ({ ctx, input }) => {
             const { userId } = ctx;
 
-            const quests = await db.building.findMany({
+            const buildings = await db.building.findMany({
                 where: {
                     worldID: input.worldID,
                     userId,
                 },
             });
 
-            return quests;
+            return buildings;
+        }),
+    getWorldMonsters: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const monsters = await db.monster.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return monsters;
         }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
@@ -2927,7 +2955,7 @@ export const appRouter = router({
         .query(async ({ ctx, input }) => {
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
-                    name: z.string().describe("Name of the Quest"),
+                    name: z.string().describe("Name of the Building"),
                     type: z
                         .string()
                         .describe(
@@ -3307,6 +3335,470 @@ export const appRouter = router({
             }
 
             return updatedBuilding;
+        }),
+    generateMonster: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                size: z.string(),
+                alignment: z.string(),
+                resistances: z.string(),
+                stats: z.string(),
+                abilities: z.string(),
+                description: z.string(),
+                lore: z.string(),
+                context: z.any(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the Monster"),
+                    type: z
+                        .string()
+                        .describe(
+                            "Type of the creature, such as humanoid, aberration, fiend, etc (1-5 Words)"
+                        ),
+                    size: z
+                        .string()
+                        .describe(
+                            "Size of the creature, such as small, medium, large, huge, etc. (1-5 Words)"
+                        ),
+                    alignment: z
+                        .string()
+                        .describe(
+                            "Alignment of the creature, such as lawful good, chaotic evil, etc. (1-5 Words)"
+                        ),
+                    resistances: z
+                        .string()
+                        .describe(
+                            "Damage resistances of the creature, such as fire, poison, etc."
+                        ),
+                    stats: z
+                        .string()
+                        .describe(
+                            "Stats of the creature, including Armor Class, Movement Speed in feet, Passive Perception, Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. This should be represented as a string representing a nine-columned markdown table, representing the statistic and its value. Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | AC | Move Speed | \\n | ---- | ---- | \\n | 18 | 50ft, 30ft flying |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 2 rows and 9 columns)"
+                        ),
+                    abilities: z
+                        .string()
+                        .describe(
+                            "Abilities of the creature, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a four-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Name | Description | Cost | \\n | ---- | ---- | ---- | \\n | Amphibious | The creature can breathe air and water. | Passive Ability |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 2 rows and 3 columns)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the Monster. Describe the monster in detail, including the physical description, nature of abilities, and the scene it is in (3-5 Sentences)"
+                        ),
+                    lore: z
+                        .string()
+                        .describe(
+                            "Lore of the Monster. Describe the lore of the monster, and how it came to be. (3-5 Sentences)"
+                        ),
+                })
+            );
+
+            const monsterTypes = [
+                "Aberration",
+                "Beast",
+                "Celestial",
+                "Construct",
+                "Dragon",
+                "Elemental",
+                "Fey",
+                "Fiend",
+                "Giant",
+                "Humanoid",
+                "Monstrosity",
+                "Ooze",
+                "Plant",
+                "Undead",
+            ];
+
+            const monsterSizes = [
+                "Tiny",
+                "Small",
+                "Medium",
+                "Large",
+                "Huge",
+                "Gargantuan",
+            ];
+
+            const monsterAlignments = [
+                "Lawful Good",
+                "Neutral Good",
+                "Chaotic Good",
+                "Lawful Neutral",
+                "Neutral",
+                "Chaotic Neutral",
+                "Lawful Evil",
+                "Neutral Evil",
+                "Chaotic Evil",
+            ];
+
+            function getRandomSize(): string {
+                const randomIndex = Math.floor(
+                    Math.random() * monsterSizes.length
+                );
+                return monsterSizes[randomIndex];
+            }
+
+            function getRandomAlignment(): string {
+                const randomIndex = Math.floor(
+                    Math.random() * monsterAlignments.length
+                );
+                return monsterAlignments[randomIndex];
+            }
+
+            function getRandomType(): string {
+                const randomIndex = Math.floor(
+                    Math.random() * monsterTypes.length
+                );
+                return monsterTypes[randomIndex];
+            }
+
+            const randomSize = getRandomSize();
+            const randomAlignment = getRandomAlignment();
+            const randomType = getRandomType();
+
+            const monsterInfo = {
+                name: input.name,
+                type: input.type ? input.type : randomType,
+                size: input.size ? input.size : randomSize,
+                alignment: input.alignment ? input.alignment : randomAlignment,
+                resistances: input.resistances,
+                stats: input.stats,
+                abilities: input.abilities,
+                description: input.description,
+                lore: input.lore,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a Creature/Enemy concept for a creature your party may encounter the following information.  
+        When making this enemy, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the creature. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
+
+        Only generate information in the monster fields that are empty. For example, if the monster already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        
+        Existing Monster Information:
+        Name: {name}
+        Type: {type}
+        Size: {size}
+        Alignment: {alignment}
+        Resistances: {resistances}
+        Stats: {stats}
+        Abilities: {abilities}
+        Description: {description}
+        Lore: {lore}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1500 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: monsterInfo.name,
+                type: monsterInfo.type,
+                size: monsterInfo.size,
+                alignment: monsterInfo.alignment,
+                resistances: monsterInfo.resistances,
+                stats: monsterInfo.stats,
+                abilities: monsterInfo.abilities,
+                description: monsterInfo.description,
+                lore: monsterInfo.lore,
+                context: JSON.stringify(input.context),
+            });
+
+            return response;
+        }),
+    saveMonster: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                size: z.string(),
+                alignment: z.string(),
+                resistances: z.string(),
+                stats: z.string(),
+                abilities: z.string(),
+                description: z.string(),
+                lore: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let monster;
+            if (input.imageb64 === "") {
+                monster = await db.monster.create({
+                    data: {
+                        name: input.name,
+                        type: input.type,
+                        size: input.size,
+                        alignment: input.alignment,
+                        resistances: input.resistances,
+                        stats: input.stats,
+                        abilities: input.abilities,
+                        description: input.description,
+                        lore: input.lore,
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `monster-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    monster = await db.monster.create({
+                        data: {
+                            name: input.name,
+                            type: input.type,
+                            size: input.size,
+                            alignment: input.alignment,
+                            resistances: input.resistances,
+                            stats: input.stats,
+                            abilities: input.abilities,
+                            description: input.description,
+                            lore: input.lore,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return monster;
+        }),
+    deleteMonster: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const monster = await db.monster.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (monster) {
+                const imageKey = monster.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedMonster = await db.monster.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedMonster;
+        }),
+    getMonster: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const monster = await db.monster.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!monster) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Quest not found",
+                });
+            }
+
+            return monster;
+        }),
+    updateMonster: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                type: z.string(),
+                size: z.string(),
+                alignment: z.string(),
+                resistances: z.string(),
+                stats: z.string(),
+                abilities: z.string(),
+                description: z.string(),
+                lore: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedMonster;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.monster.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `monster-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedMonster = await db.monster.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            type: input.type,
+                            size: input.size,
+                            alignment: input.alignment,
+                            resistances: input.resistances,
+                            stats: input.stats,
+                            abilities: input.abilities,
+                            description: input.description,
+                            lore: input.lore,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedMonster = await db.monster.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        type: input.type,
+                        size: input.size,
+                        alignment: input.alignment,
+                        resistances: input.resistances,
+                        stats: input.stats,
+                        abilities: input.abilities,
+                        description: input.description,
+                        lore: input.lore,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedMonster;
         }),
 });
 

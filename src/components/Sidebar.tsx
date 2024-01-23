@@ -4,6 +4,7 @@ import {
     Character,
     City,
     Faction,
+    Monster,
     Quest,
     World,
 } from "@prisma/client";
@@ -25,6 +26,7 @@ interface SidebarProps {
     factions: Faction[];
     quests: Quest[];
     buildings: Building[];
+    monsters: Monster[];
 }
 
 const Sidebar = ({
@@ -34,6 +36,7 @@ const Sidebar = ({
     factions,
     quests,
     buildings,
+    monsters,
 }: SidebarProps) => {
     const router = useRouter();
     return (
@@ -155,6 +158,29 @@ const Sidebar = ({
                                             href={`/dashboard/${world.id}/${building.id}?type=building`}
                                         >
                                             {building.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-6">
+                    <AccordionTrigger>Monsters</AccordionTrigger>
+                    <AccordionContent>
+                        <ul>
+                            {monsters.length === 0 ? (
+                                <div>No quests...</div>
+                            ) : (
+                                monsters.map((monster) => (
+                                    <li
+                                        key={monster.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${monster.id}?type=monster`}
+                                        >
+                                            {monster.name}
                                         </Link>
                                     </li>
                                 ))
