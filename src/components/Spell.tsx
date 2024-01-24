@@ -1,6 +1,17 @@
 "use client";
+import { trpc } from "@/app/_trpc/client";
+import Entity from "@/lib/types";
+import {
+    World
+} from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Textarea } from "./ui/textarea";
+import { Check, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import ContextCombo from "./ContextCombo";
+import { Button } from "./ui/button";
 import {
     Card,
     CardContent,
@@ -9,28 +20,9 @@ import {
     CardHeader,
     CardTitle,
 } from "./ui/card";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2 } from "lucide-react";
-import { useState, useEffect, use } from "react";
-import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import {
-    Building,
-    Character,
-    City,
-    Faction,
-    Item,
-    Monster,
-    Quest,
-    World,
-} from "@prisma/client";
-import Image from "next/image";
-import ContextCombo from "./ContextCombo";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import Entity from "@/lib/types";
 
 const Spell = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);

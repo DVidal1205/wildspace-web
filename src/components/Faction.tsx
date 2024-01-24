@@ -1,10 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    Faction,
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -57,9 +54,7 @@ const Faction = ({ world }: { world: World }) => {
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
-    const [contextEntity, setContextEntity] = useState<
-        Entity | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const { toast } = useToast();
     const utils = trpc.useContext();

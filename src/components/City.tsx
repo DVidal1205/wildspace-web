@@ -2,7 +2,6 @@
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
 import {
-    City,
     World
 } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
