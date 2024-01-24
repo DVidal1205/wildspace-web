@@ -12,11 +12,10 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2, Trash } from "lucide-react";
-import { useState, useEffect, useMemo, use } from "react";
+import { Check, Loader2 } from "lucide-react";
+import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { ToastAction } from "./ui/toast";
 import {
     Building,
     Character,
@@ -27,74 +26,64 @@ import {
     Quest,
     World,
 } from "@prisma/client";
-import { set } from "date-fns";
 import Image from "next/image";
-import { router } from "@/trpc/trpc";
-import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
+const Spell = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
-    const [typeDisabled, setTypeDisabled] = useState<boolean>(false);
-    useState<boolean>(false);
-    const [abilitiesDisabled, setAbilitiesDisabled] = useState<boolean>(false);
+    const [schoolDisabled, setSchoolDisabled] = useState<boolean>(false);
+    const [levelDisabled, setLevelDisabled] = useState<boolean>(false);
+    const [castingTimeDisabled, setCastingTimeDisabled] =
+        useState<boolean>(false);
+    const [rangeDisabled, setRangeDisabled] = useState<boolean>(false);
+    const [componentsDisabled, setComponentsDisabled] =
+        useState<boolean>(false);
+    const [durationDisabled, setDurationDisabled] = useState<boolean>(false);
     const [descriptionDisabled, setDescriptionDisabled] =
         useState<boolean>(false);
-    const [loreDisabled, setLoreDisabled] = useState<boolean>(false);
+    const [spellListDisabled, setSpellListDisabled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [currentlySavingItem, setCurrentlySavingItem] =
+    const [currentlySavingSpell, setCurrentlySavingSpell] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
+    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
 
     const [name, setName] = useState<string>("");
-    const [type, setType] = useState<string>("");
-    const [abilities, setAbilities] = useState<string>("");
+    const [school, setSchool] = useState<string>("");
+    const [level, setLevel] = useState<string>("");
+    const [castingTime, setCastingTime] = useState<string>("");
+    const [range, setRange] = useState<string>("");
+    const [components, setComponents] = useState<string>("");
+    const [duration, setDuration] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [lore, setLore] = useState<string>("");
+    const [spellList, setSpellList] = useState<string>("");
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
-    const [worldResponse, setWorldResponse] = useState<any>("");
-    const [itemResponse, setItemResponse] = useState<any>("");
-    const [deletingItem, setCurrentlyDeletingItem] = useState<boolean>(false);
-    const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+    const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<
         Character | City | Faction | Quest | Building | Monster | Item | null
     >(null);
 
-    const router = useRouter();
-
     const { toast } = useToast();
     const utils = trpc.useContext();
-
-    const { data: item } = trpc.getItem.useQuery({
-        id: entityid,
-    });
-
-    useEffect(() => {
-        if (item) {
-            setName(item.name);
-            setType(item.type);
-            setAbilities(item.abilities);
-            setDescription(item.description);
-            setLore(item.lore);
-            setImage(item.imageURL);
-            setItemResponse(item);
-        }
-    }, [item]);
 
     const {
         data: response,
         refetch: genFetch,
         error: error,
-    } = trpc.generateItem.useQuery(
+    } = trpc.generateSpell.useQuery(
         {
             name: nameDisabled ? name : "",
-            type: typeDisabled ? type : "",
-            abilities: abilitiesDisabled ? abilities : "",
+            school: schoolDisabled ? school : "",
+            level: levelDisabled ? level : "",
+            castingTime: castingTimeDisabled ? castingTime : "",
+            range: rangeDisabled ? range : "",
+            components: componentsDisabled ? components : "",
+            duration: durationDisabled ? duration : "",
             description: descriptionDisabled ? description : "",
-            lore: loreDisabled ? lore : "",
+            spellList: spellListDisabled ? spellList : "",
             prompt: prompt,
             worldInfo: world?.description,
             context: contextEntity,
@@ -103,34 +92,31 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
             enabled: false,
         }
     );
-    const { mutate: updateItem } = trpc.updateItem.useMutation({
+    const { mutate: saveSpell } = trpc.saveSpell.useMutation({
         onSuccess: () => {
-            utils.getWorldItems.invalidate();
+            utils.getWorldSpells.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
-                title: "Item Updated!",
-                description: "Your item has been updated.",
+                title: "Spell Saved",
+                description: "Your spell has been saved.",
             });
+            setName("");
+            setSchool("");
+            setLevel("");
+            setCastingTime("");
+            setRange("");
+            setComponents("");
+            setDuration("");
+            setSpellList("");
+            setDescription("");
+            setImage("");
+            setPrompt("");
         },
         onMutate: () => {
-            setCurrentlySavingItem(true);
+            setCurrentlySavingSpell(true);
         },
         onSettled() {
-            setCurrentlySavingItem(false);
-        },
-    });
-
-    const { mutate: deleteItem } = trpc.deleteItem.useMutation({
-        onSuccess: () => {
-            utils.getWorldItems.invalidate();
-            utils.getWorldEntities.invalidate();
-            router.push(`/dashboard/${world.id}`);
-        },
-        onMutate: () => {
-            setCurrentlyDeletingItem(true);
-        },
-        onSettled() {
-            setCurrentlyDeletingItem(false);
+            setCurrentlySavingSpell(false);
         },
     });
 
@@ -139,10 +125,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
         refetch: imageFetch,
         error: imageError,
     } = trpc.generateImage.useQuery(
-        {
-            object: worldResponse ? worldResponse : item,
-            type: "Item",
-        },
+        { object: response, type: "Spell" },
         { enabled: false }
     );
 
@@ -183,55 +166,58 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     };
 
     const handleSave = () => {
-        updateItem({
+        saveSpell({
             name: name,
-            type: type,
-            abilities: abilities,
+            school: school,
+            level: level,
+            castingTime: castingTime,
+            range: range,
+            components: components,
+            duration: duration,
+            spellList: spellList,
             description: description,
-            lore: lore,
             imageb64: image,
             worldID: world.id,
-            id: entityid,
         });
     };
 
     useEffect(() => {
         if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
+            setImage(imageResponse);
             setImageLoading(false);
         }
     }, [imageResponse]);
 
     useEffect(() => {
         if (response) {
-            setWorldResponse(response);
+            console.log(response);
             setName(response.name);
-            setType(response.type);
-            setAbilities(response.abilities);
+            setSchool(response.school);
+            setLevel(response.level);
+            setCastingTime(response.castingTime);
+            setRange(response.range);
+            setComponents(response.components);
+            setDuration(response.duration);
+            setSpellList(response.spellList);
             setDescription(response.description);
-            setLore(response.lore);
-            setWorldResponse(response);
             setLoading(false);
+            setResponseData(response);
         }
     }, [response]);
 
-    return !item ? (
-        <div className="flex items-center justify-center">
-            <Loader2 className="h-40 w-40 animate-spin"></Loader2>
-        </div>
-    ) : (
+    return (
         <Card>
             <CardHeader>
-                <CardTitle>Item Generation</CardTitle>
+                <CardTitle>Spell Generation</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with an item! Leave the fields blank to
+                    Let&apos;s come up with an spell! Leave the fields blank to
                     generate details, or fill in properties and check them to
-                    set them. Press the save button to save the item to your
-                    gallery.
+                    set them. Press the save button to save the
+                    spellListDisabled to your gallery.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
-                <div className="grid md:col-span-2 gap-4">
+                <div className="grid md:col-span-2 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                         <Label htmlFor="name">Name</Label>
                         <div className="flex space-x-2 items-center">
@@ -250,18 +236,35 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="descrption">Description</Label>
+                        <Label htmlFor="level">Level</Label>
                         <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="descrption"
+                            <Input
+                                id="level"
                                 autoComplete="off"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
+                                value={level}
+                                onChange={(e) => setLevel(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() => setLevelDisabled(!levelDisabled)}
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="school">School</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="school"
+                                autoComplete="off"
+                                value={school}
+                                onChange={(e) => setSchool(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
                                 onClick={() =>
-                                    setDescriptionDisabled(!descriptionDisabled)
+                                    setSchoolDisabled(!schoolDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -269,19 +272,93 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="lore">Lore</Label>
+                        <Label htmlFor="components">Components</Label>
                         <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="lore"
+                            <Input
+                                id="components"
                                 autoComplete="off"
-                                className="md:h-[17.5vh]"
-                                value={lore}
-                                onChange={(e) => setLore(e.target.value)}
-                            ></Textarea>
+                                value={components}
+                                onChange={(e) => setComponents(e.target.value)}
+                            />
                             <Toggle
                                 size="sm"
-                                className="mt-2"
-                                onClick={() => setLoreDisabled(!loreDisabled)}
+                                onClick={() =>
+                                    setComponentsDisabled(!componentsDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="castingTime">Casting Time</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="castingTime"
+                                autoComplete="off"
+                                value={castingTime}
+                                onChange={(e) => setCastingTime(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setCastingTimeDisabled(!castingTimeDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="duration">Duration</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="duration"
+                                autoComplete="off"
+                                value={duration}
+                                onChange={(e) => setDuration(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setDurationDisabled(!durationDisabled)
+                                }
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="range">Range</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="range"
+                                autoComplete="off"
+                                value={range}
+                                onChange={(e) => setRange(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() => setRangeDisabled(!rangeDisabled)}
+                            >
+                                <Check></Check>
+                            </Toggle>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="spellList">Spell List</Label>
+                        <div className="flex space-x-2 items-center">
+                            <Input
+                                id="spellList"
+                                autoComplete="off"
+                                value={spellList}
+                                onChange={(e) => setSpellList(e.target.value)}
+                            />
+                            <Toggle
+                                size="sm"
+                                onClick={() =>
+                                    setSpellListDisabled(!spellListDisabled)
+                                }
                             >
                                 <Check></Check>
                             </Toggle>
@@ -290,40 +367,17 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                 </div>
                 <div className="grid md:col-span-2 gap-4">
                     <div className="space-y-1">
-                        <Label htmlFor="type">Type</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="type"
-                                autoComplete="off"
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setTypeDisabled(!typeDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="abilities">Abilities</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Card className="overflow-auto h-[20vh] md:h-[30vh] w-full">
-                                <div className="p-4">
-                                    <Markdown
-                                        remarkPlugins={[remarkGfm]}
-                                        className="prose"
-                                    >
-                                        {abilities}
-                                    </Markdown>
-                                </div>
+                        <Label htmlFor="descrption">Description</Label>
+                        <div className="flex space-x-2 items-center h-full">
+                            <Card className="h-full p-4 w-full overflow-auto">
+                                <Markdown remarkPlugins={[remarkGfm]}>
+                                    {description}
+                                </Markdown>
                             </Card>
                             <Toggle
                                 size="sm"
-                                className="mt-2"
                                 onClick={() =>
-                                    setAbilitiesDisabled(!abilitiesDisabled)
+                                    setDescriptionDisabled(!descriptionDisabled)
                                 }
                             >
                                 <Check></Check>
@@ -348,7 +402,11 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Image
                                     height={1024}
                                     width={1024}
-                                    src={image}
+                                    src={
+                                        image
+                                            ? `data:image/png;base64,${image}`
+                                            : ""
+                                    }
                                     alt="character image"
                                     className={`rounded ${
                                         isImageFullscreen
@@ -360,7 +418,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {worldResponse || itemResponse ? (
+                        {responseData ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}
@@ -372,7 +430,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate a Item First...</p>
+                            <p>Please Generate a Spell First...</p>
                         )}
                     </div>
                 </div>
@@ -388,7 +446,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                         className="w-[30vw]"
                     />
                 </div>
-
                 <ContextCombo
                     setContextEntity={setContextEntity}
                     worldID={{ worldID: world.id }}
@@ -405,20 +462,10 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                     )}
                 </Button>
                 <Button onClick={() => handleSave()}>
-                    {currentlySavingItem === true ? (
+                    {currentlySavingSpell === true ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <div>Save</div>
-                    )}
-                </Button>
-                <Button
-                    variant="destructive"
-                    onClick={() => deleteItem({ id: entityid })}
-                >
-                    {deletingItem === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Trash className="h-4 w-4" />
                     )}
                 </Button>
             </CardFooter>
@@ -426,4 +473,4 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     );
 };
 
-export default ItemView;
+export default Spell;

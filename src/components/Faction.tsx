@@ -16,7 +16,14 @@ import { Check, Loader2 } from "lucide-react";
 import { useState, useEffect, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { Building, Character, City, Faction, Quest, World } from "@prisma/client";
+import {
+    Building,
+    Character,
+    City,
+    Faction,
+    Quest,
+    World,
+} from "@prisma/client";
 import Image from "next/image";
 import ContextCombo from "./ContextCombo";
 import FactionView from "./FactionView";
@@ -204,12 +211,12 @@ const Faction = ({ world }: { world: World }) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Character Generation</CardTitle>
+                <CardTitle>Faction Generation</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with a character! Leave the fields blank
-                    to generate details, or fill in properties and check them to
-                    set them. Press the save button to save the character to
-                    your gallery.
+                    Let&apos;s come up with a faction! Leave the fields blank to
+                    generate details, or fill in properties and check them to
+                    set them. Press the save button to save the faction to your
+                    gallery.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">

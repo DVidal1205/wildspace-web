@@ -23,6 +23,7 @@ import QuestView from "./QuestView";
 import BuildingView from "./BuildingView";
 import MonsterView from "./MonsterView";
 import ItemView from "./ItemView";
+import SpellView from "./SpellView";
 
 const GalleryPage = ({
     world,
@@ -60,6 +61,9 @@ const GalleryPage = ({
                 <MonsterView world={world} entityid={entityid} />
             )}
             {type === "item" && <ItemView world={world} entityid={entityid} />}
+            {type === "spell" && (
+                <SpellView world={world} entityid={entityid} />
+            )}
         </main>
     );
 };

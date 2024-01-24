@@ -7,6 +7,7 @@ import {
     Item,
     Monster,
     Quest,
+    Spell,
     World,
 } from "@prisma/client";
 import { Separator } from "./ui/separator";
@@ -29,6 +30,7 @@ interface SidebarProps {
     buildings: Building[];
     monsters: Monster[];
     items: Item[];
+    spells: Spell[];
 }
 
 const Sidebar = ({
@@ -40,6 +42,7 @@ const Sidebar = ({
     buildings,
     monsters,
     items,
+    spells,
 }: SidebarProps) => {
     const router = useRouter();
     return (
@@ -207,6 +210,29 @@ const Sidebar = ({
                                             href={`/dashboard/${world.id}/${item.id}?type=item`}
                                         >
                                             {item.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-8">
+                    <AccordionTrigger>Spells</AccordionTrigger>
+                    <AccordionContent>
+                        <ul>
+                            {spells.length === 0 ? (
+                                <div>No spells...</div>
+                            ) : (
+                                spells.map((spell) => (
+                                    <li
+                                        key={spell.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${spell.id}?type=spell`}
+                                        >
+                                            {spell.name}
                                         </Link>
                                     </li>
                                 ))

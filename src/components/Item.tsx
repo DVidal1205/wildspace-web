@@ -184,7 +184,7 @@ const Item = ({ world }: { world: World }) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Monster Generation</CardTitle>
+                <CardTitle>Item Generation</CardTitle>
                 <CardDescription>
                     Let&apos;s come up with an item! Leave the fields blank to
                     generate details, or fill in properties and check them to
@@ -218,7 +218,7 @@ const Item = ({ world }: { world: World }) => {
                                 id="descrption"
                                 autoComplete="off"
                                 value={description}
-                                onChange={(e) => setType(e.target.value)}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                             <Toggle
                                 size="sm"
@@ -338,7 +338,7 @@ const Item = ({ world }: { world: World }) => {
                                 )}
                             </Button>
                         ) : (
-                            <p>Please Generate a Monster First...</p>
+                            <p>Please Generate a Item First...</p>
                         )}
                     </div>
                 </div>

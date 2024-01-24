@@ -20,6 +20,7 @@ model User {
   Quest     Quest[]
   Monster   Monster[]
   Item      Item[]
+  Spell     Spell[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -42,6 +43,7 @@ model World {
   Quests     Quest[]
   Monsters   Monster[]
   Items      Item[]
+  Spells     Spell[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -199,6 +201,28 @@ model Item {
   description String @db.VarChar(1000)
   lore        String @db.VarChar(1000)
   abilities   String @db.VarChar(1000)
+
+  imageURL String @db.VarChar(1000)
+  imageKey String
+
+  World   World  @relation(fields: [worldID], references: [id], onDelete: Cascade)
+  worldID String
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Spell {
+  id          String @id @default(cuid())
+  name        String
+  school      String
+  level       String
+  components  String
+  castingTime String
+  duration    String
+  range       String
+  spellList   String
+  description String @db.VarChar(1000)
 
   imageURL String @db.VarChar(1000)
   imageKey String

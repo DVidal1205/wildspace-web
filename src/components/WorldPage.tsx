@@ -21,6 +21,7 @@ import Quest from "./Quest";
 import Building from "./Building";
 import Monster from "./Monster";
 import Item from "./Item";
+import Spell from "./Spell";
 
 const WorldPage = ({ world }: { world: World }) => {
     const { data: characters } = trpc.getWorldCharacters.useQuery({
@@ -48,6 +49,10 @@ const WorldPage = ({ world }: { world: World }) => {
         worldID: world.id,
     });
 
+    const { data: spells } = trpc.getWorldSpells.useQuery({
+        worldID: world.id,
+    });
+
     return (
         <main className="mx-auto md:p-10">
             <div className="grid lg:grid-cols-8">
@@ -61,11 +66,12 @@ const WorldPage = ({ world }: { world: World }) => {
                         buildings={buildings || []}
                         monsters={monsters || []}
                         items={items || []}
+                        spells={spells || []}
                     />
                 </div>
                 <div className="md:col-span-7 w-screen md:w-auto">
                     <Tabs defaultValue="character" className="w-full">
-                        <TabsList className="flex justify-evenly">
+                        <TabsList className="flex justify-evenly overflow-auto">
                             <TabsTrigger value="character" className="w-full">
                                 Character
                             </TabsTrigger>
@@ -86,6 +92,9 @@ const WorldPage = ({ world }: { world: World }) => {
                             </TabsTrigger>
                             <TabsTrigger value="item" className="w-full">
                                 Item
+                            </TabsTrigger>
+                            <TabsTrigger value="spell" className="w-full">
+                                Spell
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="character">
@@ -108,6 +117,9 @@ const WorldPage = ({ world }: { world: World }) => {
                         </TabsContent>
                         <TabsContent value="item">
                             <Item world={world} />
+                        </TabsContent>
+                        <TabsContent value="spell">
+                            <Spell world={world} />
                         </TabsContent>
                     </Tabs>
                 </div>

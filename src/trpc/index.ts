@@ -107,6 +107,13 @@ export const appRouter = router({
                 },
             });
 
+            const spells = await db.spell.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
             return {
                 characters,
                 cities,
@@ -115,6 +122,7 @@ export const appRouter = router({
                 buildings,
                 monsters,
                 items,
+                spells,
             };
         }),
     getWorldCharacters: privateProcedure
@@ -214,6 +222,20 @@ export const appRouter = router({
             });
 
             return items;
+        }),
+    getWorldSpells: privateProcedure
+        .input(z.object({ worldID: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const spells = await db.spell.findMany({
+                where: {
+                    worldID: input.worldID,
+                    userId,
+                },
+            });
+
+            return spells;
         }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
@@ -367,6 +389,8 @@ export const appRouter = router({
             If it is an organization, specify the image to be of the organization crest, alongside what a typical member of the organization would look like.
             
             If it is a questline, specify the image to be of a scene from the questline.
+
+            If it is a spell, specify the image to be of a scene using the spell.
 
             Generate the prompt for a {type} based on the following input JSON object:
     
@@ -3016,7 +3040,7 @@ export const appRouter = router({
                     goods: z
                         .string()
                         .describe(
-                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Price | Item | \\n | ---- | ---- | \\n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should not be followd be \\n. The \\n MUST have a space on the left and right of it in order to work  (Markdown Table, with 10-15 rows, 2 columns)"
+                            "Goods and Services of the Building. This should be represented as a string representing a two-columned markdown table, representing the good and the cost (in sp or gp). Be creative with these items or services, some including Names, as they should be unique to each shop. (i.e., the Broken Barstool may sell the Begrudged Beer for 5sp, which is the bars specialty.) Be sure to separate new lines with the \n character. An example table would be formatted as follows: | Price | Item | \n | ---- | ---- | \n | Healing Potion | 5gp | Note the row with ---- to separate the header and footer. The last row should NOT be followd be \n. The \n MUST have a space on the left and right of it in order to work  (Markdown Table, with 10-15 rows, 2 columns)"
                         ),
                 })
             );
@@ -3402,12 +3426,12 @@ export const appRouter = router({
                     stats: z
                         .string()
                         .describe(
-                            "Stats of the creature, including Armor Class, Movement Speed in feet, Passive Perception, Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. This should be represented as a string representing a nine-columned markdown table, representing the statistic and its value. Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | AC | Move Speed | \\n | ---- | ---- | \\n | 18 | 50ft, 30ft flying |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 2 rows and 9 columns)"
+                            "Stats of the creature, and MUSt include Armor Class, Movement Speed in feet, Passive Perception, Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. This should be represented as a string representing a nine-columned markdown table, representing the statistic and its value. Be sure to separate new lines with the \n character. An example table would be formatted as follows: | AC | Move Speed | \n | ---- | ---- | \n | 18 | 50ft, 30ft flying |. Note the row with ---- to separate the header and footer. The last row should not be followed by \n or a period. The \n MUST have a space on the left and right of it in order to work (| \n | and not |\n|)  (Markdown Table with 2 rows and 9 columns)"
                         ),
                     abilities: z
                         .string()
                         .describe(
-                            "Abilities of the creature, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a three-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Name | Description | Cost | \\n | ---- | ---- | ---- | \\n | Amphibious | The creature can breathe air and water. | Passive Ability |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 2 rows and 3 columns)"
+                            "Abilities of the creature, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a three-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \n character. An example table would be formatted as follows: | Name | Description | Cost | \n | ---- | ---- | ---- | \n | Amphibious | The creature can breathe air and water. | Passive Ability |. Note the row with ---- to separate the header and footer. The last row should not be followed by \n or a period. The \n MUST have a space on the left and right of it in order to work (| \n | and not |\n|)  (Markdown Table with 2 rows and 3 columns)"
                         ),
                     description: z
                         .string()
@@ -3847,7 +3871,7 @@ export const appRouter = router({
                     abilities: z
                         .string()
                         .describe(
-                            "Abilities of the item, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a three-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \\n character. An example table would be formatted as follows: | Name | Description | Cost | \\n | ---- | ---- | ---- | \\n | Retraction | As a bonus action, you can retract the armblade into your forearm or extend it from there. While it is extended, you can use the weapon as if you were holding it, and you can't use that hand for other purposes. | Bonus Action |. Note the row with ---- to separate the header and footer. The last row should not be followed by \\n or a period. The \\n MUST have a space on the left and right of it in order to work (| \\n | and not |\\n|)  (Markdown Table with 4-5 rows and 3 columns)"
+                            "Abilities of the item, including passive abilities, Actions, Reactions, and Bonus Actions. If these abilities do damage, include the amount as a combination of dice (i.e. 10d8, 4d6, 5d4) This should be represented as a string representing a three-columned markdown table, representing the name of the ability, the description of the ability, and the action cost of the ability (Action, Bonus Action, Reaction). Be sure to separate new lines with the \n character. An example table would be formatted as follows: | Name | Description | Cost | \n | ---- | ---- | ---- | \n | Retraction | As a bonus action, you can retract the armblade into your forearm or extend it from there. While it is extended, you can use the weapon as if you were holding it, and you can't use that hand for other purposes. | Bonus Action |. Note the row with ---- to separate the header and footer. The last row should not be followed by \n or a period. The \n MUST have a space on the left and right of it in order to work (| \n | and not |\n|)  (Markdown Table with 4-5 rows and 3 columns)"
                         ),
                     description: z
                         .string()
@@ -3861,29 +3885,6 @@ export const appRouter = router({
                         ),
                 })
             );
-
-            const itemTypes = [
-                "Weapon",
-                "Armor",
-                "Wondrous Item",
-                "Potion",
-                "Scroll",
-                "Ring",
-                "Rod",
-                "Staff",
-                "Wand",
-            ];
-
-            const itemRarities = [
-                "Common",
-                "Uncommon",
-                "Rare",
-                "Very Rare",
-                "Legendary",
-                "Artifact",
-                "Unique",
-                "Unknown",
-            ];
 
             function getRandomRarityAndType(): string {
                 const itemTypes = [
@@ -3924,7 +3925,7 @@ export const appRouter = router({
 
             const randomTypeAndRarity = getRandomRarityAndType();
 
-            const monsterInfo = {
+            const itemInfo = {
                 name: input.name,
                 type: input.type ? input.type : randomTypeAndRarity,
                 abilities: input.abilities,
@@ -3948,9 +3949,9 @@ export const appRouter = router({
         Other Entity to contextualize:
         {context}
 
-        Only generate information in the monster fields that are empty. For example, if the monster already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        Only generate information in the monster fields that are empty. For example, if the item already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
         
-        Existing Monster Information:
+        Existing Item Information:
         Name: {name}
         Type: {type}
         Abilities: {abilities}
@@ -3969,11 +3970,11 @@ export const appRouter = router({
                 question: input.prompt,
                 formatInstructions: parser.getFormatInstructions(),
                 worldInfo: worldInfo.worldInfo,
-                name: monsterInfo.name,
-                type: monsterInfo.type,
-                abilities: monsterInfo.abilities,
-                description: monsterInfo.description,
-                lore: monsterInfo.lore,
+                name: itemInfo.name,
+                type: itemInfo.type,
+                abilities: itemInfo.abilities,
+                description: itemInfo.description,
+                lore: itemInfo.lore,
                 context: JSON.stringify(input.context),
             });
 
@@ -4224,6 +4225,407 @@ export const appRouter = router({
             }
 
             return updatedItem;
+        }),
+    generateSpell: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                level: z.string(),
+                school: z.string(),
+                castingTime: z.string(),
+                range: z.string(),
+                components: z.string(),
+                duration: z.string(),
+                description: z.string(),
+                spellList: z.string(),
+                context: z.any(),
+                prompt: z.string(),
+                worldInfo: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const parser = StructuredOutputParser.fromZodSchema(
+                z.object({
+                    name: z.string().describe("Name of the Spell"),
+                    level: z
+                        .string()
+                        .describe(
+                            "Level of the spell, such as 1st, 2nd, 3rd, etc. (Maximum 9th. If 9th, do not include details on upcasting) (1-5 Words)"
+                        ),
+                    school: z
+                        .string()
+                        .describe(
+                            "School of the spell, such as Conjuration, Evocation, etc. (1-5 Words)"
+                        ),
+                    castingTime: z
+                        .string()
+                        .describe(
+                            "Casting time of the spell, such as 1 action, 1 minute, etc. (1-5 Words)"
+                        ),
+                    range: z
+                        .string()
+                        .describe(
+                            "Range of the spell, such as 30 feet, 60 feet, etc. (1-5 Words)"
+                        ),
+                    components: z
+                        .string()
+                        .describe(
+                            "Components of the spell, such as Verbal, Somatic, Material, etc. If it requires material components, please specify which (1-5 Words)"
+                        ),
+                    duration: z
+                        .string()
+                        .describe(
+                            "Duration of the spell, such as Instantaneous, 1 minute, etc. If the spell requires concentration, specify that as well (1-5 Words)"
+                        ),
+                    description: z
+                        .string()
+                        .describe(
+                            "Description of the Spell in markdown. The description should start with the spells name, bolded using markdown conventions and with a colon. Describe the spells abilities in detail, including dice values for any damage or healing dealth by the spell. Mention if the spell is single target or multiple, and if it is an area of effect, specify the area. Lastly, on a new line using the \n character, detail the upcast scaling for this spell, if applicable. Use markdown formatting to create this spell description, using ** for bold (i.e. **Detect Evil and Good:**). Also use the \n tag as needed to separate content properly (3-5 Sentences)"
+                        ),
+                    spellList: z
+                        .string()
+                        .describe(
+                            "Spell List of the Spell. Specify which classes can learn this spell. (1-6 Words, which are classes in a comma separated list)"
+                        ),
+                })
+            );
+
+            const spellInfo = {
+                name: input.name,
+                level: input.level,
+                school: input.school,
+                castingTime: input.castingTime,
+                range: input.range,
+                components: input.components,
+                duration: input.duration,
+                description: input.description,
+                spellList: input.spellList,
+            };
+
+            const worldInfo = { worldInfo: input.worldInfo };
+
+            const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
+        You come up with catchy and memorable ideas for a Fictional World. 
+        Create a spell concept for a creature your party may encounter the following information.  
+        When making this spell, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the spell. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        
+        Your generation Prompt: 
+        {question}
+        
+        World Information:
+        {worldInfo}
+
+        Other Entity to contextualize:
+        {context}
+
+        Only generate information in the spell fields that are empty. For example, if the spell already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the spell information that are present to populate the JSON you will return.
+        
+        Existing Spell Information:
+        Name: {name}
+        Level: {level}
+        School: {school}
+        Casting Time: {castingTime}
+        Range: {range}
+        Components: {components}
+        Duration: {duration}
+        Description: {description}
+        Spell List: {spellList}
+
+        {formatInstructions}`;
+
+            const chain = RunnableSequence.from([
+                PromptTemplate.fromTemplate(promptTemplate),
+                new OpenAI({ temperature: 0.9, maxTokens: 1500 }),
+                parser,
+            ]);
+
+            const response = await chain.invoke({
+                question: input.prompt,
+                formatInstructions: parser.getFormatInstructions(),
+                worldInfo: worldInfo.worldInfo,
+                name: spellInfo.name,
+                level: spellInfo.level,
+                school: spellInfo.school,
+                castingTime: spellInfo.castingTime,
+                range: spellInfo.range,
+                components: spellInfo.components,
+                duration: spellInfo.duration,
+                description: spellInfo.description,
+                spellList: spellInfo.spellList,
+                context: JSON.stringify(input.context),
+            });
+
+            return response;
+        }),
+    saveSpell: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                level: z.string(),
+                school: z.string(),
+                castingTime: z.string(),
+                range: z.string(),
+                components: z.string(),
+                duration: z.string(),
+                description: z.string(),
+                spellList: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let spell;
+            if (input.imageb64 === "") {
+                spell = await db.spell.create({
+                    data: {
+                        name: input.name,
+                        level: input.level,
+                        school: input.school,
+                        castingTime: input.castingTime,
+                        range: input.range,
+                        components: input.components,
+                        duration: input.duration,
+                        description: input.description,
+                        spellList: input.spellList,
+                        worldID: input.worldID,
+                        imageURL: "",
+                        imageKey: "",
+                        userId,
+                    },
+                });
+            } else {
+                const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `spell-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    spell = await db.spell.create({
+                        data: {
+                            name: input.name,
+                            level: input.level,
+                            school: input.school,
+                            castingTime: input.castingTime,
+                            range: input.range,
+                            components: input.components,
+                            duration: input.duration,
+                            description: input.description,
+                            spellList: input.spellList,
+                            worldID: input.worldID,
+                            imageURL: imageURL,
+                            imageKey: imageKey,
+                            userId,
+                        },
+                    });
+                }
+            }
+
+            return spell;
+        }),
+    deleteSpell: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const spell = await db.spell.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (spell) {
+                const imageKey = spell.imageKey;
+                if (imageKey) {
+                    await utapi.deleteFiles(imageKey);
+                }
+            }
+
+            const deletedSpell = await db.spell.delete({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            return deletedSpell;
+        }),
+    getSpell: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            const spell = await db.spell.findFirst({
+                where: {
+                    id: input.id,
+                    userId,
+                },
+            });
+
+            if (!spell) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Spell not found",
+                });
+            }
+
+            return spell;
+        }),
+    updateSpell: privateProcedure
+        .input(
+            z.object({
+                name: z.string(),
+                level: z.string(),
+                school: z.string(),
+                castingTime: z.string(),
+                range: z.string(),
+                components: z.string(),
+                duration: z.string(),
+                description: z.string(),
+                spellList: z.string(),
+                worldID: z.string(),
+                imageb64: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { userId } = ctx;
+
+            function b64toBlob(
+                b64Data: string,
+                contentType: string = ""
+            ): Blob {
+                const byteCharacters = atob(b64Data);
+                const byteArrays = [];
+
+                for (
+                    let offset = 0;
+                    offset < byteCharacters.length;
+                    offset += 512
+                ) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                return new Blob(byteArrays, { type: contentType });
+            }
+
+            let updatedSpell;
+
+            if (input.imageb64.startsWith("data:image/png;base64,")) {
+                const preMutate = await db.spell.findFirst({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                });
+
+                if (preMutate) {
+                    const imageKey = preMutate.imageKey;
+                    if (imageKey) {
+                        await utapi.deleteFiles(imageKey);
+                    }
+                }
+
+                const b64Data = input.imageb64.split(",")[1];
+                const imageBlob = b64toBlob(b64Data, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
+
+                const file = new File([imageBlob], `spell-${filename}.png`, {
+                    type: "image/png",
+                });
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
+
+                if (imageKey && imageURL) {
+                    updatedSpell = await db.spell.update({
+                        where: {
+                            id: input.id,
+                            userId,
+                        },
+                        data: {
+                            name: input.name,
+                            level: input.level,
+                            school: input.school,
+                            castingTime: input.castingTime,
+                            range: input.range,
+                            components: input.components,
+                            duration: input.duration,
+                            description: input.description,
+                            spellList: input.spellList,
+                            worldID: input.worldID,
+                            imageKey: imageKey,
+                            imageURL: imageURL,
+                        },
+                    });
+                }
+            } else {
+                updatedSpell = await db.spell.update({
+                    where: {
+                        id: input.id,
+                        userId,
+                    },
+                    data: {
+                        name: input.name,
+                        level: input.level,
+                        school: input.school,
+                        castingTime: input.castingTime,
+                        range: input.range,
+                        components: input.components,
+                        duration: input.duration,
+                        description: input.description,
+                        spellList: input.spellList,
+                        worldID: input.worldID,
+                    },
+                });
+            }
+
+            return updatedSpell;
         }),
 });
 
