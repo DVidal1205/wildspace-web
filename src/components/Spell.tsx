@@ -30,6 +30,7 @@ import Image from "next/image";
 import ContextCombo from "./ContextCombo";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Entity from "@/lib/types";
 
 const Spell = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -62,9 +63,7 @@ const Spell = ({ world }: { world: World }) => {
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
-    const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | Monster | Item | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const { toast } = useToast();
     const utils = trpc.useContext();

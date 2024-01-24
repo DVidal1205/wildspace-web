@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 
-import { useMediaQuery } from "usehooks-ts";
+import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import {
     Command,
@@ -18,18 +18,29 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { trpc } from "@/app/_trpc/client";
 import {
     Building,
     Character,
     City,
     Faction,
+    Item,
     Monster,
     Quest,
+    Spell,
 } from "@prisma/client";
+import { useMediaQuery } from "usehooks-ts";
+import Entity from "@/lib/types";
 
-type Entity = {
-    value: Character | City | Faction | Quest | Building;
+type EntityItem = {
+    value:
+        | Character
+        | City
+        | Faction
+        | Quest
+        | Building
+        | Monster
+        | Item
+        | Spell;
     label: string;
 };
 
@@ -37,20 +48,17 @@ const ContextCombo = ({
     setContextEntity,
     worldID,
 }: {
-    setContextEntity: (
-        status: Character | City | Faction | Quest | Building | Monster | null
-    ) => void;
+    setContextEntity: (status: Entity | null) => void;
     worldID: { worldID: string };
 }) => {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const [selectedEntity, setSelectedEntity] = React.useState<Entity | null>(
-        null
-    );
+    const [selectedEntity, setSelectedEntity] =
+        React.useState<EntityItem | null>(null);
 
     const entities = trpc.getWorldEntities.useQuery(worldID);
 
-    const statuses: Entity[] = [
+    const statuses: EntityItem[] = [
         ...(entities.data?.characters?.map((entity: Character) => ({
             value: entity,
             label: entity.name,
@@ -72,6 +80,14 @@ const ContextCombo = ({
             label: entity.name,
         })) || []),
         ...(entities.data?.monsters?.map((entity: Monster) => ({
+            value: entity,
+            label: entity.name,
+        })) || []),
+        ...(entities.data?.items?.map((entity: Item) => ({
+            value: entity,
+            label: entity.name,
+        })) || []),
+        ...(entities.data?.spells?.map((entity: Spell) => ({
             value: entity,
             label: entity.name,
         })) || []),
@@ -145,8 +161,8 @@ function StatusList({
     statuses,
 }: {
     setOpen: (open: boolean) => void;
-    setSelectedStatus: (status: Entity | null) => void;
-    statuses: Entity[];
+    setSelectedStatus: (status: EntityItem | null) => void;
+    statuses: EntityItem[];
 }) {
     return (
         <Command>

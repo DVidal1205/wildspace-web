@@ -1,6 +1,16 @@
 "use client";
+import { trpc } from "@/app/_trpc/client";
+import Entity from "@/lib/types";
+import {
+    City,
+    World
+} from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Textarea } from "./ui/textarea";
+import { Check, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import ContextCombo from "./ContextCombo";
+import { Button } from "./ui/button";
 import {
     Card,
     CardContent,
@@ -9,23 +19,10 @@ import {
     CardHeader,
     CardTitle,
 } from "./ui/card";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2 } from "lucide-react";
-import { useState, useEffect, use } from "react";
-import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import {
-    Building,
-    Character,
-    City,
-    Faction,
-    Quest,
-    World,
-} from "@prisma/client";
-import Image from "next/image";
-import ContextCombo from "./ContextCombo";
 
 const City = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -72,7 +69,7 @@ const City = ({ world }: { world: World }) => {
     const [currentySavingCity, setCurrentlySavingCity] =
         useState<boolean>(false);
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | null
+        Entity | null
     >(null);
 
     const { toast } = useToast();

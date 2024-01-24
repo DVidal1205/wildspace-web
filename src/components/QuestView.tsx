@@ -30,6 +30,7 @@ import Image from "next/image";
 import { router } from "@/trpc/trpc";
 import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
+import Entity from "@/lib/types";
 
 const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -63,9 +64,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [questResponse, setQuestResponse] = useState<any>("");
     const [deletingQuest, setCurrentlyDeletingQuest] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-    const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const router = useRouter();
 

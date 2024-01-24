@@ -1,29 +1,16 @@
 "use client";
-import { trpc } from "@/app/_trpc/client";
-import Sidebar from "./Sidebar";
 import { World } from "@prisma/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "./ui/card";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import BuildingView from "./BuildingView";
 import CharacterView from "./CharacterView";
 import CityView from "./CityView";
 import FactionView from "./FactionView";
-import QuestView from "./QuestView";
-import BuildingView from "./BuildingView";
-import MonsterView from "./MonsterView";
 import ItemView from "./ItemView";
+import MonsterView from "./MonsterView";
+import QuestView from "./QuestView";
 import SpellView from "./SpellView";
+import { Button } from "./ui/button";
 
 const GalleryPage = ({
     world,

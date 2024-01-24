@@ -1,22 +1,20 @@
 "use client";
-import { useState, useEffect } from "react";
+import { trpc } from "@/app/_trpc/client";
+import { Edit } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 import {
     Dialog,
     DialogClose,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogTrigger
 } from "./ui/dialog";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { trpc } from "@/app/_trpc/client";
-import { redirect } from "next/navigation";
-import { Edit } from "lucide-react";
 
 const EditButton = ({ id }: { id: string }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);

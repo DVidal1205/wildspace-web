@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Entity from "@/lib/types";
 
 const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -68,9 +69,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [spellResponse, setSpellResponse] = useState<any>("");
     const [deletingSpell, setCurrentlyDeletingSpell] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-    const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | Monster | Item | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const router = useRouter();
 

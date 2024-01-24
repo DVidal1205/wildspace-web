@@ -19,6 +19,7 @@ import { useToast } from "./ui/use-toast";
 import { Building, Character, City, Faction, Quest, World } from "@prisma/client";
 import Image from "next/image";
 import ContextCombo from "./ContextCombo";
+import Entity from "@/lib/types";
 
 const Quest = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -51,7 +52,7 @@ const Quest = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | null
+        Entity | null
     >(null);
 
     const { toast } = useToast();

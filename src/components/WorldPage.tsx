@@ -24,32 +24,7 @@ import Item from "./Item";
 import Spell from "./Spell";
 
 const WorldPage = ({ world }: { world: World }) => {
-    const { data: characters } = trpc.getWorldCharacters.useQuery({
-        worldID: world.id,
-    });
-    const { data: cities } = trpc.getWorldCities.useQuery({
-        worldID: world.id,
-    });
-    const { data: factions } = trpc.getWorldFactions.useQuery({
-        worldID: world.id,
-    });
-    const { data: quests } = trpc.getWorldQuests.useQuery({
-        worldID: world.id,
-    });
-
-    const { data: buildings } = trpc.getWorldBuildings.useQuery({
-        worldID: world.id,
-    });
-
-    const { data: monsters } = trpc.getWorldMonsters.useQuery({
-        worldID: world.id,
-    });
-
-    const { data: items } = trpc.getWorldItems.useQuery({
-        worldID: world.id,
-    });
-
-    const { data: spells } = trpc.getWorldSpells.useQuery({
+    const { data: entities } = trpc.getWorldEntities.useQuery({
         worldID: world.id,
     });
 
@@ -59,14 +34,14 @@ const WorldPage = ({ world }: { world: World }) => {
                 <div className="lg:col-span-1 h-max lg:mr-4 my-2 lg:my-0">
                     <Sidebar
                         world={world}
-                        characters={characters || []}
-                        cities={cities || []}
-                        factions={factions || []}
-                        quests={quests || []}
-                        buildings={buildings || []}
-                        monsters={monsters || []}
-                        items={items || []}
-                        spells={spells || []}
+                        characters={entities?.characters || []}
+                        cities={entities?.cities || []}
+                        factions={entities?.factions || []}
+                        quests={entities?.quests || []}
+                        buildings={entities?.buildings || []}
+                        monsters={entities?.monsters || []}
+                        items={entities?.items || []}
+                        spells={entities?.spells || []}
                     />
                 </div>
                 <div className="md:col-span-7 w-screen md:w-auto">
@@ -75,17 +50,17 @@ const WorldPage = ({ world }: { world: World }) => {
                             <TabsTrigger value="character" className="w-full">
                                 Character
                             </TabsTrigger>
-                            <TabsTrigger value="city" className="w-full">
-                                City
+                            <TabsTrigger value="building" className="w-full">
+                                Building
                             </TabsTrigger>
                             <TabsTrigger value="faction" className="w-full">
                                 Faction
                             </TabsTrigger>
+                            <TabsTrigger value="city" className="w-full">
+                                City
+                            </TabsTrigger>
                             <TabsTrigger value="quest" className="w-full">
                                 Quest
-                            </TabsTrigger>
-                            <TabsTrigger value="building" className="w-full">
-                                Building
                             </TabsTrigger>
                             <TabsTrigger value="monster" className="w-full">
                                 Monster

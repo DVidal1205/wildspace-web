@@ -80,21 +80,21 @@ const Sidebar = ({
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
-                    <AccordionTrigger>Cities</AccordionTrigger>
+                    <AccordionTrigger>Buildings</AccordionTrigger>
                     <AccordionContent>
                         <ul>
-                            {cities.length === 0 ? (
-                                <div>No cities...</div>
+                            {buildings.length === 0 ? (
+                                <div>No quests...</div>
                             ) : (
-                                cities.map((city) => (
+                                buildings.map((building) => (
                                     <li
-                                        key={city.id}
+                                        key={building.id}
                                         className="cursor-pointer my-3"
                                     >
                                         <Link
-                                            href={`/dashboard/${world.id}/${city.id}?type=city`}
+                                            href={`/dashboard/${world.id}/${building.id}?type=building`}
                                         >
-                                            {city.name}
+                                            {building.name}
                                         </Link>
                                     </li>
                                 ))
@@ -126,6 +126,29 @@ const Sidebar = ({
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-4">
+                    <AccordionTrigger>Cities</AccordionTrigger>
+                    <AccordionContent>
+                        <ul>
+                            {cities.length === 0 ? (
+                                <div>No cities...</div>
+                            ) : (
+                                cities.map((city) => (
+                                    <li
+                                        key={city.id}
+                                        className="cursor-pointer my-3"
+                                    >
+                                        <Link
+                                            href={`/dashboard/${world.id}/${city.id}?type=city`}
+                                        >
+                                            {city.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-5">
                     <AccordionTrigger>Quests</AccordionTrigger>
                     <AccordionContent>
                         <ul>
@@ -141,29 +164,6 @@ const Sidebar = ({
                                             href={`/dashboard/${world.id}/${quest.id}?type=quest`}
                                         >
                                             {quest.name}
-                                        </Link>
-                                    </li>
-                                ))
-                            )}
-                        </ul>
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-5">
-                    <AccordionTrigger>Buildings</AccordionTrigger>
-                    <AccordionContent>
-                        <ul>
-                            {buildings.length === 0 ? (
-                                <div>No quests...</div>
-                            ) : (
-                                buildings.map((building) => (
-                                    <li
-                                        key={building.id}
-                                        className="cursor-pointer my-3"
-                                    >
-                                        <Link
-                                            href={`/dashboard/${world.id}/${building.id}?type=building`}
-                                        >
-                                            {building.name}
                                         </Link>
                                     </li>
                                 ))

@@ -1,6 +1,18 @@
 "use client";
+import { trpc } from "@/app/_trpc/client";
+import Entity from "@/lib/types";
+import {
+    World
+} from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Textarea } from "./ui/textarea";
+import { Check, Loader2, Trash } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import ContextCombo from "./ContextCombo";
+import { Button } from "./ui/button";
 import {
     Card,
     CardContent,
@@ -9,29 +21,10 @@ import {
     CardHeader,
     CardTitle,
 } from "./ui/card";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2, Trash } from "lucide-react";
-import { useState, useEffect, useMemo, use } from "react";
-import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
-import { ToastAction } from "./ui/toast";
-import {
-    Building,
-    Character,
-    City,
-    Faction,
-    Quest,
-    World,
-} from "@prisma/client";
-import { set } from "date-fns";
-import Image from "next/image";
-import { router } from "@/trpc/trpc";
-import { useRouter } from "next/navigation";
-import ContextCombo from "./ContextCombo";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 const BuildingView = ({
     world,
@@ -72,9 +65,7 @@ const BuildingView = ({
     const [deletingBuilding, setCurrentlyDeletingBuilding] =
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-    const [contextEntity, setContextEntity] = useState<
-        Character | City | Faction | Quest | Building | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const router = useRouter();
 
@@ -162,7 +153,7 @@ const BuildingView = ({
     } = trpc.generateImage.useQuery(
         {
             object: worldResponse ? worldResponse : building,
-            type: "Character/Person",
+            type: "Building",
         },
         { enabled: false }
     );

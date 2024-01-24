@@ -1,9 +1,9 @@
-import Link from "next/link";
-import MaxWidthWrapper from "./MaxWidthWrapper";
-import Image from "next/image";
-import { buttonVariants } from "./ui/button";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import MaxWidthWrapper from "./MaxWidthWrapper";
+import { buttonVariants } from "./ui/button";
 
 const Navbar = () => {
     return (
@@ -23,7 +23,6 @@ const Navbar = () => {
                         </div>
                     </Link>
 
-                    {/* to do: add mobile navbar */}
                     <div className="hidden items-center space-x-4 sm:flex">
                         <>
                             <Link
