@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -71,9 +69,7 @@ const CharacterView = ({
     const [deletingCharacter, setCurrentlyDeletingCharacter] =
         useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-    const [contextEntity, setContextEntity] = useState<
-        Entity | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const router = useRouter();
 
@@ -136,7 +132,6 @@ const CharacterView = ({
     );
     const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Character Updated!",
@@ -153,7 +148,6 @@ const CharacterView = ({
 
     const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -176,38 +170,6 @@ const CharacterView = ({
         },
         { enabled: false }
     );
-
-    const handleSubmit = () => {
-        setLoading(true);
-        genFetch();
-    };
-
-    const handleImage = () => {
-        setImageLoading(true);
-        imageFetch();
-    };
-
-    const handleSave = () => {
-        updateCharacter({
-            name: name,
-            race: race,
-            cClass: pclass,
-            subclass: subclass,
-            alignment: alignment,
-            age: age,
-            build: build,
-            gender: gender,
-            hair: hair,
-            height: height,
-            fashion: fashion,
-            quirks: quirks,
-            goals: goals,
-            backstory: backstory,
-            imageb64: image,
-            worldID: world.id,
-            id: entityid,
-        });
-    };
 
     useEffect(() => {
         if (imageResponse) {
@@ -276,6 +238,38 @@ const CharacterView = ({
             setLoading(false);
         }
     }, [response]);
+
+    const handleSubmit = () => {
+        setLoading(true);
+        genFetch();
+    };
+
+    const handleImage = () => {
+        setImageLoading(true);
+        imageFetch();
+    };
+
+    const handleSave = () => {
+        updateCharacter({
+            name: name,
+            race: race,
+            cClass: pclass,
+            subclass: subclass,
+            alignment: alignment,
+            age: age,
+            build: build,
+            gender: gender,
+            hair: hair,
+            height: height,
+            fashion: fashion,
+            quirks: quirks,
+            goals: goals,
+            backstory: backstory,
+            imageb64: image,
+            worldID: world.id,
+            id: entityid,
+        });
+    };
 
     return !character ? (
         <div className="flex items-center justify-center">
@@ -565,7 +559,7 @@ const CharacterView = ({
                                     height={1024}
                                     width={1024}
                                     src={image}
-                                    alt="character image"
+                                    alt="Character Image"
                                     className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"

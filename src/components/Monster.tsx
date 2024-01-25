@@ -40,7 +40,6 @@ const Monster = ({ world }: { world: World }) => {
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [size, setSize] = useState<string>("");
@@ -83,7 +82,6 @@ const Monster = ({ world }: { world: World }) => {
     );
     const { mutate: saveMonster } = trpc.saveMonster.useMutation({
         onSuccess: () => {
-            utils.getWorldMonsters.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Monster Saved",
@@ -144,6 +142,31 @@ const Monster = ({ world }: { world: World }) => {
         }
     }, [imageError, toast]);
 
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(imageResponse);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            console.log(response);
+            setResponseData(response);
+            setName(response.name);
+            setType(response.type);
+            setSize(response.size);
+            setAlignment(response.alignment);
+            setResistance(response.resistances);
+            setStats(response.stats);
+            setAbilities(response.abilities);
+            setDescription(response.description);
+            setLore(response.lore);
+            setLoading(false);
+            setResponseData(response);
+        }
+    }, [response]);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -169,31 +192,6 @@ const Monster = ({ world }: { world: World }) => {
             worldID: world.id,
         });
     };
-
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(imageResponse);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            console.log(response);
-            setResponseData(response);
-            setName(response.name);
-            setType(response.type);
-            setSize(response.size);
-            setAlignment(response.alignment);
-            setResistance(response.resistances);
-            setStats(response.stats);
-            setAbilities(response.abilities);
-            setDescription(response.description);
-            setLore(response.lore);
-            setLoading(false);
-            setResponseData(response);
-        }
-    }, [response]);
 
     return (
         <Card>

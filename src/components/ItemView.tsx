@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -38,7 +36,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [currentlySavingItem, setCurrentlySavingItem] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [abilities, setAbilities] = useState<string>("");
@@ -50,9 +47,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [itemResponse, setItemResponse] = useState<any>("");
     const [deletingItem, setCurrentlyDeletingItem] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-    const [contextEntity, setContextEntity] = useState<
-        Entity | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const router = useRouter();
 
@@ -62,18 +57,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { data: item } = trpc.getItem.useQuery({
         id: entityid,
     });
-
-    useEffect(() => {
-        if (item) {
-            setName(item.name);
-            setType(item.type);
-            setAbilities(item.abilities);
-            setDescription(item.description);
-            setLore(item.lore);
-            setImage(item.imageURL);
-            setItemResponse(item);
-        }
-    }, [item]);
 
     const {
         data: response,
@@ -96,7 +79,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     );
     const { mutate: updateItem } = trpc.updateItem.useMutation({
         onSuccess: () => {
-            utils.getWorldItems.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Item Updated!",
@@ -113,7 +95,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     const { mutate: deleteItem } = trpc.deleteItem.useMutation({
         onSuccess: () => {
-            utils.getWorldItems.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -163,6 +144,38 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
         }
     }, [imageError, toast]);
 
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(`data:image/png;base64,${imageResponse}`);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            setWorldResponse(response);
+            setName(response.name);
+            setType(response.type);
+            setAbilities(response.abilities);
+            setDescription(response.description);
+            setLore(response.lore);
+            setWorldResponse(response);
+            setLoading(false);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        if (item) {
+            setName(item.name);
+            setType(item.type);
+            setAbilities(item.abilities);
+            setDescription(item.description);
+            setLore(item.lore);
+            setImage(item.imageURL);
+            setItemResponse(item);
+        }
+    }, [item]);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -186,26 +199,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
         });
     };
 
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            setWorldResponse(response);
-            setName(response.name);
-            setType(response.type);
-            setAbilities(response.abilities);
-            setDescription(response.description);
-            setLore(response.lore);
-            setWorldResponse(response);
-            setLoading(false);
-        }
-    }, [response]);
-
     return !item ? (
         <div className="flex items-center justify-center">
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
@@ -213,12 +206,10 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     ) : (
         <Card>
             <CardHeader>
-                <CardTitle>Item Generation</CardTitle>
+                <CardTitle>{name}</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with an item! Leave the fields blank to
-                    generate details, or fill in properties and check them to
-                    set them. Press the save button to save the item to your
-                    gallery.
+                    View your item information for {name} here, or edit and save
+                    to update the item.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">

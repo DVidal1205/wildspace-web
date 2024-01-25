@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -43,7 +41,6 @@ const City = ({ world }: { world: World }) => {
     const [governanceDisabled, setGovernanceDisabled] =
         useState<boolean>(false);
     const [questsDisabled, setQuestsDisabled] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [population, setPopulation] = useState<string>("");
     const [sprawl, setSprawl] = useState<string>("");
@@ -67,9 +64,7 @@ const City = ({ world }: { world: World }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [currentySavingCity, setCurrentlySavingCity] =
         useState<boolean>(false);
-    const [contextEntity, setContextEntity] = useState<
-        Entity | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -104,7 +99,6 @@ const City = ({ world }: { world: World }) => {
     );
     const { mutate: saveCity } = trpc.saveCity.useMutation({
         onSuccess: () => {
-            utils.getWorldCities.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "City Saved",
@@ -144,16 +138,6 @@ const City = ({ world }: { world: World }) => {
         { enabled: false }
     );
 
-    const handleSubmit = () => {
-        setLoading(true);
-        genFetch();
-    };
-
-    const handleImage = () => {
-        setImageLoading(true);
-        imageFetch();
-    };
-
     useEffect(() => {
         if (error) {
             const message = error.message;
@@ -179,27 +163,6 @@ const City = ({ world }: { world: World }) => {
             return;
         }
     }, [imageError, toast]);
-
-    const handleSave = () => {
-        saveCity({
-            name: name,
-            population: population,
-            sprawl: sprawl,
-            architecture: architecture,
-            industries: industries,
-            climate: climate,
-            safety: safety,
-            education: education,
-            modernity: modernity,
-            wealth: wealth,
-            description: description,
-            lore: lore,
-            governance: governance,
-            quests: quests,
-            imageb64: image,
-            worldID: world.id,
-        });
-    };
 
     useEffect(() => {
         if (imageResponse) {
@@ -230,6 +193,37 @@ const City = ({ world }: { world: World }) => {
             setLoading(false);
         }
     }, [response]);
+
+    const handleSubmit = () => {
+        setLoading(true);
+        genFetch();
+    };
+
+    const handleImage = () => {
+        setImageLoading(true);
+        imageFetch();
+    };
+
+    const handleSave = () => {
+        saveCity({
+            name: name,
+            population: population,
+            sprawl: sprawl,
+            architecture: architecture,
+            industries: industries,
+            climate: climate,
+            safety: safety,
+            education: education,
+            modernity: modernity,
+            wealth: wealth,
+            description: description,
+            lore: lore,
+            governance: governance,
+            quests: quests,
+            imageb64: image,
+            worldID: world.id,
+        });
+    };
 
     return (
         <Card>
@@ -535,7 +529,7 @@ const City = ({ world }: { world: World }) => {
                                             ? `data:image/png;base64,${image}`
                                             : ""
                                     }
-                                    alt="character image"
+                                    alt="City Image"
                                     className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"

@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -43,7 +41,6 @@ const Character = ({ world }: { world: World }) => {
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-
     const [name, setName] = useState<string>("");
     const [race, setRace] = useState<string>("");
     const [pclass, setClass] = useState<string>("");
@@ -61,9 +58,7 @@ const Character = ({ world }: { world: World }) => {
     const [prompt, setPrompt] = useState<string>("");
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
-    const [contextEntity, setContextEntity] = useState<
-        Entity | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -96,9 +91,9 @@ const Character = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
+
     const { mutate: saveCharacter } = trpc.saveCharacter.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Character Saved",
@@ -129,11 +124,14 @@ const Character = ({ world }: { world: World }) => {
         },
     });
 
-    const { data: imageResponse, error: imageError, refetch: imageFetch } =
-        trpc.generateImage.useQuery(
-            { object: response, type: "Character/Person" },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        error: imageError,
+        refetch: imageFetch,
+    } = trpc.generateImage.useQuery(
+        { object: response, type: "Character/Person" },
+        { enabled: false }
+    );
 
     const handleSubmit = () => {
         setLoading(true);
@@ -512,7 +510,7 @@ const Character = ({ world }: { world: World }) => {
                                             ? `data:image/png;base64,${image}`
                                             : ""
                                     }
-                                    alt="character image"
+                                    alt="Character Image"
                                     className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"

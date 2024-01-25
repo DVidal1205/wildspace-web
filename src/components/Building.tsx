@@ -40,7 +40,6 @@ const Building = ({ world }: { world: World }) => {
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [size, setSize] = useState<string>("");
@@ -81,9 +80,9 @@ const Building = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
+
     const { mutate: saveBuilding } = trpc.saveBuilding.useMutation({
         onSuccess: () => {
-            utils.getWorldBuildings.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Building Saved",
@@ -120,7 +119,6 @@ const Building = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -133,7 +131,6 @@ const Building = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,
@@ -143,6 +140,31 @@ const Building = ({ world }: { world: World }) => {
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(imageResponse);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            console.log(response);
+            setResponseData(response);
+            setName(response.name);
+            setType(response.type);
+            setSize(response.size);
+            setArchitecture(response.architecture);
+            setAmbience(response.ambience);
+            setTraffic(response.traffic);
+            setDescription(response.description);
+            setVendor(response.vendor);
+            setGoods(response.goods);
+            setLoading(false);
+            setResponseData(response);
+        }
+    }, [response]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -169,31 +191,6 @@ const Building = ({ world }: { world: World }) => {
             worldID: world.id,
         });
     };
-
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(imageResponse);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            console.log(response);
-            setResponseData(response);
-            setName(response.name);
-            setType(response.type);
-            setSize(response.size);
-            setArchitecture(response.architecture);
-            setAmbience(response.ambience);
-            setTraffic(response.traffic);
-            setDescription(response.description);
-            setVendor(response.vendor);
-            setGoods(response.goods);
-            setLoading(false);
-            setResponseData(response);
-        }
-    }, [response]);
 
     return (
         <Card>
@@ -403,7 +400,7 @@ const Building = ({ world }: { world: World }) => {
                                             ? `data:image/png;base64,${image}`
                                             : ""
                                     }
-                                    alt="character image"
+                                    alt="Building Image"
                                     className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"

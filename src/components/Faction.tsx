@@ -85,7 +85,6 @@ const Faction = ({ world }: { world: World }) => {
     );
     const { mutate: saveFaction } = trpc.saveFaction.useMutation({
         onSuccess: () => {
-            utils.getWorldFactions.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Faction Saved",
@@ -120,33 +119,6 @@ const Faction = ({ world }: { world: World }) => {
         { object: responseData, type: "Faction" },
         { enabled: false }
     );
-
-    const handleSubmit = () => {
-        setLoading(true);
-        genFetch();
-    };
-
-    const handleImage = () => {
-        setImageLoading(true);
-        imageFetch();
-    };
-
-    const handleSave = () => {
-        saveFaction({
-            name: name,
-            type: type,
-            alignment: alignment,
-            population: population,
-            presence: presence,
-            devotion: devotion,
-            goals: goals,
-            description: description,
-            lore: lore,
-            traits: traits,
-            imageb64: image,
-            worldID: world.id,
-        });
-    };
 
     useEffect(() => {
         if (error) {
@@ -198,6 +170,33 @@ const Faction = ({ world }: { world: World }) => {
             setLoading(false);
         }
     }, [response]);
+
+    const handleSubmit = () => {
+        setLoading(true);
+        genFetch();
+    };
+
+    const handleImage = () => {
+        setImageLoading(true);
+        imageFetch();
+    };
+
+    const handleSave = () => {
+        saveFaction({
+            name: name,
+            type: type,
+            alignment: alignment,
+            population: population,
+            presence: presence,
+            devotion: devotion,
+            goals: goals,
+            description: description,
+            lore: lore,
+            traits: traits,
+            imageb64: image,
+            worldID: world.id,
+        });
+    };
 
     return (
         <Card>

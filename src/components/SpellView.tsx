@@ -53,7 +53,6 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [currentlySavingSpell, setCurrentlySavingSpell] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [school, setSchool] = useState<string>("");
     const [level, setLevel] = useState<string>("");
@@ -80,22 +79,6 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
         id: entityid,
     });
 
-    useEffect(() => {
-        if (spell) {
-            setName(spell.name);
-            setSchool(spell.school);
-            setLevel(spell.level);
-            setCastingTime(spell.castingTime);
-            setRange(spell.range);
-            setComponents(spell.components);
-            setDuration(spell.duration);
-            setDescription(spell.description);
-            setSpellList(spell.spellList);
-            setImage(spell.imageURL);
-            setSpellResponse(spell);
-        }
-    }, [spell]);
-
     const {
         data: response,
         refetch: genFetch,
@@ -121,7 +104,6 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     );
     const { mutate: updateSpell } = trpc.updateSpell.useMutation({
         onSuccess: () => {
-            utils.getWorldSpells.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Spell Updated!",
@@ -138,7 +120,6 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     const { mutate: deleteSpell } = trpc.deleteSpell.useMutation({
         onSuccess: () => {
-            utils.getWorldSpells.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -163,6 +144,22 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     );
 
     useEffect(() => {
+        if (spell) {
+            setName(spell.name);
+            setSchool(spell.school);
+            setLevel(spell.level);
+            setCastingTime(spell.castingTime);
+            setRange(spell.range);
+            setComponents(spell.components);
+            setDuration(spell.duration);
+            setDescription(spell.description);
+            setSpellList(spell.spellList);
+            setImage(spell.imageURL);
+            setSpellResponse(spell);
+        }
+    }, [spell]);
+
+    useEffect(() => {
         if (error) {
             toast({
                 title: "Error",
@@ -185,6 +182,29 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(`data:image/png;base64,${imageResponse}`);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            setWorldResponse(response);
+            setName(response.name);
+            setSchool(response.school);
+            setLevel(response.level);
+            setCastingTime(response.castingTime);
+            setRange(response.range);
+            setComponents(response.components);
+            setDuration(response.duration);
+            setDescription(response.description);
+            setWorldResponse(response);
+            setLoading(false);
+        }
+    }, [response]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -213,29 +233,6 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
         });
     };
 
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            setWorldResponse(response);
-            setName(response.name);
-            setSchool(response.school);
-            setLevel(response.level);
-            setCastingTime(response.castingTime);
-            setRange(response.range);
-            setComponents(response.components);
-            setDuration(response.duration);
-            setDescription(response.description);
-            setWorldResponse(response);
-            setLoading(false);
-        }
-    }, [response]);
-
     return !spell ? (
         <div className="flex items-center justify-center">
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
@@ -243,12 +240,10 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     ) : (
         <Card>
             <CardHeader>
-                <CardTitle>Spell Generation</CardTitle>
+                <CardTitle>{name}</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with an spell! Leave the fields blank to
-                    generate details, or fill in properties and check them to
-                    set them. Press the save button to save the
-                    spellListDisabled to your gallery.
+                    View your spell information for {name} here, or edit and
+                    save to update the spell.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">

@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { Faction, World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -43,7 +41,6 @@ const FactionView = ({
         useState<boolean>(false);
     const [loreDisabled, setLoreDisabled] = useState<boolean>(false);
     const [traitsDisabled, setTraitsDisabled] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [alignment, setAlignment] = useState<string>("");
@@ -54,21 +51,18 @@ const FactionView = ({
     const [description, setDescription] = useState<string>("");
     const [lore, setLore] = useState<string>("");
     const [traits, setTraits] = useState<string>("");
-
     const [prompt, setPrompt] = useState<string>("");
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [factionData, setFactionData] = useState<Faction | null>(null);
     const [currentlySavingFaction, setCurrentlySavingFaction] =
         useState<boolean>(false);
-    const [cityData, setCityData] = useState<any>("");
     const [deletingFaction, setCurrentlyDeletingFaction] =
         useState<boolean>(false);
-    const [contextEntity, setContextEntity] = useState<
-        Entity | null
-    >(null);
+    const [contextEntity, setContextEntity] = useState<Entity | null>(null);
 
     const router = useRouter();
 
@@ -76,23 +70,6 @@ const FactionView = ({
     const utils = trpc.useContext();
 
     const { data: faction } = trpc.getFaction.useQuery({ id: entityid });
-
-    useEffect(() => {
-        if (faction) {
-            setName(faction.name);
-            setType(faction.type);
-            setAlignment(faction.alignment);
-            setPopulation(faction.population);
-            setPresence(faction.presence);
-            setDevotion(faction.devotion);
-            setGoals(faction.goals);
-            setDescription(faction.description);
-            setLore(faction.lore);
-            setTraits(faction.traits);
-            setImage(faction.imageURL);
-            setResponseData(faction);
-        }
-    }, [faction]);
 
     const {
         data: response,
@@ -120,7 +97,6 @@ const FactionView = ({
     );
     const { mutate: updateFaction } = trpc.updateFaction.useMutation({
         onSuccess: () => {
-            utils.getWorldFactions.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Faction Updated",
@@ -137,7 +113,6 @@ const FactionView = ({
 
     const { mutate: deleteFaction } = trpc.deleteFaction.useMutation({
         onSuccess: () => {
-            utils.getWorldFactions.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -157,34 +132,6 @@ const FactionView = ({
         { object: responseData ? responseData : faction, type: "Faction" },
         { enabled: false }
     );
-
-    const handleSubmit = () => {
-        setLoading(true);
-        genFetch();
-    };
-
-    const handleImage = () => {
-        setImageLoading(true);
-        imageFetch();
-    };
-
-    const handleSave = () => {
-        updateFaction({
-            name: name,
-            population: population,
-            type: type,
-            alignment: alignment,
-            presence: presence,
-            devotion: devotion,
-            goals: goals,
-            description: description,
-            lore: lore,
-            traits: traits,
-            imageb64: image,
-            worldID: world.id,
-            id: entityid,
-        });
-    };
 
     useEffect(() => {
         if (imageResponse) {
@@ -236,6 +183,52 @@ const FactionView = ({
         }
     }, [response]);
 
+    useEffect(() => {
+        if (faction) {
+            setName(faction.name);
+            setType(faction.type);
+            setAlignment(faction.alignment);
+            setPopulation(faction.population);
+            setPresence(faction.presence);
+            setDevotion(faction.devotion);
+            setGoals(faction.goals);
+            setDescription(faction.description);
+            setLore(faction.lore);
+            setTraits(faction.traits);
+            setImage(faction.imageURL);
+            setResponseData(faction);
+            setFactionData(faction);
+        }
+    }, [faction]);
+
+    const handleSubmit = () => {
+        setLoading(true);
+        genFetch();
+    };
+
+    const handleImage = () => {
+        setImageLoading(true);
+        imageFetch();
+    };
+
+    const handleSave = () => {
+        updateFaction({
+            name: name,
+            population: population,
+            type: type,
+            alignment: alignment,
+            presence: presence,
+            devotion: devotion,
+            goals: goals,
+            description: description,
+            lore: lore,
+            traits: traits,
+            imageb64: image,
+            worldID: world.id,
+            id: entityid,
+        });
+    };
+
     return !faction ? (
         <div className="flex items-center justify-center">
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
@@ -245,8 +238,8 @@ const FactionView = ({
             <CardHeader>
                 <CardTitle>{name}</CardTitle>
                 <CardDescription>
-                    View your city information for {name} here, or edit and save
-                    to update the character.
+                    View your faction information for {name} here, or edit and
+                    save to update the faction.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
@@ -465,7 +458,7 @@ const FactionView = ({
                         )}
                     </Card>
                     <div className="flex justify-center">
-                        {responseData || faction ? (
+                        {responseData || factionData ? (
                             <Button
                                 className="mt-2"
                                 onClick={() => handleImage()}

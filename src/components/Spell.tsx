@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -42,7 +40,6 @@ const Spell = ({ world }: { world: World }) => {
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-
     const [name, setName] = useState<string>("");
     const [school, setSchool] = useState<string>("");
     const [level, setLevel] = useState<string>("");
@@ -85,7 +82,6 @@ const Spell = ({ world }: { world: World }) => {
     );
     const { mutate: saveSpell } = trpc.saveSpell.useMutation({
         onSuccess: () => {
-            utils.getWorldSpells.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Spell Saved",
@@ -146,6 +142,30 @@ const Spell = ({ world }: { world: World }) => {
         }
     }, [imageError, toast]);
 
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(imageResponse);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            console.log(response);
+            setName(response.name);
+            setSchool(response.school);
+            setLevel(response.level);
+            setCastingTime(response.castingTime);
+            setRange(response.range);
+            setComponents(response.components);
+            setDuration(response.duration);
+            setSpellList(response.spellList);
+            setDescription(response.description);
+            setLoading(false);
+            setResponseData(response);
+        }
+    }, [response]);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -171,30 +191,6 @@ const Spell = ({ world }: { world: World }) => {
             worldID: world.id,
         });
     };
-
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(imageResponse);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            console.log(response);
-            setName(response.name);
-            setSchool(response.school);
-            setLevel(response.level);
-            setCastingTime(response.castingTime);
-            setRange(response.range);
-            setComponents(response.components);
-            setDuration(response.duration);
-            setSpellList(response.spellList);
-            setDescription(response.description);
-            setLoading(false);
-            setResponseData(response);
-        }
-    }, [response]);
 
     return (
         <Card>

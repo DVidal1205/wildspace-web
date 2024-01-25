@@ -49,7 +49,6 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [difficulty, setDifficulty] = useState<string>("");
     const [discovery, setDiscovery] = useState<string>("");
@@ -75,22 +74,6 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         id: entityid,
     });
 
-    useEffect(() => {
-        if (quest) {
-            setName(quest.name);
-            setDifficulty(quest.difficulty);
-            setDiscovery(quest.discovery);
-            setConsequences(quest.consequences);
-            setRewards(quest.rewards);
-            setOutcome(quest.outcomes);
-            setObjectives(quest.objective);
-            setDescription(quest.description);
-            setQuestResponse(quest);
-            setWorldResponse(quest);
-            setImage(quest.imageURL);
-        }
-    }, [quest]);
-
     const { data: response, refetch: genFetch } = trpc.generateQuest.useQuery(
         {
             name: nameDisabled ? name : "",
@@ -111,7 +94,6 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     );
     const { mutate: updateQuest } = trpc.updateQuest.useMutation({
         onSuccess: () => {
-            utils.getWorldCharacters.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Quest Updated!",
@@ -128,7 +110,6 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     const { mutate: deleteQuest } = trpc.deleteQuest.useMutation({
         onSuccess: () => {
-            utils.getWorldQuests.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -148,6 +129,45 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
             },
             { enabled: false }
         );
+
+    useEffect(() => {
+        if (quest) {
+            setName(quest.name);
+            setDifficulty(quest.difficulty);
+            setDiscovery(quest.discovery);
+            setConsequences(quest.consequences);
+            setRewards(quest.rewards);
+            setOutcome(quest.outcomes);
+            setObjectives(quest.objective);
+            setDescription(quest.description);
+            setQuestResponse(quest);
+            setWorldResponse(quest);
+            setImage(quest.imageURL);
+        }
+    }, [quest]);
+
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(`data:image/png;base64,${imageResponse}`);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            setWorldResponse(response);
+            setName(response.name);
+            setDifficulty(response.difficulty);
+            setDiscovery(response.discovery);
+            setConsequences(response.consequences);
+            setRewards(response.rewards);
+            setOutcome(response.outcomes);
+            setObjectives(response.objective);
+            setDescription(response.description);
+            setWorldResponse(response);
+            setLoading(false);
+        }
+    }, [response]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -174,29 +194,6 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
             id: entityid,
         });
     };
-
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            setWorldResponse(response);
-            setName(response.name);
-            setDifficulty(response.difficulty);
-            setDiscovery(response.discovery);
-            setConsequences(response.consequences);
-            setRewards(response.rewards);
-            setOutcome(response.outcomes);
-            setObjectives(response.objective);
-            setDescription(response.description);
-            setWorldResponse(response);
-            setLoading(false);
-        }
-    }, [response]);
 
     return !quest ? (
         <div className="flex items-center justify-center">

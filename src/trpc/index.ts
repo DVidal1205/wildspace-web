@@ -1,19 +1,16 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { privateProcedure, publicProcedure, router } from "./trpc";
-import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
-import { any, z } from "zod";
-import { ChatOpenAI, OpenAI } from "@langchain/openai";
-import { StructuredOutputParser } from "langchain/output_parsers";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { utapi } from "@/server/uploadthing";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
-import { Character } from "@prisma/client";
+import { OpenAI } from "@langchain/openai";
+import { TRPCError } from "@trpc/server";
+import { StructuredOutputParser } from "langchain/output_parsers";
 import { OpenAI as MyOpenAI } from "openai";
-import { useUploadThing } from "@/lib/uploadthing";
-import axios from "axios";
-import { utapi } from "@/server/uploadthing";
-import build from "next/dist/build";
+import { z } from "zod";
+import { privateProcedure, publicProcedure, router } from "./trpc";
+import { absoluteUrl } from "@/lib/utils";
+import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
 
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
@@ -43,6 +40,52 @@ export const appRouter = router({
         }
 
         return { success: true };
+    }),
+    createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
+        const { userId } = ctx;
+
+        const billingUrl = absoluteUrl("/dashboard/billing");
+
+        if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+        const dbUser = await db.user.findFirst({
+            where: {
+                id: userId,
+            },
+        });
+
+        if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+        const subscriptionPlan = await getUserSubscriptionPlan();
+
+        if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+            const stripeSession = await stripe.billingPortal.sessions.create({
+                customer: dbUser.stripeCustomerId,
+                return_url: billingUrl,
+            });
+
+            return { url: stripeSession.url };
+        }
+
+        const stripeSession = await stripe.checkout.sessions.create({
+            success_url: billingUrl,
+            cancel_url: billingUrl,
+            payment_method_types: ["card", "paypal"],
+            mode: "subscription",
+            billing_address_collection: "auto",
+            line_items: [
+                {
+                    price: PLANS.find((plan) => plan.name === "Pro")?.price
+                        .priceIds.test,
+                    quantity: 1,
+                },
+            ],
+            metadata: {
+                userId: userId,
+            },
+        });
+
+        return { url: stripeSession.url };
     }),
     getUserWorlds: privateProcedure.query(async ({ ctx }) => {
         const { userId } = ctx;
@@ -125,118 +168,6 @@ export const appRouter = router({
                 spells,
             };
         }),
-    getWorldCharacters: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const characters = await db.character.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return characters;
-        }),
-    getWorldCities: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const cities = await db.city.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return cities;
-        }),
-    getWorldFactions: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const factions = await db.faction.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return factions;
-        }),
-    getWorldQuests: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const quests = await db.quest.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return quests;
-        }),
-    getWorldBuildings: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const buildings = await db.building.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return buildings;
-        }),
-    getWorldMonsters: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const monsters = await db.monster.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return monsters;
-        }),
-    getWorldItems: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const items = await db.item.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return items;
-        }),
-    getWorldSpells: privateProcedure
-        .input(z.object({ worldID: z.string() }))
-        .query(async ({ ctx, input }) => {
-            const { userId } = ctx;
-
-            const spells = await db.spell.findMany({
-                where: {
-                    worldID: input.worldID,
-                    userId,
-                },
-            });
-
-            return spells;
-        }),
     deleteWorld: privateProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
@@ -263,6 +194,48 @@ export const appRouter = router({
                 },
             });
 
+            const factions = await db.faction.findMany({
+                where: {
+                    worldID: input.id,
+                    userId,
+                },
+            });
+
+            const monsters = await db.monster.findMany({
+                where: {
+                    worldID: input.id,
+                    userId,
+                },
+            });
+
+            const quests = await db.quest.findMany({
+                where: {
+                    worldID: input.id,
+                    userId,
+                },
+            });
+
+            const buildings = await db.building.findMany({
+                where: {
+                    worldID: input.id,
+                    userId,
+                },
+            });
+
+            const items = await db.item.findMany({
+                where: {
+                    worldID: input.id,
+                    userId,
+                },
+            });
+
+            const spells = await db.spell.findMany({
+                where: {
+                    worldID: input.id,
+                    userId,
+                },
+            });
+
             for (const character of characters) {
                 if (character.imageKey) {
                     await utapi.deleteFiles(character.imageKey);
@@ -272,6 +245,42 @@ export const appRouter = router({
             for (const city of cities) {
                 if (city.imageKey) {
                     await utapi.deleteFiles(city.imageKey);
+                }
+            }
+
+            for (const faction of factions) {
+                if (faction.imageKey) {
+                    await utapi.deleteFiles(faction.imageKey);
+                }
+            }
+
+            for (const monster of monsters) {
+                if (monster.imageKey) {
+                    await utapi.deleteFiles(monster.imageKey);
+                }
+            }
+
+            for (const quest of quests) {
+                if (quest.imageKey) {
+                    await utapi.deleteFiles(quest.imageKey);
+                }
+            }
+
+            for (const building of buildings) {
+                if (building.imageKey) {
+                    await utapi.deleteFiles(building.imageKey);
+                }
+            }
+
+            for (const item of items) {
+                if (item.imageKey) {
+                    await utapi.deleteFiles(item.imageKey);
+                }
+            }
+
+            for (const spell of spells) {
+                if (spell.imageKey) {
+                    await utapi.deleteFiles(spell.imageKey);
                 }
             }
 
@@ -1833,7 +1842,7 @@ export const appRouter = router({
         {context}
 
         Only generate information in the city fields that are empty. For example, if the city already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Lore: ) Use the fields from the city information that are present to populate the JSON you will return.
-        Existing Character Information:
+        Existing City Information:
         Name: {name}
         Population: {population}
         Sprawl: {sprawl}
@@ -2038,7 +2047,7 @@ export const appRouter = router({
             if (!city) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
-                    message: "Character not found",
+                    message: "City not found",
                 });
             }
 
@@ -2278,8 +2287,9 @@ export const appRouter = router({
         Other Entity to contextualize:
         {context}
 
-        Only generate information in the city fields that are empty. For example, if the city already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Lore: ) Use the fields from the city information that are present to populate the JSON you will return.
-        Existing Character Information:
+        Only generate information in the faction fields that are empty. For example, if the faction already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Lore: ) Use the fields from the faction information that are present to populate the JSON you will return.
+        
+        Existing Faction Information:
         Name: {name}
         Population: {population}
         Type: {type}
@@ -2668,7 +2678,7 @@ export const appRouter = router({
             const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a quest/plotline concept for a quest your party may encounter the following information.  
-        When making this quest, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the faction. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        When making this quest, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the quest. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
         
         Your generation Prompt: 
         {question}
@@ -2679,7 +2689,7 @@ export const appRouter = router({
         Other Entity to contextualize:
         {context}
 
-        Only generate information in the city fields that are empty. For example, if the quest already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        Only generate information in the quest fields that are empty. For example, if the quest already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
         
         Existing Quest Information:
         Name: {name}
@@ -3062,7 +3072,7 @@ export const appRouter = router({
             const promptTemplate = `You are an expert World Builder for Fictional Fantasy Worlds.
         You come up with catchy and memorable ideas for a Fictional World. 
         Create a building/shop concept for a building your party may encounter the following information.  
-        When making this quest, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the building. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
+        When making this building, be sure to contextualize the following information about the world as best as possible, i.e, include the world into your generation of the building. You may be also asked to contextualize another entity, such as a person, place, or country. Be sure to include details of that entity, and be sure to use the name of the entity.
         
         Your generation Prompt: 
         {question}
@@ -3073,9 +3083,9 @@ export const appRouter = router({
         Other Entity to contextualize:
         {context}
 
-        Only generate information in the city fields that are empty. For example, if the quest already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        Only generate information in the building fields that are empty. For example, if the buidling already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the building information that are present to populate the JSON you will return.
         
-        Existing Quest Information:
+        Existing Building Information:
         Name: {name}
         Type: {type}
         Size: {size}
@@ -3255,7 +3265,7 @@ export const appRouter = router({
             if (!building) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
-                    message: "Quest not found",
+                    message: "Building not found",
                 });
             }
 
@@ -3537,7 +3547,7 @@ export const appRouter = router({
         Other Entity to contextualize:
         {context}
 
-        Only generate information in the monster fields that are empty. For example, if the monster already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        Only generate information in the monster fields that are empty. For example, if the monster already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the monster information that are present to populate the JSON you will return.
         
         Existing Monster Information:
         Name: {name}
@@ -3719,7 +3729,7 @@ export const appRouter = router({
             if (!monster) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
-                    message: "Quest not found",
+                    message: "Monster not found",
                 });
             }
 
@@ -3862,7 +3872,7 @@ export const appRouter = router({
         .query(async ({ ctx, input }) => {
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
-                    name: z.string().describe("Name of the Monster"),
+                    name: z.string().describe("Name of the Item"),
                     type: z
                         .string()
                         .describe(
@@ -3949,7 +3959,7 @@ export const appRouter = router({
         Other Entity to contextualize:
         {context}
 
-        Only generate information in the monster fields that are empty. For example, if the item already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the quest information that are present to populate the JSON you will return.
+        Only generate information in the item fields that are empty. For example, if the item already has a name (i.e. Name: Demacia), do not generate a new name. Only generate for the fields that are empty (i.e. Backstory: ) Use the fields from the item information that are present to populate the JSON you will return.
         
         Existing Item Information:
         Name: {name}
@@ -4111,7 +4121,7 @@ export const appRouter = router({
             if (!item) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
-                    message: "Quest not found",
+                    message: "Item not found",
                 });
             }
 

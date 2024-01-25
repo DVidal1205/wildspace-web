@@ -14,7 +14,6 @@ const Dash = () => {
     const [currentlyDeletingWorld, setCurrentlyDeletingWorld] = useState<
         string | null
     >(null);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const utils = trpc.useContext();
 

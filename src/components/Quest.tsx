@@ -39,7 +39,6 @@ const Quest = ({ world }: { world: World }) => {
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-
     const [name, setName] = useState<string>("");
     const [difficulty, setDifficulty] = useState<string>("");
     const [discovery, setDiscovery] = useState<string>("");
@@ -76,7 +75,6 @@ const Quest = ({ world }: { world: World }) => {
     );
     const { mutate: saveQuest } = trpc.saveQuest.useMutation({
         onSuccess: () => {
-            utils.getWorldQuests.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Quest Saved",
@@ -107,6 +105,30 @@ const Quest = ({ world }: { world: World }) => {
             { enabled: false }
         );
 
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(imageResponse);
+            console.log(imageResponse);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            console.log(response);
+            setResponseData(response);
+            setName(response.name);
+            setDifficulty(response.difficulty);
+            setDiscovery(response.discovery);
+            setConsequences(response.consequences);
+            setRewards(response.rewards);
+            setOutcome(response.outcomes);
+            setObjectives(response.objective);
+            setDescription(response.description);
+            setLoading(false);
+        }
+    }, [response]);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -131,30 +153,6 @@ const Quest = ({ world }: { world: World }) => {
             worldID: world.id,
         });
     };
-
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(imageResponse);
-            console.log(imageResponse);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            console.log(response);
-            setResponseData(response);
-            setName(response.name);
-            setDifficulty(response.difficulty);
-            setDiscovery(response.discovery);
-            setConsequences(response.consequences);
-            setRewards(response.rewards);
-            setOutcome(response.outcomes);
-            setObjectives(response.objective);
-            setDescription(response.description);
-            setLoading(false);
-        }
-    }, [response]);
 
     return (
         <Card>

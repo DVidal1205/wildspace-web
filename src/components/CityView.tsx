@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -130,7 +128,6 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     );
     const { mutate: updateCity } = trpc.updateCity.useMutation({
         onSuccess: () => {
-            utils.getWorldCities.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "City Updated",
@@ -147,7 +144,6 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     const { mutate: deleteCity } = trpc.deleteCity.useMutation({
         onSuccess: () => {
-            utils.getWorldCities.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -167,38 +163,6 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
         { object: response ? response : city, type: "City/Town" },
         { enabled: false }
     );
-
-    const handleSubmit = () => {
-        setLoading(true);
-        genFetch();
-    };
-
-    const handleImage = () => {
-        setImageLoading(true);
-        imageFetch();
-    };
-
-    const handleSave = () => {
-        updateCity({
-            name: name,
-            population: population,
-            sprawl: sprawl,
-            architecture: architecture,
-            industries: industries,
-            climate: climate,
-            safety: safety,
-            education: education,
-            modernity: modernity,
-            wealth: wealth,
-            description: description,
-            lore: lore,
-            governance: governance,
-            quests: quests,
-            imageb64: image,
-            worldID: world.id,
-            id: entityid,
-        });
-    };
 
     useEffect(() => {
         if (error) {
@@ -253,6 +217,38 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
             setLoading(false);
         }
     }, [response]);
+
+    const handleSubmit = () => {
+        setLoading(true);
+        genFetch();
+    };
+
+    const handleImage = () => {
+        setImageLoading(true);
+        imageFetch();
+    };
+
+    const handleSave = () => {
+        updateCity({
+            name: name,
+            population: population,
+            sprawl: sprawl,
+            architecture: architecture,
+            industries: industries,
+            climate: climate,
+            safety: safety,
+            education: education,
+            modernity: modernity,
+            wealth: wealth,
+            description: description,
+            lore: lore,
+            governance: governance,
+            quests: quests,
+            imageb64: image,
+            worldID: world.id,
+            id: entityid,
+        });
+    };
 
     return !city ? (
         <div className="flex items-center justify-center">
@@ -556,7 +552,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                     height={1024}
                                     width={1024}
                                     src={image}
-                                    alt="character image"
+                                    alt="City Image"
                                     className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"

@@ -26,7 +26,6 @@ import { useToast } from "./ui/use-toast";
 const Item = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
     const [typeDisabled, setTypeDisabled] = useState<boolean>(false);
-    const [sizeDisabled, setSizeDisabled] = useState<boolean>(false);
     const [abilitiesDisabled, setAbilitiesDisabled] = useState<boolean>(false);
     const [descriptionDisabled, setDescriptionDisabled] =
         useState<boolean>(false);
@@ -36,7 +35,6 @@ const Item = ({ world }: { world: World }) => {
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [isImageFullscreen, setIsImageFullscreen] = useState(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [abilities, setAbilities] = useState<string>("");
@@ -71,7 +69,6 @@ const Item = ({ world }: { world: World }) => {
     );
     const { mutate: saveItem } = trpc.saveItem.useMutation({
         onSuccess: () => {
-            utils.getWorldItems.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Item Saved",
@@ -128,6 +125,27 @@ const Item = ({ world }: { world: World }) => {
         }
     }, [imageError, toast]);
 
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(imageResponse);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            console.log(response);
+            setResponseData(response);
+            setName(response.name);
+            setType(response.type);
+            setAbilities(response.abilities);
+            setDescription(response.description);
+            setLore(response.lore);
+            setLoading(false);
+            setResponseData(response);
+        }
+    }, [response]);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -149,27 +167,6 @@ const Item = ({ world }: { world: World }) => {
             worldID: world.id,
         });
     };
-
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(imageResponse);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            console.log(response);
-            setResponseData(response);
-            setName(response.name);
-            setType(response.type);
-            setAbilities(response.abilities);
-            setDescription(response.description);
-            setLore(response.lore);
-            setLoading(false);
-            setResponseData(response);
-        }
-    }, [response]);
 
     return (
         <Card>

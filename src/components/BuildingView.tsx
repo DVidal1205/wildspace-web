@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -48,7 +46,6 @@ const BuildingView = ({
     const [currentlySavingBuilding, setCurrentlySavingBuilding] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [size, setSize] = useState<string>("");
@@ -76,22 +73,6 @@ const BuildingView = ({
         id: entityid,
     });
 
-    useEffect(() => {
-        if (building) {
-            setName(building.name);
-            setType(building.type);
-            setSize(building.size);
-            setArchitecture(building.architecture);
-            setAmbience(building.ambience);
-            setTraffic(building.traffic);
-            setDescription(building.description);
-            setVendor(building.vendor);
-            setGoods(building.goods);
-            setImage(building.imageURL);
-            setBuildingResponse(building);
-        }
-    }, [building]);
-
     const {
         data: response,
         refetch: genFetch,
@@ -115,9 +96,9 @@ const BuildingView = ({
             enabled: false,
         }
     );
+
     const { mutate: updateBuilding } = trpc.updateBuilding.useMutation({
         onSuccess: () => {
-            utils.getWorldBuildings.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Building Updated!",
@@ -134,7 +115,6 @@ const BuildingView = ({
 
     const { mutate: deleteBuilding } = trpc.deleteBuilding.useMutation({
         onSuccess: () => {
-            utils.getWorldBuildings.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -159,8 +139,23 @@ const BuildingView = ({
     );
 
     useEffect(() => {
+        if (building) {
+            setName(building.name);
+            setType(building.type);
+            setSize(building.size);
+            setArchitecture(building.architecture);
+            setAmbience(building.ambience);
+            setTraffic(building.traffic);
+            setDescription(building.description);
+            setVendor(building.vendor);
+            setGoods(building.goods);
+            setImage(building.imageURL);
+            setBuildingResponse(building);
+        }
+    }, [building]);
+
+    useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -173,7 +168,6 @@ const BuildingView = ({
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,
@@ -183,6 +177,30 @@ const BuildingView = ({
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(`data:image/png;base64,${imageResponse}`);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            setWorldResponse(response);
+            setName(response.name);
+            setType(response.type);
+            setSize(response.size);
+            setArchitecture(response.architecture);
+            setAmbience(response.ambience);
+            setTraffic(response.traffic);
+            setDescription(response.description);
+            setVendor(response.vendor);
+            setGoods(response.goods);
+            setWorldResponse(response);
+            setLoading(false);
+        }
+    }, [response]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -211,30 +229,6 @@ const BuildingView = ({
         });
     };
 
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            setWorldResponse(response);
-            setName(response.name);
-            setType(response.type);
-            setSize(response.size);
-            setArchitecture(response.architecture);
-            setAmbience(response.ambience);
-            setTraffic(response.traffic);
-            setDescription(response.description);
-            setVendor(response.vendor);
-            setGoods(response.goods);
-            setWorldResponse(response);
-            setLoading(false);
-        }
-    }, [response]);
-
     return !building ? (
         <div className="flex items-center justify-center">
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
@@ -242,12 +236,10 @@ const BuildingView = ({
     ) : (
         <Card>
             <CardHeader>
-                <CardTitle>Building Generation</CardTitle>
+                <CardTitle>{name}</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with a building! Leave the fields blank
-                    to generate details, or fill in properties and check them to
-                    set them. Press the save button to save the building to your
-                    gallery.
+                    View your building information for {name} here, or edit and
+                    save to update the building.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
@@ -443,7 +435,7 @@ const BuildingView = ({
                                     height={1024}
                                     width={1024}
                                     src={image}
-                                    alt="character image"
+                                    alt="Building Image"
                                     className={`rounded ${
                                         isImageFullscreen
                                             ? "h-[85vh] w-auto"

@@ -1,9 +1,7 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
-import {
-    World
-} from "@prisma/client";
+import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
 import { Check, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -48,7 +46,6 @@ const MonsterView = ({
     const [currentlySavingMonster, setCurrentlySavingMonster] =
         useState<boolean>(false);
     const [imageLoading, setImageLoading] = useState<boolean>(false);
-
     const [name, setName] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [size, setSize] = useState<string>("");
@@ -117,7 +114,6 @@ const MonsterView = ({
     );
     const { mutate: updateMonster } = trpc.updateMonster.useMutation({
         onSuccess: () => {
-            utils.getWorldMonsters.invalidate();
             utils.getWorldEntities.invalidate();
             toast({
                 title: "Monster Updated!",
@@ -134,7 +130,6 @@ const MonsterView = ({
 
     const { mutate: deleteMonster } = trpc.deleteMonster.useMutation({
         onSuccess: () => {
-            utils.getWorldMonsters.invalidate();
             utils.getWorldEntities.invalidate();
             router.push(`/dashboard/${world.id}`);
         },
@@ -184,6 +179,30 @@ const MonsterView = ({
         }
     }, [imageError, toast]);
 
+    useEffect(() => {
+        if (imageResponse) {
+            setImage(`data:image/png;base64,${imageResponse}`);
+            setImageLoading(false);
+        }
+    }, [imageResponse]);
+
+    useEffect(() => {
+        if (response) {
+            setWorldResponse(response);
+            setName(response.name);
+            setType(response.type);
+            setSize(response.size);
+            setAlignment(response.alignment);
+            setResistance(response.resistances);
+            setStats(response.stats);
+            setAbilities(response.abilities);
+            setDescription(response.description);
+            setLore(response.lore);
+            setWorldResponse(response);
+            setLoading(false);
+        }
+    }, [response]);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -211,30 +230,6 @@ const MonsterView = ({
         });
     };
 
-    useEffect(() => {
-        if (imageResponse) {
-            setImage(`data:image/png;base64,${imageResponse}`);
-            setImageLoading(false);
-        }
-    }, [imageResponse]);
-
-    useEffect(() => {
-        if (response) {
-            setWorldResponse(response);
-            setName(response.name);
-            setType(response.type);
-            setSize(response.size);
-            setAlignment(response.alignment);
-            setResistance(response.resistances);
-            setStats(response.stats);
-            setAbilities(response.abilities);
-            setDescription(response.description);
-            setLore(response.lore);
-            setWorldResponse(response);
-            setLoading(false);
-        }
-    }, [response]);
-
     return !monster ? (
         <div className="flex items-center justify-center">
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
@@ -242,12 +237,10 @@ const MonsterView = ({
     ) : (
         <Card>
             <CardHeader>
-                <CardTitle>Monster Generation</CardTitle>
+                <CardTitle>{name}</CardTitle>
                 <CardDescription>
-                    Let&apos;s come up with a monster! Leave the fields blank to
-                    generate details, or fill in properties and check them to
-                    set them. Press the save button to save the monster to your
-                    gallery.
+                    View your monster information for {name} here, or edit and
+                    save to update the monster.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
