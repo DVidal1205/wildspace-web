@@ -11,6 +11,7 @@ import { z } from "zod";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
+import { PLANS } from "@/config/stripe";
 
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
