@@ -188,7 +188,7 @@ const Page = async () => {
                   </ul>
                   <div className="border-t border-gray-200" />
                   <div className="p-5">
-                    {plan === "Free" ? (
+                    {plan === "Demo" ? (
                       <Link
                         href={user ? "/dashboard" : "/sign-in"}
                         className={buttonVariants({

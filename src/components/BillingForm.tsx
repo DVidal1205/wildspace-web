@@ -41,7 +41,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
       ? "Pro"
       : subscriptionPlan.name === "Pro"
       ? "Premium"
-      : "";
+      : "Pro";
 
   return (
     <MaxWidthWrapper className="max-w-5xl">
