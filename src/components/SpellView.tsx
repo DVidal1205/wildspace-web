@@ -415,7 +415,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                         </div>
                     </div>
                 </div>
-                <div className="space-y-1 ml-2">
+                <div className="space-y-1">
                     <Label>Image</Label>
                     <Card className="aspect-square">
                         {image && (

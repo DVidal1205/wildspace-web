@@ -13,6 +13,11 @@ const nextConfig = {
                 hostname: "utfs.io",
                 port: "",
             },
+            {
+                protocol: "https",
+                hostname: "avatars.githubusercontent.com",
+                port: "",
+            },
         ],
     },
 };
