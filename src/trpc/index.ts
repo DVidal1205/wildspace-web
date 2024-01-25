@@ -426,7 +426,7 @@ export const appRouter = router({
 
             console.log(response.prompt);
 
-            const openai = new MyOpenAI();
+            const openai = new MyOpenAI({ timeout: 60000 });
             const imageResponse = await openai.images.generate({
                 model: "dall-e-3",
                 prompt: response.prompt,
