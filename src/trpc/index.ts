@@ -13,7 +13,7 @@ import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
 import { PLANS } from "@/config/stripe";
 
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
