@@ -13,6 +13,8 @@ import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
 import { PLANS } from "@/config/stripe";
 
+export const maxDuration = 30;
+
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
         const { getUser } = getKindeServerSession();
@@ -426,7 +428,7 @@ export const appRouter = router({
 
             console.log(response.prompt);
 
-            const openai = new MyOpenAI({ timeout: 60000 });
+            const openai = new MyOpenAI();
             const imageResponse = await openai.images.generate({
                 model: "dall-e-3",
                 prompt: response.prompt,
