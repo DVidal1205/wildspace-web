@@ -42,7 +42,7 @@ export const appRouter = router({
 
         return { success: true };
     }),
-    createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
+    createStripeSession: privateProcedure.input(z.object({slug: z.string()})).mutation(async ({ input, ctx }) => {
         const { userId } = ctx;
 
         const billingUrl = absoluteUrl("/dashboard/billing");
@@ -76,7 +76,7 @@ export const appRouter = router({
             billing_address_collection: "auto",
             line_items: [
                 {
-                    price: PLANS.find((plan) => plan.name === "Pro")?.price
+                    price: PLANS.find((plan) => plan.name === input.slug)?.price
                         .priceIds.test,
                     quantity: 1,
                 },
