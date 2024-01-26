@@ -197,7 +197,17 @@ const Item = ({ world }: { world: World }) => {
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="grid md:col-span-2 gap-4">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the item.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -216,7 +226,21 @@ const Item = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="descrption">Description</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="description">Description</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the item,
+                                            including details of its appearance
+                                            and how it is used.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="descrption"
@@ -239,7 +263,21 @@ const Item = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="lore">Lore</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="lore">Lore</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the lore of
+                                            the item, including its history and
+                                            significance.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="lore"
@@ -262,7 +300,21 @@ const Item = ({ world }: { world: World }) => {
                     </div>
                     <div className="grid md:col-span-2 gap-4">
                         <div className="space-y-1">
-                            <Label htmlFor="type">Type</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="type">Type</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The type of item, ranging from
+                                            Armor, Weapon, Ring, as well as its
+                                            rarity from Common to Legendary.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="type"
@@ -281,7 +333,21 @@ const Item = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="abilities">Abilities</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="abilities">Abilities</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A table detailing the abilities of
+                                            the item and their action economy
+                                            costs.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Card className="overflow-auto h-[20vh] md:h-[30vh] w-full">
                                     <div className="p-4">

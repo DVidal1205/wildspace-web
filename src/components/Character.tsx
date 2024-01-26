@@ -250,7 +250,17 @@ const Character = ({ world }: { world: World }) => {
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="gap-4 md:col-span-2 grid md:grid-cols-2">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the character.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -269,7 +279,19 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="race">Race</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="race">Race</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The fantasy race of the character.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="race"
@@ -288,7 +310,17 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="class">Class</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="class">Class</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The TTRPG class of the character.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="class"
@@ -307,7 +339,20 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="subclass">Subclass</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="subclass">Subclass</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The corresponding subclass of the
+                                            TTRPG class of the character.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="subclass"
@@ -328,7 +373,20 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="alignment">Alignment</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="alignment">Alignment</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The alignment of the character, or
+                                            their moral compass.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="alignment"
@@ -349,7 +407,20 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="age">Age</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="age">Age</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The age of the character,
+                                            appropriate for their fantasy race.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="age"
@@ -366,7 +437,20 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="build">Build</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="build">Build</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The physical build of the character,
+                                            ranging from thin to muscular.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="build"
@@ -385,7 +469,21 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="gender">Gender</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="gender">Gender</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The gender of the character,
+                                            including Male, Female, Non-Binary,
+                                            or Construct
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="gender"
@@ -404,7 +502,20 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="hair">Hair</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="hair">Hair</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The hair color and style of the
+                                            character.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="hair"
@@ -423,7 +534,21 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="height">Height</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="height">Height</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The height of the character
+                                            appropriate for their fantasy race,
+                                            in feet and inches.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="height"
@@ -444,7 +569,21 @@ const Character = ({ world }: { world: World }) => {
                     </div>
                     <div className="gap-4 space-y-2 md:col-span-2">
                         <div className="space-y-1">
-                            <Label htmlFor="fashion">Fashion</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="fashion">Fashion</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the fashion
+                                            of the character, including their
+                                            clothing, accessories, and jewelry.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="fashion"
@@ -463,7 +602,21 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="quirks">Quirks</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="quirks">Quirks</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the quirks of
+                                            the character to use in roleplay or
+                                            scenemaking.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="quirks"
@@ -482,7 +635,21 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="goals">Goals</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="goals">Goals</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the goals of
+                                            the character to use in their story
+                                            and motivating their actions.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="goals"
@@ -501,7 +668,22 @@ const Character = ({ world }: { world: World }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="backstory">Backstory</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="backstory">Backstory</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the backstory
+                                            of the character, possibly including
+                                            their upbringing, family, and past
+                                            experiences.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="backstory"

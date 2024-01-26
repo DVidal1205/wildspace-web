@@ -296,7 +296,17 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="grid md:col-span-2 md:grid-cols-2 gap-4">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the spell.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -315,7 +325,20 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="level">Level</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="level">Level</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The level of the spell from 1st to
+                                            9th.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="level"
@@ -334,7 +357,20 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="school">School</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="school">School</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The school of magic the spell is
+                                            derived from.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="school"
@@ -353,7 +389,22 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="components">Components</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="components">Components</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The components needed for casting
+                                            the spell, including V (Verbal), S
+                                            (Somatic), or M (Material, and the
+                                            materials needed).
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="components"
@@ -376,7 +427,21 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="castingTime">Casting Time</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="castingTime">
+                                    Casting Time
+                                </Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The time it takes to cast the spell.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="castingTime"
@@ -399,7 +464,20 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="duration">Duration</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="duration">Duration</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The duration of the spell, including
+                                            if it requires concentration.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="duration"
@@ -420,7 +498,21 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="range">Range</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="range">Range</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The range the spell can be casted
+                                            from, or the range of its
+                                            projectile.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="range"
@@ -439,7 +531,20 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="spellList">Spell List</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="spellList">Spell List</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The list of classes that have access
+                                            to casting the spell.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="spellList"
@@ -462,7 +567,21 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="grid md:col-span-2 gap-4">
                         <div className="space-y-1">
-                            <Label htmlFor="descrption">Description</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="description">Description</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The description of the spell,
+                                            detailing its abilities, damage, and
+                                            other factors in the spells casting.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center h-full">
                                 <Card className="h-full p-4 w-full overflow-auto">
                                     <Markdown remarkPlugins={[remarkGfm]}>
@@ -482,7 +601,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 mt-4 md:mt-0">
                         <Label>Image</Label>
                         <Card className="aspect-square">
                             {image && (

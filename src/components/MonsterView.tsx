@@ -279,7 +279,17 @@ const MonsterView = ({
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="gap-4 grid">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the monster.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -298,7 +308,21 @@ const MonsterView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="type">Type</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="type">Type</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The name of the monster, including
+                                            forms such as humanoid, fiend,
+                                            aberration, etc.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="type"
@@ -317,7 +341,20 @@ const MonsterView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="size">Size</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="size">Size</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The size of the monster, ranging
+                                            from small to gargantuan.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="size"
@@ -336,7 +373,20 @@ const MonsterView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="alignment">Alignment</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="alignment">Alignment</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The name alignment of the monster,
+                                            indicating its moral compass.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="alignment"
@@ -357,7 +407,20 @@ const MonsterView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="resistance">Resistances</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="resistances">Resistances</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The damage types the monster is
+                                            resistant of.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="resistance"
@@ -382,7 +445,21 @@ const MonsterView = ({
                     </div>
                     <div className="grid gap-4">
                         <div className="space-y-1">
-                            <Label htmlFor="description">Description</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="description">Description</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph description of the
+                                            monster, including its appearance
+                                            and abilities.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="description"
@@ -407,7 +484,22 @@ const MonsterView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="lore">Lore</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="lore">Lore</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the lore of
+                                            the monster, including its context
+                                            in the world and any myths
+                                            surrounding it.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="lore"
@@ -430,8 +522,22 @@ const MonsterView = ({
                     </div>
                     <div className="grid gap-4 md:col-span-2">
                         <div className="space-y-1">
-                            <Label htmlFor="lore">Stats</Label>
-                            <div className="flex space-x-2 items-center">
+                            <div className="flex items-center">
+                                <Label htmlFor="stats">Stats</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A table detailing the stats of the
+                                            monster, including its defenses,
+                                            speeds, and other stats.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
+                            <div className="flex flex-col">
                                 <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                     <div className="p-4">
                                         <Markdown
@@ -454,8 +560,22 @@ const MonsterView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="lore">Abilities</Label>
-                            <div className="flex space-x-2 items-center">
+                            <div className="flex items-center">
+                                <Label htmlFor="abilities">Abilities</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A table detailing the various combat
+                                            abilities and passives the monster
+                                            has.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
+                            <div className="flex flex-col">
                                 <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                     <div className="p-4">
                                         <Markdown

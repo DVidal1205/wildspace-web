@@ -250,10 +250,20 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                         save to update the quest.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="grid lg:grid-cols-5 gap-4">
+                <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="gap-4 md:col-span-2 grid">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the quest.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -272,7 +282,22 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="description">Description</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="description">Description</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragrapgh describing the quest,
+                                            including details about the quest
+                                            giver, the quest process itself, and
+                                            the rewards.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="description"
@@ -295,7 +320,21 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="objectives">Objectives</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="objectives">Objectives</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the various
+                                            objectives within this quest, and
+                                            how to complete them.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="objectives"
@@ -318,7 +357,21 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="outcome">Outcome</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="outcome">Outcome</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing the various
+                                            outcomes of the quest depending on
+                                            the partys performance.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="outcome"
@@ -339,7 +392,17 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="gap-4 md:col-span-2 grid">
                         <div className="space-y-1">
-                            <Label htmlFor="difficulty">Difficulty</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="difficulty">Difficulty</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The difficulty of the quest.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="difficulty"
@@ -362,7 +425,21 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="discovery">Discovery</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="discovery">Discovery</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing how the party
+                                            may come across and discover this
+                                            quest.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="discovery"
@@ -383,7 +460,23 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="consequences">Consequences</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="consequences">
+                                    Consequences
+                                </Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing the potential
+                                            consequences of completing this
+                                            quest, good or bad.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="consequences"
@@ -406,7 +499,21 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="rewards">Rewards</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="rewards">Rewards</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing various
+                                            rewards the party may receive upon
+                                            completion of this quest.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="rewards"

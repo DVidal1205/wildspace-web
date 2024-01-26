@@ -4375,7 +4375,7 @@ export const appRouter = router({
                     range: z
                         .string()
                         .describe(
-                            "Range of the spell, such as 30 feet, 60 feet, etc. (1-5 Words)"
+                            "Range of the spell, such as 30 feet, 60 feet, touch, etc. (1-5 Words)"
                         ),
                     components: z
                         .string()

@@ -280,7 +280,17 @@ const FactionView = ({
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="gap-4 md:col-span-2 grid md:grid-cols-2">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the faction.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -299,7 +309,21 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="type">Type</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="type">Type</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The type of faction, which could
+                                            include cult, advocacy group, royal
+                                            family, etc.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="type"
@@ -318,7 +342,20 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="population">Population</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="population">Population</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The number of people who are apart
+                                            of the faction.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="population"
@@ -341,7 +378,21 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="alignment">Alignment</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="alignment">Alignment</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The average alignment of the
+                                            faction, detailing their moral
+                                            compass.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="alignment"
@@ -362,7 +413,21 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="presence">Presence</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="presence">Presence</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            How the faction is known outside of
+                                            it, and its impact on the region it
+                                            exists in.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="presence"
@@ -383,7 +448,22 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="devotion">Devotion</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="devotion">Devotion</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The average devotion members of the
+                                            faction have to their organization
+                                            and cause, ranging from volunteer to
+                                            fanatic.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="devotion"
@@ -406,7 +486,22 @@ const FactionView = ({
                     </div>
                     <div className="gap-4 space-y-2 md:col-span-2">
                         <div className="space-y-1">
-                            <Label htmlFor="description">Description</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="description">Description</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph description of the
+                                            faction, including more detail on
+                                            its members, causes, and
+                                            participance.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="description"
@@ -429,7 +524,21 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="lore">Lore</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="lore">Lore</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing the lore of
+                                            the faction, including details on
+                                            its founding and history.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="lore"
@@ -448,7 +557,21 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="goals">Goals</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="goals">Goals</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing the goals of
+                                            the faction, and how they seek to
+                                            achieve them.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="goals"
@@ -467,7 +590,22 @@ const FactionView = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="traits">Traits</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="traits">Traits</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the common
+                                            and noticeable traits of members of
+                                            the faction, and how to identify
+                                            them.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="traits"

@@ -305,7 +305,17 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
                     <div className="gap-4 md:col-span-2 grid md:grid-cols-2">
                         <div className="space-y-1">
-                            <Label htmlFor="name">Name</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="name">Name</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The name of the city.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="name"
@@ -324,7 +334,20 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="population">Population</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="population">Population</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The population of the city,
+                                            appropriate to its size.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="population"
@@ -347,7 +370,20 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="sprawl">Sprawl</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="sprawl">Sprawl</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The general layout of the city and
+                                            its buildings.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="sprawl"
@@ -366,7 +402,22 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="architecture">Architecture</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="architecture">
+                                    Architecture
+                                </Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The general architectural practices
+                                            of the city.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="architecture"
@@ -389,7 +440,19 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="industries">Industries</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="industries">Industries</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The common industries of the city.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="industries"
@@ -412,7 +475,17 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="climate">Climate</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="climate">Climate</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>The general climate of the city.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="climate"
@@ -431,7 +504,19 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="safety">Safety</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="safety">Safety</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The level of safety within the city.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="safety"
@@ -450,7 +535,20 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="education">Education</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="education">Education</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The level of education within the
+                                            city.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="education"
@@ -471,7 +569,20 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="modernity">Modernity</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="modernity">Modernity</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The level of modern technology or
+                                            social practices within the city.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="modernity"
@@ -492,7 +603,20 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="wealth">Wealth</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="wealth">Wealth</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            The average wealth of the city and
+                                            its individuals.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Input
                                     id="wealth"
@@ -513,7 +637,22 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="gap-4 space-y-2 md:col-span-2">
                         <div className="space-y-1">
-                            <Label htmlFor="description">Description</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="description">Description</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph description of the city,
+                                            including more detail on its
+                                            industires, population, or
+                                            demographics.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="description"
@@ -536,7 +675,21 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="lore">Lore</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="lore">Lore</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph describing the lore of
+                                            the city, including details of its
+                                            founding and history moving forward.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="lore"
@@ -555,7 +708,22 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="governance">Governance</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="governance">Governance</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph description of the type
+                                            of governance of the city, including
+                                            details of the governing body and
+                                            governing structure.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="governance"
@@ -578,7 +746,23 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label htmlFor="quests">Quests</Label>
+                            <div className="flex items-center">
+                                <Label htmlFor="quests">Quests</Label>
+                                <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="w-80 p-2">
+                                        <p>
+                                            A paragraph detailing questlines you
+                                            may find in the city, including
+                                            information on how to come across
+                                            the quests, and how to complete
+                                            them.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <div className="flex space-x-2 items-center">
                                 <Textarea
                                     id="quests"
