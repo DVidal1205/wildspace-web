@@ -44,7 +44,7 @@ export async function getUserSubscriptionPlan() {
 
     const plan = isSubscribed
         ? PLANS.find(
-              (plan) => plan.price.priceIds.test === dbUser.stripePriceId
+              (plan) => plan.price.priceIds.production === dbUser.stripePriceId
           )
         : null;
 
