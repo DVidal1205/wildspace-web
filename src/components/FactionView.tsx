@@ -95,21 +95,22 @@ const FactionView = ({
             enabled: false,
         }
     );
-    const { mutate: updateFaction } = trpc.updateFaction.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Faction Updated",
-                description: "Your faction has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingFaction(true);
-        },
-        onSettled() {
-            setCurrentlySavingFaction(false);
-        },
-    });
+    const { mutate: updateFaction, error: updateError } =
+        trpc.updateFaction.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Faction Updated",
+                    description: "Your faction has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingFaction(true);
+            },
+            onSettled() {
+                setCurrentlySavingFaction(false);
+            },
+        });
 
     const { mutate: deleteFaction } = trpc.deleteFaction.useMutation({
         onSuccess: () => {
@@ -165,6 +166,18 @@ const FactionView = ({
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (response) {

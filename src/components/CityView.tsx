@@ -126,21 +126,22 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
             enabled: false,
         }
     );
-    const { mutate: updateCity } = trpc.updateCity.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "City Updated",
-                description: "Your city has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingCity(true);
-        },
-        onSettled() {
-            setCurrentlySavingCity(false);
-        },
-    });
+    const { mutate: updateCity, error: updateError } =
+        trpc.updateCity.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "City Updated",
+                    description: "Your city has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingCity(true);
+            },
+            onSettled() {
+                setCurrentlySavingCity(false);
+            },
+        });
 
     const { mutate: deleteCity } = trpc.deleteCity.useMutation({
         onSuccess: () => {
@@ -189,6 +190,18 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (imageResponse) {

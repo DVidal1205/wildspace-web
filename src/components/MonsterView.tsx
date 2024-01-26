@@ -112,21 +112,22 @@ const MonsterView = ({
             enabled: false,
         }
     );
-    const { mutate: updateMonster } = trpc.updateMonster.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Monster Updated!",
-                description: "Your monster has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingMonster(true);
-        },
-        onSettled() {
-            setCurrentlySavingMonster(false);
-        },
-    });
+    const { mutate: updateMonster, error: updateError } =
+        trpc.updateMonster.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Monster Updated!",
+                    description: "Your monster has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingMonster(true);
+            },
+            onSettled() {
+                setCurrentlySavingMonster(false);
+            },
+        });
 
     const { mutate: deleteMonster } = trpc.deleteMonster.useMutation({
         onSuccess: () => {
@@ -165,6 +166,18 @@ const MonsterView = ({
             return;
         }
     }, [error, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (imageError) {

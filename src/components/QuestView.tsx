@@ -74,7 +74,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         id: entityid,
     });
 
-    const { data: response, refetch: genFetch } = trpc.generateQuest.useQuery(
+    const { data: response, refetch: genFetch, error: error } = trpc.generateQuest.useQuery(
         {
             name: nameDisabled ? name : "",
             difficulty: difficultyDisabled ? difficulty : "",
@@ -92,21 +92,22 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
             enabled: false,
         }
     );
-    const { mutate: updateQuest } = trpc.updateQuest.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Quest Updated!",
-                description: "Your quest has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingQuest(true);
-        },
-        onSettled() {
-            setCurrentlySavingQuest(false);
-        },
-    });
+    const { mutate: updateQuest, error: updateError } =
+        trpc.updateQuest.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Quest Updated!",
+                    description: "Your quest has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingQuest(true);
+            },
+            onSettled() {
+                setCurrentlySavingQuest(false);
+            },
+        });
 
     const { mutate: deleteQuest } = trpc.deleteQuest.useMutation({
         onSuccess: () => {
@@ -121,7 +122,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
+    const { data: imageResponse, refetch: imageFetch, error: imageError } =
         trpc.generateImage.useQuery(
             {
                 object: worldResponse ? worldResponse : quest,
@@ -152,6 +153,18 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
             setImageLoading(false);
         }
     }, [imageResponse]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (response) {

@@ -130,21 +130,22 @@ const CharacterView = ({
             enabled: false,
         }
     );
-    const { mutate: updateCharacter } = trpc.updateCharacter.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Character Updated!",
-                description: "Your character has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingCharacter(true);
-        },
-        onSettled() {
-            setCurrentlySavingCharacter(false);
-        },
-    });
+    const { mutate: updateCharacter, error: updateError } =
+        trpc.updateCharacter.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Character Updated!",
+                    description: "Your character has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingCharacter(true);
+            },
+            onSettled() {
+                setCurrentlySavingCharacter(false);
+            },
+        });
 
     const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
         onSuccess: () => {
@@ -203,6 +204,18 @@ const CharacterView = ({
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (imageError) {

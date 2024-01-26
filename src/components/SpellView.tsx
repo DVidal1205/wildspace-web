@@ -102,21 +102,22 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
             enabled: false,
         }
     );
-    const { mutate: updateSpell } = trpc.updateSpell.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Spell Updated!",
-                description: "Your spell has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingSpell(true);
-        },
-        onSettled() {
-            setCurrentlySavingSpell(false);
-        },
-    });
+    const { mutate: updateSpell, error: updateError } =
+        trpc.updateSpell.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Spell Updated!",
+                    description: "Your spell has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingSpell(true);
+            },
+            onSettled() {
+                setCurrentlySavingSpell(false);
+            },
+        });
 
     const { mutate: deleteSpell } = trpc.deleteSpell.useMutation({
         onSuccess: () => {
@@ -160,6 +161,18 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     }, [spell]);
 
     useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
+
+    useEffect(() => {
         if (error) {
             toast({
                 title: "Error",
@@ -182,6 +195,18 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (imageResponse) {

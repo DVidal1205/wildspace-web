@@ -80,7 +80,7 @@ const Spell = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveSpell } = trpc.saveSpell.useMutation({
+    const { mutate: saveSpell, error: saveError } = trpc.saveSpell.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
             toast({
@@ -118,7 +118,6 @@ const Spell = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -130,8 +129,19 @@ const Spell = ({ world }: { world: World }) => {
     }, [error, toast]);
 
     useEffect(() => {
+        if (saveError) {
+            toast({
+                title: "Error",
+                description: `${saveError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [saveError, toast]);
+
+    useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,

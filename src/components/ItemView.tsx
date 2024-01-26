@@ -77,21 +77,22 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
             enabled: false,
         }
     );
-    const { mutate: updateItem } = trpc.updateItem.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Item Updated!",
-                description: "Your item has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingItem(true);
-        },
-        onSettled() {
-            setCurrentlySavingItem(false);
-        },
-    });
+    const { mutate: updateItem, error: updateError } =
+        trpc.updateItem.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Item Updated!",
+                    description: "Your item has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingItem(true);
+            },
+            onSettled() {
+                setCurrentlySavingItem(false);
+            },
+        });
 
     const { mutate: deleteItem } = trpc.deleteItem.useMutation({
         onSuccess: () => {
@@ -130,6 +131,18 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
             return;
         }
     }, [error, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (imageError) {

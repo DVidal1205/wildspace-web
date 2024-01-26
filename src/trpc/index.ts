@@ -1453,6 +1453,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -1593,6 +1600,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -1918,6 +1932,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -2082,6 +2103,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -2353,6 +2381,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -2505,6 +2540,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -2749,6 +2791,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -2896,6 +2945,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -3146,6 +3202,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -3295,6 +3358,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -3610,6 +3680,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -3759,6 +3836,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -4010,6 +4094,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -4147,6 +4238,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,
@@ -4391,6 +4489,13 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
 
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
+
             function b64toBlob(
                 b64Data: string,
                 contentType: string = ""
@@ -4540,6 +4645,13 @@ export const appRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const { userId } = ctx;
+
+            if (input.name === "") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Name cannot be empty",
+                });
+            }
 
             function b64toBlob(
                 b64Data: string,

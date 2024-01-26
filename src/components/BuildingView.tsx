@@ -97,21 +97,22 @@ const BuildingView = ({
         }
     );
 
-    const { mutate: updateBuilding } = trpc.updateBuilding.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Building Updated!",
-                description: "Your building has been updated.",
-            });
-        },
-        onMutate: () => {
-            setCurrentlySavingBuilding(true);
-        },
-        onSettled() {
-            setCurrentlySavingBuilding(false);
-        },
-    });
+    const { mutate: updateBuilding, error: updateError } =
+        trpc.updateBuilding.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Building Updated!",
+                    description: "Your building has been updated.",
+                });
+            },
+            onMutate: () => {
+                setCurrentlySavingBuilding(true);
+            },
+            onSettled() {
+                setCurrentlySavingBuilding(false);
+            },
+        });
 
     const { mutate: deleteBuilding } = trpc.deleteBuilding.useMutation({
         onSuccess: () => {
@@ -165,6 +166,18 @@ const BuildingView = ({
             return;
         }
     }, [error, toast]);
+
+    useEffect(() => {
+        if (updateError) {
+            toast({
+                title: "Error",
+                description: `${updateError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [updateError, toast]);
 
     useEffect(() => {
         if (imageError) {

@@ -97,7 +97,7 @@ const City = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveCity } = trpc.saveCity.useMutation({
+    const { mutate: saveCity, error: saveError } = trpc.saveCity.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
             toast({
@@ -140,7 +140,6 @@ const City = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -153,7 +152,6 @@ const City = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,
@@ -171,6 +169,18 @@ const City = ({ world }: { world: World }) => {
             setImageLoading(false);
         }
     }, [imageResponse]);
+
+    useEffect(() => {
+        if (saveError) {
+            toast({
+                title: "Error",
+                description: `${saveError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [saveError, toast]);
 
     useEffect(() => {
         if (response) {

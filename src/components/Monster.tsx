@@ -80,32 +80,33 @@ const Monster = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveMonster } = trpc.saveMonster.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Monster Saved",
-                description: "Your monster has been saved.",
-            });
-            setName("");
-            setType("");
-            setSize("");
-            setAlignment("");
-            setResistance("");
-            setStats("");
-            setAbilities("");
-            setDescription("");
-            setLore("");
-            setImage("");
-            setPrompt("");
-        },
-        onMutate: () => {
-            setCurrentlySavingMonster(true);
-        },
-        onSettled() {
-            setCurrentlySavingMonster(false);
-        },
-    });
+    const { mutate: saveMonster, error: saveError } =
+        trpc.saveMonster.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Monster Saved",
+                    description: "Your monster has been saved.",
+                });
+                setName("");
+                setType("");
+                setSize("");
+                setAlignment("");
+                setResistance("");
+                setStats("");
+                setAbilities("");
+                setDescription("");
+                setLore("");
+                setImage("");
+                setPrompt("");
+            },
+            onMutate: () => {
+                setCurrentlySavingMonster(true);
+            },
+            onSettled() {
+                setCurrentlySavingMonster(false);
+            },
+        });
 
     const {
         data: imageResponse,
@@ -118,7 +119,6 @@ const Monster = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -130,8 +130,19 @@ const Monster = ({ world }: { world: World }) => {
     }, [error, toast]);
 
     useEffect(() => {
+        if (saveError) {
+            toast({
+                title: "Error",
+                description: `${saveError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [saveError, toast]);
+
+    useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,

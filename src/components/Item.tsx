@@ -67,7 +67,7 @@ const Item = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveItem } = trpc.saveItem.useMutation({
+    const { mutate: saveItem, error: saveError } = trpc.saveItem.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
             toast({
@@ -101,7 +101,6 @@ const Item = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -113,8 +112,19 @@ const Item = ({ world }: { world: World }) => {
     }, [error, toast]);
 
     useEffect(() => {
+        if (saveError) {
+            toast({
+                title: "Error",
+                description: `${saveError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [saveError, toast]);
+
+    useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,

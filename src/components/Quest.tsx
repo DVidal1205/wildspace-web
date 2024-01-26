@@ -55,7 +55,11 @@ const Quest = ({ world }: { world: World }) => {
     const { toast } = useToast();
     const utils = trpc.useContext();
 
-    const { data: response, refetch: genFetch } = trpc.generateQuest.useQuery(
+    const {
+        data: response,
+        refetch: genFetch,
+        error: error,
+    } = trpc.generateQuest.useQuery(
         {
             name: nameDisabled ? name : "",
             difficulty: difficultyDisabled ? difficulty : "",
@@ -73,7 +77,7 @@ const Quest = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveQuest } = trpc.saveQuest.useMutation({
+    const { mutate: saveQuest, error: saveError } = trpc.saveQuest.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
             toast({
@@ -99,7 +103,7 @@ const Quest = ({ world }: { world: World }) => {
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch } =
+    const { data: imageResponse, refetch: imageFetch, error: imageError } =
         trpc.generateImage.useQuery(
             { object: responseData, type: "Questline" },
             { enabled: false }
@@ -112,6 +116,30 @@ const Quest = ({ world }: { world: World }) => {
             setImageLoading(false);
         }
     }, [imageResponse]);
+
+    useEffect(() => {
+        if (error) {
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
 
     useEffect(() => {
         if (response) {

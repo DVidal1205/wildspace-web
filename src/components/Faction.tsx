@@ -83,33 +83,34 @@ const Faction = ({ world }: { world: World }) => {
             enabled: false,
         }
     );
-    const { mutate: saveFaction } = trpc.saveFaction.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Faction Saved",
-                description: "Your faction has been saved.",
-            });
-            setName("");
-            setType("");
-            setAlignment("");
-            setPopulation("");
-            setPresence("");
-            setDevotion("");
-            setGoals("");
-            setDescription("");
-            setLore("");
-            setTraits("");
-            setImage("");
-            setPrompt("");
-        },
-        onMutate: () => {
-            setCurrentlySavingFaction(true);
-        },
-        onSettled() {
-            setCurrentlySavingFaction(false);
-        },
-    });
+    const { mutate: saveFaction, error: saveError } =
+        trpc.saveFaction.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Faction Saved",
+                    description: "Your faction has been saved.",
+                });
+                setName("");
+                setType("");
+                setAlignment("");
+                setPopulation("");
+                setPresence("");
+                setDevotion("");
+                setGoals("");
+                setDescription("");
+                setLore("");
+                setTraits("");
+                setImage("");
+                setPrompt("");
+            },
+            onMutate: () => {
+                setCurrentlySavingFaction(true);
+            },
+            onSettled() {
+                setCurrentlySavingFaction(false);
+            },
+        });
 
     const {
         data: imageResponse,
@@ -122,7 +123,6 @@ const Faction = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -135,7 +135,6 @@ const Faction = ({ world }: { world: World }) => {
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,
@@ -145,6 +144,18 @@ const Faction = ({ world }: { world: World }) => {
             return;
         }
     }, [imageError, toast]);
+
+    useEffect(() => {
+        if (saveError) {
+            toast({
+                title: "Error",
+                description: `${saveError.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [saveError, toast]);
 
     useEffect(() => {
         if (imageResponse) {
