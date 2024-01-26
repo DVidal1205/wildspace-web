@@ -1505,10 +1505,24 @@ export const appRouter = router({
                 });
             } else {
                 const imageBlob = b64toBlob(input.imageb64, "image/png");
+                const filename = input.name
+                    ? input.name.toLowerCase().replace(/ /g, "_")
+                    : "default";
 
-                const response = await utapi.uploadFiles(imageBlob);
-                const imageKey = response.data?.key;
-                const imageURL = `https://utfs.io/f/${imageKey}`;
+                const file = new File(
+                    [imageBlob],
+                    `character-${filename}.png`,
+                    {
+                        type: "image/png",
+                    }
+                );
+
+                let response, imageKey, imageURL;
+                if (file) {
+                    response = await utapi.uploadFiles(file);
+                    imageKey = response.data?.key;
+                    imageURL = `https://utfs.io/f/${imageKey}`;
+                }
 
                 if (imageKey && imageURL) {
                     character = await db.character.create({
