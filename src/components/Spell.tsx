@@ -381,7 +381,7 @@ const Spell = ({ world }: { world: World }) => {
                         </div>
                     </div>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 mt-4 md:mt-0">
                     <Label>Image</Label>
                     <Card className="aspect-square">
                         {image && (
@@ -406,7 +406,7 @@ const Spell = ({ world }: { world: World }) => {
                                     alt="character image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>

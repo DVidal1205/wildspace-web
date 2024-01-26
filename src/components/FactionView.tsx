@@ -478,7 +478,7 @@ const FactionView = ({
                                     alt="faction image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>

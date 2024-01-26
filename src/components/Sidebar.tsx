@@ -1,5 +1,11 @@
 "use client";
 import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
     Building,
     Character,
     City,
@@ -10,16 +16,9 @@ import {
     Spell,
     World,
 } from "@prisma/client";
-import { Separator } from "./ui/separator";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
-import WorldButton from "./WorldButton";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import WorldButton from "./WorldButton";
+import { Separator } from "./ui/separator";
 
 interface SidebarProps {
     world: World;
@@ -44,9 +43,8 @@ const Sidebar = ({
     items,
     spells,
 }: SidebarProps) => {
-    const router = useRouter();
     return (
-        <div className="sm:w-[90vw] sm:mx-4 sm:px-6 md:w-full md:px-0">
+        <div className="mt-2 w-full px-6 md:px-0 md:mt-0">
             <div className="flex justify-between mb-2">
                 <div>{world.name}</div>
                 <WorldButton world={world} />

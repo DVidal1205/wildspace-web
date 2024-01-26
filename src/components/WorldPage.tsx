@@ -30,7 +30,7 @@ const WorldPage = ({ world }: { world: World }) => {
 
     return (
         <main className="mx-auto md:p-10">
-            <div className="grid lg:grid-cols-8">
+            <div className="grid md:grid-cols-8">
                 <div className="lg:col-span-1 h-max lg:pr-8 my-2 lg:my-0">
                     <Sidebar
                         world={world}
@@ -44,10 +44,13 @@ const WorldPage = ({ world }: { world: World }) => {
                         spells={entities?.spells || []}
                     />
                 </div>
-                <div className="md:col-span-7 w-screen md:w-auto">
+                <div className="md:col-span-7 w-full overflow-auto md:w-auto">
                     <Tabs defaultValue="character" className="w-full">
                         <TabsList className="flex justify-evenly overflow-auto">
-                            <TabsTrigger value="character" className="w-full">
+                            <TabsTrigger
+                                value="character"
+                                className="ml-24 md:ml-0 w-full"
+                            >
                                 Character
                             </TabsTrigger>
                             <TabsTrigger value="building" className="w-full">

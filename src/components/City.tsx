@@ -540,7 +540,7 @@ const City = ({ world }: { world: World }) => {
                                     alt="City Image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>

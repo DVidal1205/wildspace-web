@@ -588,7 +588,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                     alt="City Image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>

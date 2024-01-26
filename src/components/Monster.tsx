@@ -351,7 +351,7 @@ const Monster = ({ world }: { world: World }) => {
                     <div className="space-y-1">
                         <Label htmlFor="lore">Stats</Label>
                         <div className="flex flex-col">
-                            <Card className="w-[30vw] md:h-[17.5vh] overflow-auto">
+                            <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                 <div className="p-4">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
@@ -373,7 +373,7 @@ const Monster = ({ world }: { world: World }) => {
                     <div className="space-y-1">
                         <Label htmlFor="lore">Abilities</Label>
                         <div className="flex flex-col">
-                            <Card className="w-[30vw] md:h-[17.5vh] overflow-auto">
+                            <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                 <div className="p-4">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
@@ -420,7 +420,7 @@ const Monster = ({ world }: { world: World }) => {
                                     alt="character image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>

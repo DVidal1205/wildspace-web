@@ -356,7 +356,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                     alt="character image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>

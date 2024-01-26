@@ -407,7 +407,7 @@ const MonsterView = ({
                     <div className="space-y-1">
                         <Label htmlFor="lore">Stats</Label>
                         <div className="flex space-x-2 items-center">
-                            <Card className="w-full md:h-[17.5vh] overflow-y-auto">
+                            <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                 <div className="p-4">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
@@ -429,7 +429,7 @@ const MonsterView = ({
                     <div className="space-y-1">
                         <Label htmlFor="lore">Abilities</Label>
                         <div className="flex space-x-2 items-center">
-                            <Card className="w-full md:h-[17.5vh] overflow-y-auto">
+                            <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                 <div className="p-4">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
@@ -472,7 +472,7 @@ const MonsterView = ({
                                     alt="character image"
                                     className={`rounded ${
                                         isImageFullscreen
-                                            ? "h-[85vh] w-auto"
+                                            ? "h-[85vw] md:h-[85vh] w-auto"
                                             : ""
                                     }`}
                                 ></Image>
