@@ -3,7 +3,7 @@ import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
 import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Check, Loader2, Trash } from "lucide-react";
+import { Check, HelpCircle, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,6 +23,12 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Toggle } from "./ui/toggle";
 import { useToast } from "./ui/use-toast";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./ui/tooltip";
 
 const MonsterView = ({
     world,
@@ -261,288 +267,322 @@ const MonsterView = ({
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
         </div>
     ) : (
-        <Card>
-            <CardHeader>
-                <CardTitle>{name}</CardTitle>
-                <CardDescription>
-                    View your monster information for {name} here, or edit and
-                    save to update the monster.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
-                <div className="gap-4 grid">
-                    <div className="space-y-1">
-                        <Label htmlFor="name">Name</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="name"
-                                autoComplete="off"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setNameDisabled(!nameDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
+        <TooltipProvider>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{name}</CardTitle>
+                    <CardDescription>
+                        View your monster information for {name} here, or edit
+                        and save to update the monster.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
+                    <div className="gap-4 grid">
+                        <div className="space-y-1">
+                            <Label htmlFor="name">Name</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="name"
+                                    autoComplete="off"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setNameDisabled(!nameDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="type">Type</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="type"
+                                    autoComplete="off"
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setTypeDisabled(!typeDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="size">Size</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="size"
+                                    autoComplete="off"
+                                    value={size}
+                                    onChange={(e) => setSize(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setSizeDisabled(!sizeDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="alignment">Alignment</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="alignment"
+                                    autoComplete="off"
+                                    value={alignment}
+                                    onChange={(e) =>
+                                        setAlignment(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setAlignmentDisabled(!alignmentDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="resistance">Resistances</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="resistance"
+                                    autoComplete="off"
+                                    value={resistance}
+                                    onChange={(e) =>
+                                        setResistance(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setResistanceDisabled(
+                                            !resistanceDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid gap-4">
+                        <div className="space-y-1">
+                            <Label htmlFor="description">Description</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="description"
+                                    autoComplete="off"
+                                    className="md:h-[17.5vh]"
+                                    value={description}
+                                    onChange={(e) =>
+                                        setDescription(e.target.value)
+                                    }
+                                ></Textarea>
+                                <Toggle
+                                    size="sm"
+                                    className="mt-2"
+                                    onClick={() =>
+                                        setDescriptionDisabled(
+                                            !descriptionDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="lore">Lore</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="lore"
+                                    autoComplete="off"
+                                    className="md:h-[17.5vh]"
+                                    value={lore}
+                                    onChange={(e) => setLore(e.target.value)}
+                                ></Textarea>
+                                <Toggle
+                                    size="sm"
+                                    className="mt-2"
+                                    onClick={() =>
+                                        setLoreDisabled(!loreDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid gap-4 md:col-span-2">
+                        <div className="space-y-1">
+                            <Label htmlFor="lore">Stats</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
+                                    <div className="p-4">
+                                        <Markdown
+                                            remarkPlugins={[remarkGfm]}
+                                            className="prose"
+                                        >
+                                            {stats}
+                                        </Markdown>
+                                    </div>
+                                </Card>
+                                <Toggle
+                                    size="sm"
+                                    className="mt-2"
+                                    onClick={() =>
+                                        setStatsDisabled(!statsDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="lore">Abilities</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
+                                    <div className="p-4">
+                                        <Markdown
+                                            remarkPlugins={[remarkGfm]}
+                                            className="prose"
+                                        >
+                                            {abilities}
+                                        </Markdown>
+                                    </div>
+                                </Card>
+                                <Toggle
+                                    size="sm"
+                                    className="mt-2"
+                                    onClick={() =>
+                                        setAbilitiesDisabled(!abilitiesDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="type">Type</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="type"
-                                autoComplete="off"
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setTypeDisabled(!typeDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="size">Size</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="size"
-                                autoComplete="off"
-                                value={size}
-                                onChange={(e) => setSize(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setSizeDisabled(!sizeDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="alignment">Alignment</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="alignment"
-                                autoComplete="off"
-                                value={alignment}
-                                onChange={(e) => setAlignment(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setAlignmentDisabled(!alignmentDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="resistance">Resistances</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="resistance"
-                                autoComplete="off"
-                                value={resistance}
-                                onChange={(e) => setResistance(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setResistanceDisabled(!resistanceDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid gap-4">
-                    <div className="space-y-1">
-                        <Label htmlFor="description">Description</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="description"
-                                autoComplete="off"
-                                className="md:h-[17.5vh]"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            ></Textarea>
-                            <Toggle
-                                size="sm"
-                                className="mt-2"
-                                onClick={() =>
-                                    setDescriptionDisabled(!descriptionDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="lore">Lore</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="lore"
-                                autoComplete="off"
-                                className="md:h-[17.5vh]"
-                                value={lore}
-                                onChange={(e) => setLore(e.target.value)}
-                            ></Textarea>
-                            <Toggle
-                                size="sm"
-                                className="mt-2"
-                                onClick={() => setLoreDisabled(!loreDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid gap-4 md:col-span-2">
-                    <div className="space-y-1">
-                        <Label htmlFor="lore">Stats</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
-                                <div className="p-4">
-                                    <Markdown
-                                        remarkPlugins={[remarkGfm]}
-                                        className="prose"
-                                    >
-                                        {stats}
-                                    </Markdown>
-                                </div>
-                            </Card>
-                            <Toggle
-                                size="sm"
-                                className="mt-2"
-                                onClick={() => setStatsDisabled(!statsDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="lore">Abilities</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
-                                <div className="p-4">
-                                    <Markdown
-                                        remarkPlugins={[remarkGfm]}
-                                        className="prose"
-                                    >
-                                        {abilities}
-                                    </Markdown>
-                                </div>
-                            </Card>
-                            <Toggle
-                                size="sm"
-                                className="mt-2"
-                                onClick={() =>
-                                    setAbilitiesDisabled(!abilitiesDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <Label>Image</Label>
-                    <Card className="aspect-square">
-                        {image && (
-                            <div
-                                className={`${
-                                    isImageFullscreen
-                                        ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
-                                        : ""
-                                }`}
-                                onClick={() =>
-                                    setIsImageFullscreen(!isImageFullscreen)
-                                }
-                            >
-                                <Image
-                                    height={1024}
-                                    width={1024}
-                                    src={image}
-                                    alt="character image"
-                                    className={`rounded ${
+                        <Label>Image</Label>
+                        <Card className="aspect-square">
+                            {image && (
+                                <div
+                                    className={`${
                                         isImageFullscreen
-                                            ? "h-[85vw] md:h-[85vh] w-auto"
+                                            ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
                                             : ""
                                     }`}
-                                ></Image>
-                            </div>
-                        )}
-                    </Card>
-                    <div className="flex justify-center">
-                        {worldResponse || monsterReponse ? (
-                            <Button
-                                className="mt-2"
-                                onClick={() => handleImage()}
-                            >
-                                {imageLoading ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <div>Generate Image</div>
-                                )}
-                            </Button>
-                        ) : (
-                            <p>Please Generate a Monster First...</p>
-                        )}
+                                    onClick={() =>
+                                        setIsImageFullscreen(!isImageFullscreen)
+                                    }
+                                >
+                                    <Image
+                                        height={1024}
+                                        width={1024}
+                                        src={image}
+                                        alt="character image"
+                                        className={`rounded ${
+                                            isImageFullscreen
+                                                ? "h-[85vw] md:h-[85vh] w-auto"
+                                                : ""
+                                        }`}
+                                    ></Image>
+                                </div>
+                            )}
+                        </Card>
+                        <div className="flex justify-center">
+                            {worldResponse || monsterReponse ? (
+                                <Button
+                                    className="mt-2"
+                                    onClick={() => handleImage()}
+                                >
+                                    {imageLoading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <div>Generate Image</div>
+                                    )}
+                                </Button>
+                            ) : (
+                                <p>Please Generate a Monster First...</p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </CardContent>
-            <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
-                <Label htmlFor="race">Prompt</Label>
-                <div className="flex space-x-2 items-center">
-                    <Input
-                        id="prompt"
-                        autoComplete="off"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        className="w-[30vw]"
-                    />
-                </div>
+                </CardContent>
+                <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
+                    <Label htmlFor="race">Prompt</Label>
+                    <div className="flex space-x-2 items-center">
+                        <Input
+                            id="prompt"
+                            autoComplete="off"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            className="w-[30vw]"
+                        />
+                    </div>
 
-                <ContextCombo
-                    setContextEntity={setContextEntity}
-                    worldID={{ worldID: world.id }}
-                />
-                <Button
-                    onClick={() => {
-                        handleSubmit();
-                    }}
-                >
-                    {loading === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <div>Generate</div>
-                    )}
-                </Button>
-                <Button onClick={() => handleSave()}>
-                    {currentlySavingMonster === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <div>Save</div>
-                    )}
-                </Button>
-                <Button
-                    variant="destructive"
-                    onClick={() => deleteMonster({ id: entityid })}
-                >
-                    {deletingMonster === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Trash className="h-4 w-4" />
-                    )}
-                </Button>
-            </CardFooter>
-        </Card>
+                    <ContextCombo
+                        setContextEntity={setContextEntity}
+                        worldID={{ worldID: world.id }}
+                    />
+                    <Button
+                        onClick={() => {
+                            handleSubmit();
+                        }}
+                    >
+                        {loading === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <div>Generate</div>
+                        )}
+                    </Button>
+                    <Button onClick={() => handleSave()}>
+                        {currentlySavingMonster === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <div>Save</div>
+                        )}
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onClick={() => deleteMonster({ id: entityid })}
+                    >
+                        {deletingMonster === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Trash className="h-4 w-4" />
+                        )}
+                    </Button>
+                    <Tooltip delayDuration={300}>
+                        <TooltipTrigger className="cursor-default ml-1.5">
+                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                        </TooltipTrigger>
+                        <TooltipContent className="w-80 p-2">
+                            <p>
+                                Generate over your currently saved entity. Click
+                                the save button to save your changes, or click
+                                the delete button to delete your entity.
+                            </p>
+                        </TooltipContent>
+                    </Tooltip>
+                </CardFooter>
+            </Card>
+        </TooltipProvider>
     );
 };
 

@@ -12,7 +12,7 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2, Trash } from "lucide-react";
+import { Check, HelpCircle, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
@@ -31,6 +31,12 @@ import { router } from "@/trpc/trpc";
 import { useRouter } from "next/navigation";
 import ContextCombo from "./ContextCombo";
 import Entity from "@/lib/types";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./ui/tooltip";
 
 const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -235,265 +241,295 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
         </div>
     ) : (
-        <Card>
-            <CardHeader>
-                <CardTitle>{name}</CardTitle>
-                <CardDescription>
-                    View your quest information for {name} here, or edit and
-                    save to update the quest.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="grid lg:grid-cols-5 gap-4">
-                <div className="gap-4 md:col-span-2 grid">
-                    <div className="space-y-1">
-                        <Label htmlFor="name">Name</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="name"
-                                autoComplete="off"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setNameDisabled(!nameDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
+        <TooltipProvider>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{name}</CardTitle>
+                    <CardDescription>
+                        View your quest information for {name} here, or edit and
+                        save to update the quest.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="grid lg:grid-cols-5 gap-4">
+                    <div className="gap-4 md:col-span-2 grid">
+                        <div className="space-y-1">
+                            <Label htmlFor="name">Name</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="name"
+                                    autoComplete="off"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setNameDisabled(!nameDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="description">Description</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="description"
+                                    autoComplete="off"
+                                    value={description}
+                                    onChange={(e) =>
+                                        setDescription(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setDescriptionDisabled(
+                                            !descriptionDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="objectives">Objectives</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="objectives"
+                                    autoComplete="off"
+                                    value={objectives}
+                                    onChange={(e) =>
+                                        setObjectives(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setObjectivesDisabled(
+                                            !objectivesDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="outcome">Outcome</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="outcome"
+                                    autoComplete="off"
+                                    value={outcome}
+                                    onChange={(e) => setOutcome(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setOutcomeDisabled(!outcomeDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="gap-4 md:col-span-2 grid">
+                        <div className="space-y-1">
+                            <Label htmlFor="difficulty">Difficulty</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="difficulty"
+                                    autoComplete="off"
+                                    value={difficulty}
+                                    onChange={(e) =>
+                                        setDifficulty(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setDifficultyDisabled(
+                                            !difficultyDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="discovery">Discovery</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="discovery"
+                                    autoComplete="off"
+                                    value={discovery}
+                                    onChange={(e) =>
+                                        setDiscovery(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setDiscoveryDisabled(!discoveryDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="consequences">Consequences</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="consequences"
+                                    autoComplete="off"
+                                    value={consequences}
+                                    onChange={(e) =>
+                                        setConsequences(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setConsequencesDisabled(
+                                            !consequencesDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="rewards">Rewards</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Textarea
+                                    id="rewards"
+                                    autoComplete="off"
+                                    value={rewards}
+                                    onChange={(e) => setRewards(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setRewardsDisabled(!rewardsDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="description">Description</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="description"
-                                autoComplete="off"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setDescriptionDisabled(!descriptionDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="objectives">Objectives</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="objectives"
-                                autoComplete="off"
-                                value={objectives}
-                                onChange={(e) => setObjectives(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setObjectivesDisabled(!objectivesDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="outcome">Outcome</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="outcome"
-                                autoComplete="off"
-                                value={outcome}
-                                onChange={(e) => setOutcome(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setOutcomeDisabled(!outcomeDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="gap-4 md:col-span-2 grid">
-                    <div className="space-y-1">
-                        <Label htmlFor="difficulty">Difficulty</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="difficulty"
-                                autoComplete="off"
-                                value={difficulty}
-                                onChange={(e) => setDifficulty(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setDifficultyDisabled(!difficultyDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="discovery">Discovery</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="discovery"
-                                autoComplete="off"
-                                value={discovery}
-                                onChange={(e) => setDiscovery(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setDiscoveryDisabled(!discoveryDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="consequences">Consequences</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="consequences"
-                                autoComplete="off"
-                                value={consequences}
-                                onChange={(e) =>
-                                    setConsequences(e.target.value)
-                                }
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setConsequencesDisabled(
-                                        !consequencesDisabled
-                                    )
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="rewards">Rewards</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Textarea
-                                id="rewards"
-                                autoComplete="off"
-                                value={rewards}
-                                onChange={(e) => setRewards(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setRewardsDisabled(!rewardsDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <Label>Image</Label>
-                    <Card className="aspect-square">
-                        {image && (
-                            <div
-                                className={`${
-                                    isImageFullscreen
-                                        ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
-                                        : ""
-                                }`}
-                                onClick={() =>
-                                    setIsImageFullscreen(!isImageFullscreen)
-                                }
-                            >
-                                <Image
-                                    height={1024}
-                                    width={1024}
-                                    src={image}
-                                    alt="character image"
-                                    className={`rounded ${
+                        <Label>Image</Label>
+                        <Card className="aspect-square">
+                            {image && (
+                                <div
+                                    className={`${
                                         isImageFullscreen
-                                            ? "h-[85vw] md:h-[85vh] w-auto"
+                                            ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
                                             : ""
                                     }`}
-                                ></Image>
-                            </div>
-                        )}
-                    </Card>
-                    <div className="flex justify-center">
-                        {worldResponse || questResponse ? (
-                            <Button
-                                className="mt-2"
-                                onClick={() => handleImage()}
-                            >
-                                {imageLoading ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <div>Generate Image</div>
-                                )}
-                            </Button>
-                        ) : (
-                            <p>Please Generate a Quest First...</p>
-                        )}
+                                    onClick={() =>
+                                        setIsImageFullscreen(!isImageFullscreen)
+                                    }
+                                >
+                                    <Image
+                                        height={1024}
+                                        width={1024}
+                                        src={image}
+                                        alt="character image"
+                                        className={`rounded ${
+                                            isImageFullscreen
+                                                ? "h-[85vw] md:h-[85vh] w-auto"
+                                                : ""
+                                        }`}
+                                    ></Image>
+                                </div>
+                            )}
+                        </Card>
+                        <div className="flex justify-center">
+                            {worldResponse || questResponse ? (
+                                <Button
+                                    className="mt-2"
+                                    onClick={() => handleImage()}
+                                >
+                                    {imageLoading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <div>Generate Image</div>
+                                    )}
+                                </Button>
+                            ) : (
+                                <p>Please Generate a Quest First...</p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </CardContent>
-            <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
-                <Label htmlFor="race">Prompt</Label>
-                <div className="flex space-x-2 items-center">
-                    <Input
-                        id="prompt"
-                        autoComplete="off"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        className="w-[30vw]"
-                    />
-                </div>
+                </CardContent>
+                <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
+                    <Label htmlFor="race">Prompt</Label>
+                    <div className="flex space-x-2 items-center">
+                        <Input
+                            id="prompt"
+                            autoComplete="off"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            className="w-[30vw]"
+                        />
+                    </div>
 
-                <ContextCombo
-                    setContextEntity={setContextEntity}
-                    worldID={{ worldID: world.id }}
-                />
-                <Button
-                    onClick={() => {
-                        handleSubmit();
-                    }}
-                >
-                    {loading === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <div>Generate</div>
-                    )}
-                </Button>
-                <Button onClick={() => handleSave()}>
-                    {currentlySavingQuest === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <div>Save</div>
-                    )}
-                </Button>
-                <Button
-                    variant="destructive"
-                    onClick={() => deleteQuest({ id: entityid })}
-                >
-                    {deletingQuest === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Trash className="h-4 w-4" />
-                    )}
-                </Button>
-            </CardFooter>
-        </Card>
+                    <ContextCombo
+                        setContextEntity={setContextEntity}
+                        worldID={{ worldID: world.id }}
+                    />
+                    <Button
+                        onClick={() => {
+                            handleSubmit();
+                        }}
+                    >
+                        {loading === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <div>Generate</div>
+                        )}
+                    </Button>
+                    <Button onClick={() => handleSave()}>
+                        {currentlySavingQuest === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <div>Save</div>
+                        )}
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onClick={() => deleteQuest({ id: entityid })}
+                    >
+                        {deletingQuest === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Trash className="h-4 w-4" />
+                        )}
+                    </Button>
+                    <Tooltip delayDuration={300}>
+                        <TooltipTrigger className="cursor-default ml-1.5">
+                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                        </TooltipTrigger>
+                        <TooltipContent className="w-80 p-2">
+                            <p>
+                                Generate over your currently saved entity. Click
+                                the save button to save your changes, or click
+                                the delete button to delete your entity.
+                            </p>
+                        </TooltipContent>
+                    </Tooltip>
+                </CardFooter>
+            </Card>
+        </TooltipProvider>
     );
 };
 

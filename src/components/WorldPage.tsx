@@ -1,27 +1,16 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
-import Sidebar from "./Sidebar";
 import { World } from "@prisma/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import Building from "./Building";
 import Character from "./Character";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "./ui/card";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import City from "./City";
 import Faction from "./Faction";
-import Quest from "./Quest";
-import Building from "./Building";
-import Monster from "./Monster";
 import Item from "./Item";
+import Monster from "./Monster";
+import Quest from "./Quest";
+import Sidebar from "./Sidebar";
 import Spell from "./Spell";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 const WorldPage = ({ world }: { world: World }) => {
     const { data: entities } = trpc.getWorldEntities.useQuery({

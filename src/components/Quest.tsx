@@ -3,7 +3,7 @@ import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
 import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Check, Loader2 } from "lucide-react";
+import { Check, HelpCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ContextCombo from "./ContextCombo";
@@ -20,6 +20,12 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Toggle } from "./ui/toggle";
 import { useToast } from "./ui/use-toast";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./ui/tooltip";
 
 const Quest = ({ world }: { world: World }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -103,11 +109,14 @@ const Quest = ({ world }: { world: World }) => {
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch, error: imageError } =
-        trpc.generateImage.useQuery(
-            { object: responseData, type: "Questline" },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        { object: responseData, type: "Questline" },
+        { enabled: false }
+    );
 
     useEffect(() => {
         if (imageResponse) {
@@ -181,6 +190,7 @@ const Quest = ({ world }: { world: World }) => {
     };
 
     return (
+        <TooltipProvider>
         <Card>
             <CardHeader>
                 <CardTitle>Quest Generation</CardTitle>
@@ -433,8 +443,24 @@ const Quest = ({ world }: { world: World }) => {
                         <div>Save</div>
                     )}
                 </Button>
+                <Tooltip delayDuration={300}>
+                    <TooltipTrigger className="cursor-default ml-1.5">
+                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                    </TooltipTrigger>
+                    <TooltipContent className="w-80 p-2">
+                        <p>
+                            Type in a prompt to generate an entity.
+                            Additionally, pick a Context Entity from the
+                            contextualize button to reference it in your
+                            generation. Combine the two to generate a character
+                            with depth and purpose. Then, save it to your
+                            gallery!
+                        </p>
+                    </TooltipContent>
+                </Tooltip>
             </CardFooter>
         </Card>
+        </TooltipProvider>
     );
 };
 

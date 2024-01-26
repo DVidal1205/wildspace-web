@@ -3,7 +3,7 @@ import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
 import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Check, Loader2, Trash } from "lucide-react";
+import { Check, HelpCircle, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -21,6 +21,12 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Toggle } from "./ui/toggle";
 import { useToast } from "./ui/use-toast";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./ui/tooltip";
 
 const CharacterView = ({
     world,
@@ -294,6 +300,7 @@ const CharacterView = ({
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
         </div>
     ) : (
+        <TooltipProvider>
         <Card>
             <CardHeader>
                 <CardTitle>{name}</CardTitle>
@@ -649,8 +656,21 @@ const CharacterView = ({
                         <Trash className="h-4 w-4" />
                     )}
                 </Button>
+                <Tooltip delayDuration={300}>
+                        <TooltipTrigger className="cursor-default ml-1.5">
+                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                        </TooltipTrigger>
+                        <TooltipContent className="w-80 p-2">
+                            <p>
+                                Generate over your currently saved entity. Click
+                                the save button to save your changes, or click
+                                the delete button to delete your entity.
+                            </p>
+                        </TooltipContent>
+                    </Tooltip>
             </CardFooter>
         </Card>
+        </TooltipProvider>
     );
 };
 

@@ -12,7 +12,7 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, Loader2, Trash } from "lucide-react";
+import { Check, HelpCircle, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
@@ -35,6 +35,12 @@ import ContextCombo from "./ContextCombo";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Entity from "@/lib/types";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./ui/tooltip";
 
 const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -278,275 +284,309 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
             <Loader2 className="h-40 w-40 animate-spin"></Loader2>
         </div>
     ) : (
-        <Card>
-            <CardHeader>
-                <CardTitle>{name}</CardTitle>
-                <CardDescription>
-                    View your spell information for {name} here, or edit and
-                    save to update the spell.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
-                <div className="grid md:col-span-2 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                        <Label htmlFor="name">Name</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="name"
-                                autoComplete="off"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setNameDisabled(!nameDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
+        <TooltipProvider>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{name}</CardTitle>
+                    <CardDescription>
+                        View your spell information for {name} here, or edit and
+                        save to update the spell.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
+                    <div className="grid md:col-span-2 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <Label htmlFor="name">Name</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="name"
+                                    autoComplete="off"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setNameDisabled(!nameDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="level">Level</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="level"
+                                    autoComplete="off"
+                                    value={level}
+                                    onChange={(e) => setLevel(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setLevelDisabled(!levelDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="school">School</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="school"
+                                    autoComplete="off"
+                                    value={school}
+                                    onChange={(e) => setSchool(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setSchoolDisabled(!schoolDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="components">Components</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="components"
+                                    autoComplete="off"
+                                    value={components}
+                                    onChange={(e) =>
+                                        setComponents(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setComponentsDisabled(
+                                            !componentsDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="castingTime">Casting Time</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="castingTime"
+                                    autoComplete="off"
+                                    value={castingTime}
+                                    onChange={(e) =>
+                                        setCastingTime(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setCastingTimeDisabled(
+                                            !castingTimeDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="duration">Duration</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="duration"
+                                    autoComplete="off"
+                                    value={duration}
+                                    onChange={(e) =>
+                                        setDuration(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setDurationDisabled(!durationDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="range">Range</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="range"
+                                    autoComplete="off"
+                                    value={range}
+                                    onChange={(e) => setRange(e.target.value)}
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setRangeDisabled(!rangeDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label htmlFor="spellList">Spell List</Label>
+                            <div className="flex space-x-2 items-center">
+                                <Input
+                                    id="spellList"
+                                    autoComplete="off"
+                                    value={spellList}
+                                    onChange={(e) =>
+                                        setSpellList(e.target.value)
+                                    }
+                                />
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setSpellListDisabled(!spellListDisabled)
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid md:col-span-2 gap-4">
+                        <div className="space-y-1">
+                            <Label htmlFor="descrption">Description</Label>
+                            <div className="flex space-x-2 items-center h-full">
+                                <Card className="h-full p-4 w-full overflow-auto">
+                                    <Markdown remarkPlugins={[remarkGfm]}>
+                                        {description}
+                                    </Markdown>
+                                </Card>
+                                <Toggle
+                                    size="sm"
+                                    onClick={() =>
+                                        setDescriptionDisabled(
+                                            !descriptionDisabled
+                                        )
+                                    }
+                                >
+                                    <Check></Check>
+                                </Toggle>
+                            </div>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="level">Level</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="level"
-                                autoComplete="off"
-                                value={level}
-                                onChange={(e) => setLevel(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setLevelDisabled(!levelDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="school">School</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="school"
-                                autoComplete="off"
-                                value={school}
-                                onChange={(e) => setSchool(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setSchoolDisabled(!schoolDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="components">Components</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="components"
-                                autoComplete="off"
-                                value={components}
-                                onChange={(e) => setComponents(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setComponentsDisabled(!componentsDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="castingTime">Casting Time</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="castingTime"
-                                autoComplete="off"
-                                value={castingTime}
-                                onChange={(e) => setCastingTime(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setCastingTimeDisabled(!castingTimeDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="duration">Duration</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="duration"
-                                autoComplete="off"
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setDurationDisabled(!durationDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="range">Range</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="range"
-                                autoComplete="off"
-                                value={range}
-                                onChange={(e) => setRange(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() => setRangeDisabled(!rangeDisabled)}
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <Label htmlFor="spellList">Spell List</Label>
-                        <div className="flex space-x-2 items-center">
-                            <Input
-                                id="spellList"
-                                autoComplete="off"
-                                value={spellList}
-                                onChange={(e) => setSpellList(e.target.value)}
-                            />
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setSpellListDisabled(!spellListDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid md:col-span-2 gap-4">
-                    <div className="space-y-1">
-                        <Label htmlFor="descrption">Description</Label>
-                        <div className="flex space-x-2 items-center h-full">
-                            <Card className="h-full p-4 w-full overflow-auto">
-                                <Markdown remarkPlugins={[remarkGfm]}>
-                                    {description}
-                                </Markdown>
-                            </Card>
-                            <Toggle
-                                size="sm"
-                                onClick={() =>
-                                    setDescriptionDisabled(!descriptionDisabled)
-                                }
-                            >
-                                <Check></Check>
-                            </Toggle>
-                        </div>
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <Label>Image</Label>
-                    <Card className="aspect-square">
-                        {image && (
-                            <div
-                                className={`${
-                                    isImageFullscreen
-                                        ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
-                                        : ""
-                                }`}
-                                onClick={() =>
-                                    setIsImageFullscreen(!isImageFullscreen)
-                                }
-                            >
-                                <Image
-                                    height={1024}
-                                    width={1024}
-                                    src={image}
-                                    alt="character image"
-                                    className={`rounded ${
+                        <Label>Image</Label>
+                        <Card className="aspect-square">
+                            {image && (
+                                <div
+                                    className={`${
                                         isImageFullscreen
-                                            ? "h-[85vw] md:h-[85vh] w-auto"
+                                            ? "fixed inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur"
                                             : ""
                                     }`}
-                                ></Image>
-                            </div>
-                        )}
-                    </Card>
-                    <div className="flex justify-center">
-                        {worldResponse || spellResponse ? (
-                            <Button
-                                className="mt-2"
-                                onClick={() => handleImage()}
-                            >
-                                {imageLoading ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <div>Generate Image</div>
-                                )}
-                            </Button>
-                        ) : (
-                            <p>Please Generate a Spell First...</p>
-                        )}
+                                    onClick={() =>
+                                        setIsImageFullscreen(!isImageFullscreen)
+                                    }
+                                >
+                                    <Image
+                                        height={1024}
+                                        width={1024}
+                                        src={image}
+                                        alt="character image"
+                                        className={`rounded ${
+                                            isImageFullscreen
+                                                ? "h-[85vw] md:h-[85vh] w-auto"
+                                                : ""
+                                        }`}
+                                    ></Image>
+                                </div>
+                            )}
+                        </Card>
+                        <div className="flex justify-center">
+                            {worldResponse || spellResponse ? (
+                                <Button
+                                    className="mt-2"
+                                    onClick={() => handleImage()}
+                                >
+                                    {imageLoading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <div>Generate Image</div>
+                                    )}
+                                </Button>
+                            ) : (
+                                <p>Please Generate a Spell First...</p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </CardContent>
-            <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
-                <Label htmlFor="race">Prompt</Label>
-                <div className="flex space-x-2 items-center">
-                    <Input
-                        id="prompt"
-                        autoComplete="off"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        className="w-[30vw]"
-                    />
-                </div>
+                </CardContent>
+                <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
+                    <Label htmlFor="race">Prompt</Label>
+                    <div className="flex space-x-2 items-center">
+                        <Input
+                            id="prompt"
+                            autoComplete="off"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            className="w-[30vw]"
+                        />
+                    </div>
 
-                <ContextCombo
-                    setContextEntity={setContextEntity}
-                    worldID={{ worldID: world.id }}
-                />
-                <Button
-                    onClick={() => {
-                        handleSubmit();
-                    }}
-                >
-                    {loading === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <div>Generate</div>
-                    )}
-                </Button>
-                <Button onClick={() => handleSave()}>
-                    {currentlySavingSpell === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <div>Save</div>
-                    )}
-                </Button>
-                <Button
-                    variant="destructive"
-                    onClick={() => deleteSpell({ id: entityid })}
-                >
-                    {deletingSpell === true ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Trash className="h-4 w-4" />
-                    )}
-                </Button>
-            </CardFooter>
-        </Card>
+                    <ContextCombo
+                        setContextEntity={setContextEntity}
+                        worldID={{ worldID: world.id }}
+                    />
+                    <Button
+                        onClick={() => {
+                            handleSubmit();
+                        }}
+                    >
+                        {loading === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <div>Generate</div>
+                        )}
+                    </Button>
+                    <Button onClick={() => handleSave()}>
+                        {currentlySavingSpell === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <div>Save</div>
+                        )}
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onClick={() => deleteSpell({ id: entityid })}
+                    >
+                        {deletingSpell === true ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Trash className="h-4 w-4" />
+                        )}
+                    </Button>
+                    <Tooltip delayDuration={300}>
+                        <TooltipTrigger className="cursor-default ml-1.5">
+                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                        </TooltipTrigger>
+                        <TooltipContent className="w-80 p-2">
+                            <p>
+                                Generate over your currently saved entity. Click
+                                the save button to save your changes, or click
+                                the delete button to delete your entity.
+                            </p>
+                        </TooltipContent>
+                    </Tooltip>
+                </CardFooter>
+            </Card>
+        </TooltipProvider>
     );
 };
 
