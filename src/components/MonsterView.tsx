@@ -156,7 +156,6 @@ const MonsterView = ({
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -181,7 +180,6 @@ const MonsterView = ({
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,

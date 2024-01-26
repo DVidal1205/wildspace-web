@@ -160,13 +160,12 @@ const Faction = ({ world }: { world: World }) => {
     useEffect(() => {
         if (imageResponse) {
             setImage(imageResponse);
-            console.log(imageResponse);
             setImageLoading(false);
         }
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setPopulation(response.population);
@@ -180,7 +179,7 @@ const Faction = ({ world }: { world: World }) => {
             setType(response.type);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

@@ -143,7 +143,6 @@ const FactionView = ({
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -156,7 +155,6 @@ const FactionView = ({
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,

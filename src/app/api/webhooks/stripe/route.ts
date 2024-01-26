@@ -37,7 +37,6 @@ export async function POST(request: Request) {
             session.subscription as string
         );
 
-        console.log("subscription", subscription);
         await db.user.update({
             where: {
                 id: session.metadata.userId,
@@ -51,7 +50,6 @@ export async function POST(request: Request) {
                 ),
             },
         });
-        console.log("updated");
     }
 
     if (event.type === "invoice.payment_succeeded") {

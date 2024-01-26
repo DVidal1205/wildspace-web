@@ -143,8 +143,7 @@ const Item = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
-            console.log(response);
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setType(response.type);
@@ -152,9 +151,8 @@ const Item = ({ world }: { world: World }) => {
             setDescription(response.description);
             setLore(response.lore);
             setLoading(false);
-            setResponseData(response);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

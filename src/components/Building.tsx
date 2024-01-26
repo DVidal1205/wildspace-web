@@ -149,9 +149,7 @@ const Building = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
-            console.log(response);
-            setResponseData(response);
+        if (response && response != responseData) {
             setName(response.name);
             setType(response.type);
             setSize(response.size);
@@ -164,7 +162,7 @@ const Building = ({ world }: { world: World }) => {
             setLoading(false);
             setResponseData(response);
         }
-    }, [response]);
+    }, [response, nameDisabled, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

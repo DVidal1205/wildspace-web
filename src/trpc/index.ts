@@ -425,8 +425,6 @@ export const appRouter = router({
                 formatInstructions: parser.getFormatInstructions(),
             });
 
-            console.log(response.prompt);
-
             const openai = new MyOpenAI();
             const imageResponse = await openai.images.generate({
                 model: "dall-e-3",
@@ -2156,7 +2154,6 @@ export const appRouter = router({
 
                 const b64Data = input.imageb64.split(",")[1];
                 const imageBlob = b64toBlob(b64Data, "image/png");
-                console.log("test?");
                 const filename = input.name
                     ? input.name.toLowerCase().replace(/ /g, "_")
                     : "default";

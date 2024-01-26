@@ -165,7 +165,6 @@ const City = ({ world }: { world: World }) => {
     useEffect(() => {
         if (imageResponse) {
             setImage(imageResponse);
-            console.log(imageResponse);
             setImageLoading(false);
         }
     }, [imageResponse]);
@@ -183,8 +182,7 @@ const City = ({ world }: { world: World }) => {
     }, [saveError, toast]);
 
     useEffect(() => {
-        if (response) {
-            console.log(response);
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setPopulation(response.population);
@@ -202,7 +200,7 @@ const City = ({ world }: { world: World }) => {
             setQuests(response.quests);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

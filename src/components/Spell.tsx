@@ -160,8 +160,7 @@ const Spell = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
-            console.log(response);
+        if (response && response != responseData) {
             setName(response.name);
             setSchool(response.school);
             setLevel(response.level);
@@ -174,7 +173,7 @@ const Spell = ({ world }: { world: World }) => {
             setLoading(false);
             setResponseData(response);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

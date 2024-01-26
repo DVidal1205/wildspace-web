@@ -168,7 +168,6 @@ const Character = ({ world }: { world: World }) => {
     useEffect(() => {
         if (imageResponse) {
             setImage(imageResponse);
-            console.log(imageResponse);
             setImageLoading(false);
         }
     }, [imageResponse]);
@@ -210,8 +209,7 @@ const Character = ({ world }: { world: World }) => {
     }, [saveError, toast]);
 
     useEffect(() => {
-        if (response) {
-            console.log(response);
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setRace(response.race);
@@ -229,7 +227,7 @@ const Character = ({ world }: { world: World }) => {
             setBackstory(response.backstory);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     return (
         <Card>

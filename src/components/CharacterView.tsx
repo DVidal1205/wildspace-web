@@ -181,7 +181,6 @@ const CharacterView = ({
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -194,7 +193,6 @@ const CharacterView = ({
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,
@@ -216,19 +214,6 @@ const CharacterView = ({
             return;
         }
     }, [updateError, toast]);
-
-    useEffect(() => {
-        if (imageError) {
-            const message = imageError.message;
-            toast({
-                title: "Error",
-                description: `${imageError.message}`,
-                variant: "destructive",
-            });
-            setLoading(false);
-            return;
-        }
-    }, [imageError, toast]);
 
     useEffect(() => {
         if (response) {

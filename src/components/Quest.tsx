@@ -112,7 +112,6 @@ const Quest = ({ world }: { world: World }) => {
     useEffect(() => {
         if (imageResponse) {
             setImage(imageResponse);
-            console.log(imageResponse);
             setImageLoading(false);
         }
     }, [imageResponse]);
@@ -142,8 +141,7 @@ const Quest = ({ world }: { world: World }) => {
     }, [imageError, toast]);
 
     useEffect(() => {
-        if (response) {
-            console.log(response);
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setDifficulty(response.difficulty);
@@ -155,7 +153,7 @@ const Quest = ({ world }: { world: World }) => {
             setDescription(response.description);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

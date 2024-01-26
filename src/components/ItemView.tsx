@@ -121,7 +121,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     useEffect(() => {
         if (error) {
-            const message = error.message;
             toast({
                 title: "Error",
                 description: `${error.message}`,
@@ -146,7 +145,6 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
 
     useEffect(() => {
         if (imageError) {
-            const message = imageError.message;
             toast({
                 title: "Error",
                 description: `${imageError.message}`,
