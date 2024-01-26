@@ -119,41 +119,9 @@ const Character = ({ world }: { world: World }) => {
             },
             onMutate: () => {
                 setCurrentlySavingCharacter(true);
-                setName("");
-                setRace("");
-                setClass("");
-                setSubclass("");
-                setAlignment("");
-                setAge("");
-                setBuild("");
-                setGender("");
-                setHair("");
-                setHeight("");
-                setFashion("");
-                setQuirks("");
-                setGoals("");
-                setBackstory("");
-                setImage("");
-                setPrompt("");
             },
             onSettled() {
                 setCurrentlySavingCharacter(false);
-                setName("");
-                setRace("");
-                setClass("");
-                setSubclass("");
-                setAlignment("");
-                setAge("");
-                setBuild("");
-                setGender("");
-                setHair("");
-                setHeight("");
-                setFashion("");
-                setQuirks("");
-                setGoals("");
-                setBackstory("");
-                setImage("");
-                setPrompt("");
             },
         });
 
