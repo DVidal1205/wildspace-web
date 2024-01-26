@@ -11,7 +11,7 @@ import {
     CardHeader,
     CardTitle,
 } from "./ui/card";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Gem, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -74,9 +74,11 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
                                     : null}
                             </Button>
                         ) : (
-                            <Link href="/pricing">
-                                Upgrade{" "}
-                                <Gem className="text-blue-600 h-4 w-4 ml-1.5" />
+                            <Link
+                                href="/pricing"
+                                className={buttonVariants({ size: "lg" })}
+                            >
+                                Upgrade
                             </Link>
                         )}
 
