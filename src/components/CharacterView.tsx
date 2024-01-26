@@ -150,6 +150,27 @@ const CharacterView = ({
     const { mutate: deleteCharacter } = trpc.deleteCharacter.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Character Deleted!",
+                description: "Your character has been deleted.",
+            });
+            setName("");
+            setRace("");
+            setClass("");
+            setSubclass("");
+            setAlignment("");
+            setAge("");
+            setBuild("");
+            setGender("");
+            setHair("");
+            setHeight("");
+            setFashion("");
+            setQuirks("");
+            setGoals("");
+            setBackstory("");
+            setImage("");
+            setWorldResponse("");
+            setCharacterResponse("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -216,7 +237,7 @@ const CharacterView = ({
     }, [updateError, toast]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response != worldResponse) {
             setWorldResponse(response);
             setName(response.name);
             setRace(response.race);
@@ -232,10 +253,9 @@ const CharacterView = ({
             setQuirks(response.quirks);
             setGoals(response.goals);
             setBackstory(response.backstory);
-            setWorldResponse(response);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, worldResponse]);
 
     const handleSubmit = () => {
         setLoading(true);

@@ -132,6 +132,22 @@ const MonsterView = ({
     const { mutate: deleteMonster } = trpc.deleteMonster.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Monster Deleted!",
+                description: "Your monster has been deleted.",
+            });
+            setName("");
+            setType("");
+            setSize("");
+            setAlignment("");
+            setResistance("");
+            setStats("");
+            setAbilities("");
+            setDescription("");
+            setLore("");
+            setImage("");
+            setMonsterResponse("");
+            setWorldResponse("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -198,7 +214,7 @@ const MonsterView = ({
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response !== worldResponse) {
             setWorldResponse(response);
             setName(response.name);
             setType(response.type);
@@ -209,10 +225,9 @@ const MonsterView = ({
             setAbilities(response.abilities);
             setDescription(response.description);
             setLore(response.lore);
-            setWorldResponse(response);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, worldResponse]);
 
     const handleSubmit = () => {
         setLoading(true);

@@ -57,7 +57,7 @@ const FactionView = ({
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [loading, setLoading] = useState<boolean>(false);
-    const [factionData, setFactionData] = useState<Faction | null>(null);
+    const [factionData, setFactionData] = useState<any>(null);
     const [currentlySavingFaction, setCurrentlySavingFaction] =
         useState<boolean>(false);
     const [deletingFaction, setCurrentlyDeletingFaction] =
@@ -115,6 +115,23 @@ const FactionView = ({
     const { mutate: deleteFaction } = trpc.deleteFaction.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Faction Deleted",
+                description: "Your faction has been deleted.",
+            });
+            setName("");
+            setType("");
+            setAlignment("");
+            setPopulation("");
+            setPresence("");
+            setDevotion("");
+            setGoals("");
+            setDescription("");
+            setLore("");
+            setTraits("");
+            setImage("");
+            setResponseData("");
+            setFactionData("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -178,7 +195,7 @@ const FactionView = ({
     }, [updateError, toast]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setPopulation(response.population);
@@ -192,7 +209,7 @@ const FactionView = ({
             setTraits(response.traits);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     useEffect(() => {
         if (faction) {

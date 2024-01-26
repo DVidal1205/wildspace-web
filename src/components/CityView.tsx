@@ -21,6 +21,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Toggle } from "./ui/toggle";
 import { useToast } from "./ui/use-toast";
+import { set } from "date-fns";
 
 const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -146,6 +147,27 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { mutate: deleteCity } = trpc.deleteCity.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "City Deleted",
+                description: "Your city has been deleted.",
+            });
+            setName("");
+            setPopulation("");
+            setSprawl("");
+            setArchitecture("");
+            setIndustries("");
+            setClimate("");
+            setSafety("");
+            setEducation("");
+            setModernity("");
+            setWealth("");
+            setDescription("");
+            setLore("");
+            setGovernance("");
+            setQuests("");
+            setImage("");
+            setCityData("");
+            setResponseData("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -209,7 +231,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response != responseData) {
             setResponseData(response);
             setName(response.name);
             setPopulation(response.population);
@@ -227,7 +249,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
             setQuests(response.quests);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

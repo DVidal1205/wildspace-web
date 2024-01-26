@@ -162,7 +162,7 @@ const Building = ({ world }: { world: World }) => {
             setLoading(false);
             setResponseData(response);
         }
-    }, [response, nameDisabled, responseData]);
+    }, [response, responseData]);
 
     const handleSubmit = () => {
         setLoading(true);

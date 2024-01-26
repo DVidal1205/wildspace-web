@@ -74,7 +74,11 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         id: entityid,
     });
 
-    const { data: response, refetch: genFetch, error: error } = trpc.generateQuest.useQuery(
+    const {
+        data: response,
+        refetch: genFetch,
+        error: error,
+    } = trpc.generateQuest.useQuery(
         {
             name: nameDisabled ? name : "",
             difficulty: difficultyDisabled ? difficulty : "",
@@ -112,6 +116,22 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { mutate: deleteQuest } = trpc.deleteQuest.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Quest Deleted!",
+                description: "Your quest has been deleted.",
+            });
+            setName("");
+            setDifficulty("");
+            setDiscovery("");
+            setConsequences("");
+            setRewards("");
+            setOutcome("");
+            setObjectives("");
+            setDescription("");
+            setImage("");
+            setPrompt("");
+            setWorldResponse("");
+            setQuestResponse("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -122,14 +142,17 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         },
     });
 
-    const { data: imageResponse, refetch: imageFetch, error: imageError } =
-        trpc.generateImage.useQuery(
-            {
-                object: worldResponse ? worldResponse : quest,
-                type: "Questline",
-            },
-            { enabled: false }
-        );
+    const {
+        data: imageResponse,
+        refetch: imageFetch,
+        error: imageError,
+    } = trpc.generateImage.useQuery(
+        {
+            object: worldResponse ? worldResponse : quest,
+            type: "Questline",
+        },
+        { enabled: false }
+    );
 
     useEffect(() => {
         if (quest) {
@@ -167,7 +190,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     }, [updateError, toast]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response !== worldResponse) {
             setWorldResponse(response);
             setName(response.name);
             setDifficulty(response.difficulty);
@@ -177,10 +200,9 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
             setOutcome(response.outcomes);
             setObjectives(response.objective);
             setDescription(response.description);
-            setWorldResponse(response);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, worldResponse]);
 
     const handleSubmit = () => {
         setLoading(true);

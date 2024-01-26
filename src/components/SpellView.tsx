@@ -122,6 +122,22 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { mutate: deleteSpell } = trpc.deleteSpell.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Spell Deleted!",
+                description: "Your spell has been deleted.",
+            });
+            setName("");
+            setSchool("");
+            setLevel("");
+            setCastingTime("");
+            setRange("");
+            setComponents("");
+            setDuration("");
+            setDescription("");
+            setSpellList("");
+            setImage("");
+            setWorldResponse("");
+            setSpellResponse("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -216,7 +232,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response !== worldResponse) {
             setWorldResponse(response);
             setName(response.name);
             setSchool(response.school);
@@ -226,10 +242,9 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
             setComponents(response.components);
             setDuration(response.duration);
             setDescription(response.description);
-            setWorldResponse(response);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, worldResponse]);
 
     const handleSubmit = () => {
         setLoading(true);

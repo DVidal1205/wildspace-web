@@ -117,6 +117,22 @@ const BuildingView = ({
     const { mutate: deleteBuilding } = trpc.deleteBuilding.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Building Deleted!",
+                description: "Your building has been deleted.",
+            });
+            setName("");
+            setType("");
+            setSize("");
+            setArchitecture("");
+            setAmbience("");
+            setTraffic("");
+            setDescription("");
+            setVendor("");
+            setGoods("");
+            setImage("");
+            setWorldResponse("");
+            setBuildingResponse("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -199,7 +215,7 @@ const BuildingView = ({
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response != worldResponse) {
             setWorldResponse(response);
             setName(response.name);
             setType(response.type);
@@ -210,10 +226,9 @@ const BuildingView = ({
             setDescription(response.description);
             setVendor(response.vendor);
             setGoods(response.goods);
-            setWorldResponse(response);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, worldResponse]);
 
     const handleSubmit = () => {
         setLoading(true);

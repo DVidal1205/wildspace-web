@@ -97,6 +97,18 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     const { mutate: deleteItem } = trpc.deleteItem.useMutation({
         onSuccess: () => {
             utils.getWorldEntities.invalidate();
+            toast({
+                title: "Item Deleted!",
+                description: "Your item has been deleted.",
+            });
+            setName("");
+            setType("");
+            setAbilities("");
+            setDescription("");
+            setLore("");
+            setImage("");
+            setItemResponse("");
+            setWorldResponse("");
             router.push(`/dashboard/${world.id}`);
         },
         onMutate: () => {
@@ -163,17 +175,16 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response) {
+        if (response && response != worldResponse) {
             setWorldResponse(response);
             setName(response.name);
             setType(response.type);
             setAbilities(response.abilities);
             setDescription(response.description);
             setLore(response.lore);
-            setWorldResponse(response);
             setLoading(false);
         }
-    }, [response]);
+    }, [response, worldResponse]);
 
     useEffect(() => {
         if (item) {
