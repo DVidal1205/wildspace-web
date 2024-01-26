@@ -3,11 +3,9 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
 
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
-
 export const ourFileRouter = {
     imageUploader: f({ image: { maxFileSize: "16MB" } })
-        .middleware(async ({ req }) => {
+        .middleware(async () => {
             const { getUser } = getKindeServerSession();
             const user = await getUser();
 

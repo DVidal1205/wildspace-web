@@ -1516,33 +1516,37 @@ export const appRouter = router({
                         type: "image/png",
                     }
                 );
-                const response = await utapi.uploadFiles(file);
-                const imageKey = response.data?.key;
-                const imageURL = `https://utfs.io/f/${imageKey}`;
+                try {
+                    const response = await utapi.uploadFiles(file);
+                    const imageKey = response.data?.key;
+                    const imageURL = `https://utfs.io/f/${imageKey}`;
 
-                if (imageKey && imageURL) {
-                    character = await db.character.create({
-                        data: {
-                            name: input.name,
-                            race: input.race,
-                            class: input.cClass,
-                            subclass: input.subclass,
-                            alignment: input.alignment,
-                            age: input.age,
-                            build: input.build,
-                            gender: input.gender,
-                            hair: input.hair,
-                            height: input.height,
-                            backstory: input.backstory,
-                            quirks: input.quirks,
-                            fashion: input.fashion,
-                            goals: input.goals,
-                            worldID: input.worldID,
-                            imageURL: imageURL,
-                            imageKey: imageKey,
-                            userId,
-                        },
-                    });
+                    if (imageKey && imageURL) {
+                        character = await db.character.create({
+                            data: {
+                                name: input.name,
+                                race: input.race,
+                                class: input.cClass,
+                                subclass: input.subclass,
+                                alignment: input.alignment,
+                                age: input.age,
+                                build: input.build,
+                                gender: input.gender,
+                                hair: input.hair,
+                                height: input.height,
+                                backstory: input.backstory,
+                                quirks: input.quirks,
+                                fashion: input.fashion,
+                                goals: input.goals,
+                                worldID: input.worldID,
+                                imageURL: imageURL,
+                                imageKey: imageKey,
+                                userId,
+                            },
+                        });
+                    }
+                } catch (error) {
+                    console.log(error);
                 }
             }
 
