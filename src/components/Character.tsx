@@ -92,37 +92,38 @@ const Character = ({ world }: { world: World }) => {
         }
     );
 
-    const { mutate: saveCharacter } = trpc.saveCharacter.useMutation({
-        onSuccess: () => {
-            utils.getWorldEntities.invalidate();
-            toast({
-                title: "Character Saved",
-                description: "Your character has been saved.",
-            });
-            setName("");
-            setRace("");
-            setClass("");
-            setSubclass("");
-            setAlignment("");
-            setAge("");
-            setBuild("");
-            setGender("");
-            setHair("");
-            setHeight("");
-            setFashion("");
-            setQuirks("");
-            setGoals("");
-            setBackstory("");
-            setImage("");
-            setPrompt("");
-        },
-        onMutate: () => {
-            setCurrentlySavingCharacter(true);
-        },
-        onSettled() {
-            setCurrentlySavingCharacter(false);
-        },
-    });
+    const { mutate: saveCharacter, error: saveError } =
+        trpc.saveCharacter.useMutation({
+            onSuccess: () => {
+                utils.getWorldEntities.invalidate();
+                toast({
+                    title: "Character Saved",
+                    description: "Your character has been saved.",
+                });
+                setName("");
+                setRace("");
+                setClass("");
+                setSubclass("");
+                setAlignment("");
+                setAge("");
+                setBuild("");
+                setGender("");
+                setHair("");
+                setHeight("");
+                setFashion("");
+                setQuirks("");
+                setGoals("");
+                setBackstory("");
+                setImage("");
+                setPrompt("");
+            },
+            onMutate: () => {
+                setCurrentlySavingCharacter(true);
+            },
+            onSettled() {
+                setCurrentlySavingCharacter(false);
+            },
+        });
 
     const {
         data: imageResponse,
@@ -163,6 +164,17 @@ const Character = ({ world }: { world: World }) => {
             worldID: world.id,
         });
     };
+
+    useEffect(() => {
+        if (saveError) {
+            console.log(saveError);
+            toast({
+                title: "Error",
+                description: `${saveError.message}`,
+                variant: "destructive",
+            });
+        }
+    }, [saveError]);
 
     useEffect(() => {
         if (imageResponse) {
