@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
+import { cn, constructMetadata } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Toaster } from "@/components/ui/toaster";
+import type { Viewport } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-    title: "Project Wildspace",
-    description:
-        "A worldbuilding tool that helps you create interactive and unique fantasy worlds. Peer into the Wildspace and discover all that awaits.",
+export const metadata = constructMetadata();
+
+export const viewport: Viewport = {
+    themeColor: "purple",
 };
 
 export default function RootLayout({
