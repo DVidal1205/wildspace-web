@@ -46,7 +46,7 @@ const Sidebar = ({
 }: SidebarProps) => {
     const router = useRouter();
     return (
-        <div className="sm:w-[95vw] sm:mx-4 sm:px-6 md:w-full md:px-0">
+        <div className="sm:w-[95vw] sm:mx-4 sm:px-6 md:w-full md:px-0 md:mr-2">
             <div className="flex justify-between mb-2">
                 <div>{world.name}</div>
                 <WorldButton world={world} />
