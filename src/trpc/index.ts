@@ -1516,13 +1516,9 @@ export const appRouter = router({
                         type: "image/png",
                     }
                 );
-
-                let response, imageKey, imageURL;
-                if (file) {
-                    response = await utapi.uploadFiles(file);
-                    imageKey = response.data?.key;
-                    imageURL = `https://utfs.io/f/${imageKey}`;
-                }
+                const response = await utapi.uploadFiles(file);
+                const imageKey = response.data?.key;
+                const imageURL = `https://utfs.io/f/${imageKey}`;
 
                 if (imageKey && imageURL) {
                     character = await db.character.create({

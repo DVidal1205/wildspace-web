@@ -166,17 +166,6 @@ const Character = ({ world }: { world: World }) => {
     };
 
     useEffect(() => {
-        if (saveError) {
-            console.log(saveError);
-            toast({
-                title: "Error",
-                description: `${saveError.message}`,
-                variant: "destructive",
-            });
-        }
-    }, [saveError]);
-
-    useEffect(() => {
         if (imageResponse) {
             setImage(imageResponse);
             console.log(imageResponse);
