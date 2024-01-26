@@ -12,8 +12,9 @@ import {
     CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
+import { Gem, Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import Link from "next/link";
 
 interface BillingFormProps {
     subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
@@ -63,14 +64,21 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
                     </CardHeader>
 
                     <CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
-                        <Button type="submit">
-                            {isLoading ? (
-                                <Loader2 className="mr-4 h-4 w-4 animate-spin" />
-                            ) : null}
-                            {subscriptionPlan.isSubscribed
-                                ? "Manage Subscription"
-                                : "Upgrade"}
-                        </Button>
+                        {subscriptionPlan.isSubscribed ? (
+                            <Button type="submit">
+                                {isLoading ? (
+                                    <Loader2 className="mr-4 h-4 w-4 animate-spin" />
+                                ) : null}
+                                {subscriptionPlan.isSubscribed
+                                    ? "Manage Subscription"
+                                    : null}
+                            </Button>
+                        ) : (
+                            <Link href="/pricing">
+                                Upgrade{" "}
+                                <Gem className="text-blue-600 h-4 w-4 ml-1.5" />
+                            </Link>
+                        )}
 
                         {subscriptionPlan.isSubscribed ? (
                             <p className="rounded-full text-xs font-medium">
