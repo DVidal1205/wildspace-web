@@ -155,6 +155,14 @@ const Character = ({ world }: { world: World }) => {
   };
 
   const handleSave = () => {
+    if (loading === true) {
+      toast({
+        title: "Error",
+        description: "Please wait for generation to finish before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
     saveCharacter({
       name: name,
       race: race,
