@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components";
@@ -19,7 +20,7 @@ export default function Home() {
                     <span className="text-primary">worlds</span> in seconds.
                 </h1>
                 <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
-                    Project Wildspace is a worldbuilding tool that helps you
+                    Project Wildspace is a world-building tool that helps you
                     create interactive and unique fantasy worlds. Peer into the
                     Wildspace and discover all that awaits.
                 </p>
@@ -29,7 +30,7 @@ export default function Home() {
                             size: "lg",
                         })}
                     >
-                        Get started <ArrowRight className="ml-1.5 h-5 w-5" />
+                        Get started <ArrowRight className="h-5 w-5" />
                     </RegisterLink>
                 </div>
                 <Image
@@ -40,14 +41,23 @@ export default function Home() {
                     className="aspect-auto h-[112] w-auto"
                 ></Image>
 
-                <div className="mb-32 mt-32 max-w-5xl sm:mt-56">
+                <div className="mb-32 max-w-5xl sm:mt-56">
                     <div className="mb-12">
                         <h2 className="mt-2 font-bold text-4xl text-gray-900 sm:text-5xl">
-                            Start worldbuilding in minutes
+                            Start world-building in minutes
                         </h2>
                         <p className="mt-4 text-lg text-zinc-700">
                             Creating a world is hard. We&apos;ve made it easy.
                         </p>
+                        <div className="my-12 border rounded-lg drop">
+                            <Image
+                                src="/demo.png"
+                                height={1080}
+                                width={1920}
+                                alt="Widlspace Demo"
+                                className="rounded-lg"
+                            />
+                        </div>
                     </div>
 
                     <ol className="my-8 space-y-4 pt-8 md:flex md:space-x-12 md:space-y-0">
@@ -96,6 +106,7 @@ export default function Home() {
                     </ol>
                 </div>
             </MaxWidthWrapper>
+            <Footer />
         </>
     );
 }
