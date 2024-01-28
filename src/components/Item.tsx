@@ -88,6 +88,7 @@ const Item = ({ world }: { world: World }) => {
             setLore("");
             setImage("");
             setPrompt("");
+            setEntity("");
             setResponseData("");
         },
         onMutate: () => {

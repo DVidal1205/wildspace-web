@@ -110,6 +110,7 @@ const Faction = ({ world }: { world: World }) => {
                 setTraits("");
                 setImage("");
                 setPrompt("");
+                setEntity("");
                 setResponseData("");
             },
             onMutate: () => {

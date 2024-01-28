@@ -101,6 +101,7 @@ const Quest = ({ world }: { world: World }) => {
             setDescription("");
             setImage("");
             setPrompt("");
+            setEntity("");
             setResponseData("");
         },
         onMutate: () => {

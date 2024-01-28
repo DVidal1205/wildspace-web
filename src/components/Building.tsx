@@ -106,6 +106,7 @@ const Building = ({ world }: { world: World }) => {
             setGoods("");
             setImage("");
             setPrompt("");
+            setEntity("");
             setResponseData("");
         },
         onMutate: () => {

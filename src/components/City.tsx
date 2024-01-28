@@ -127,6 +127,7 @@ const City = ({ world }: { world: World }) => {
             setQuests("");
             setImage("");
             setPrompt("");
+            setEntity("");
             setResponseData("");
         },
         onMutate: () => {
@@ -190,25 +191,25 @@ const City = ({ world }: { world: World }) => {
     }, [saveError, toast]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setResponseData(response);
-            setName(response.name);
-            setPopulation(response.population);
-            setSprawl(response.sprawl);
-            setArchitecture(response.architecture);
-            setIndustries(response.industries);
-            setClimate(response.climate);
-            setSafety(response.safety);
-            setEducation(response.education);
-            setModernity(response.modernity);
-            setWealth(response.wealth);
-            setDescription(response.description);
-            setLore(response.lore);
-            setGovernance(response.governance);
-            setQuests(response.quests);
+        if (entity && entity != responseData) {
+            setResponseData(entity);
+            setName(entity.name);
+            setPopulation(entity.population);
+            setSprawl(entity.sprawl);
+            setArchitecture(entity.architecture);
+            setIndustries(entity.industries);
+            setClimate(entity.climate);
+            setSafety(entity.safety);
+            setEducation(entity.education);
+            setModernity(entity.modernity);
+            setWealth(entity.wealth);
+            setDescription(entity.description);
+            setLore(entity.lore);
+            setGovernance(entity.governance);
+            setQuests(entity.quests);
             setLoading(false);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
 
     useEffect(() => {
         if (response) {

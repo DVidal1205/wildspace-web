@@ -106,6 +106,7 @@ const Monster = ({ world }: { world: World }) => {
                 setLore("");
                 setImage("");
                 setPrompt("");
+                setEntity("");
                 setResponseData("");
             },
             onMutate: () => {

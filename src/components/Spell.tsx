@@ -105,6 +105,7 @@ const Spell = ({ world }: { world: World }) => {
             setDescription("");
             setImage("");
             setPrompt("");
+            setEntity("");
             setResponseData("");
         },
         onMutate: () => {
