@@ -50,6 +50,7 @@ const Item = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -87,6 +88,7 @@ const Item = ({ world }: { world: World }) => {
             setLore("");
             setImage("");
             setPrompt("");
+            setResponseData("");
         },
         onMutate: () => {
             setCurrentlySavingItem(true);
@@ -149,16 +151,27 @@ const Item = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setResponseData(response);
-            setName(response.name);
-            setType(response.type);
-            setAbilities(response.abilities);
-            setDescription(response.description);
-            setLore(response.lore);
+        if (entity && entity != responseData) {
+            setResponseData(entity);
+            setName(entity.name);
+            setType(entity.type);
+            setAbilities(entity.abilities);
+            setDescription(entity.description);
+            setLore(entity.lore);
             setLoading(false);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
+
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -171,6 +184,15 @@ const Item = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveItem({
             name: name,
             type: type,

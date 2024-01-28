@@ -59,6 +59,7 @@ const Monster = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -105,6 +106,7 @@ const Monster = ({ world }: { world: World }) => {
                 setLore("");
                 setImage("");
                 setPrompt("");
+                setResponseData("");
             },
             onMutate: () => {
                 setCurrentlySavingMonster(true);
@@ -167,20 +169,31 @@ const Monster = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setResponseData(response);
-            setName(response.name);
-            setType(response.type);
-            setSize(response.size);
-            setAlignment(response.alignment);
-            setResistance(response.resistances);
-            setStats(response.stats);
-            setAbilities(response.abilities);
-            setDescription(response.description);
-            setLore(response.lore);
+        if (entity && entity != responseData) {
+            setResponseData(entity);
+            setName(entity.name);
+            setType(entity.type);
+            setSize(entity.size);
+            setAlignment(entity.alignment);
+            setResistance(entity.resistances);
+            setStats(entity.stats);
+            setAbilities(entity.abilities);
+            setDescription(entity.description);
+            setLore(entity.lore);
             setLoading(false);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
+
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -193,6 +206,15 @@ const Monster = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveMonster({
             name: name,
             type: type,

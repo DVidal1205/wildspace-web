@@ -246,6 +246,15 @@ const FactionView = ({
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         updateFaction({
             name: name,
             population: population,

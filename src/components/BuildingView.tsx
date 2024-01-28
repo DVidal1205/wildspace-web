@@ -247,6 +247,15 @@ const BuildingView = ({
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         updateBuilding({
             name: name,
             type: type,

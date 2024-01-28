@@ -71,6 +71,7 @@ const City = ({ world }: { world: World }) => {
     const [currentySavingCity, setCurrentlySavingCity] =
         useState<boolean>(false);
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -126,6 +127,7 @@ const City = ({ world }: { world: World }) => {
             setQuests("");
             setImage("");
             setPrompt("");
+            setResponseData("");
         },
         onMutate: () => {
             setCurrentlySavingCity(true);
@@ -208,6 +210,17 @@ const City = ({ world }: { world: World }) => {
         }
     }, [response, responseData]);
 
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
+
     const handleSubmit = () => {
         setLoading(true);
         genFetch();
@@ -219,6 +232,15 @@ const City = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveCity({
             name: name,
             population: population,

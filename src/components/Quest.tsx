@@ -57,6 +57,7 @@ const Quest = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -100,6 +101,7 @@ const Quest = ({ world }: { world: World }) => {
             setDescription("");
             setImage("");
             setPrompt("");
+            setResponseData("");
         },
         onMutate: () => {
             setCurrentlySavingQuest(true);
@@ -150,19 +152,30 @@ const Quest = ({ world }: { world: World }) => {
     }, [imageError, toast]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setResponseData(response);
-            setName(response.name);
-            setDifficulty(response.difficulty);
-            setDiscovery(response.discovery);
-            setConsequences(response.consequences);
-            setRewards(response.rewards);
-            setOutcome(response.outcomes);
-            setObjectives(response.objective);
-            setDescription(response.description);
+        if (entity && entity != responseData) {
+            setResponseData(entity);
+            setName(entity.name);
+            setDifficulty(entity.difficulty);
+            setDiscovery(entity.discovery);
+            setConsequences(entity.consequences);
+            setRewards(entity.rewards);
+            setOutcome(entity.outcomes);
+            setObjectives(entity.objective);
+            setDescription(entity.description);
             setLoading(false);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
+
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -175,6 +188,15 @@ const Quest = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveQuest({
             name: name,
             difficulty: difficulty,

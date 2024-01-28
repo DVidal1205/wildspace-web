@@ -61,6 +61,7 @@ const Faction = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -109,6 +110,7 @@ const Faction = ({ world }: { world: World }) => {
                 setTraits("");
                 setImage("");
                 setPrompt("");
+                setResponseData("");
             },
             onMutate: () => {
                 setCurrentlySavingFaction(true);
@@ -171,21 +173,32 @@ const Faction = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setResponseData(response);
-            setName(response.name);
-            setPopulation(response.population);
-            setAlignment(response.alignment);
-            setPresence(response.presence);
-            setDevotion(response.devotion);
-            setGoals(response.goals);
-            setDescription(response.description);
-            setLore(response.lore);
-            setTraits(response.traits);
-            setType(response.type);
+        if (entity && entity != responseData) {
+            setResponseData(entity);
+            setName(entity.name);
+            setPopulation(entity.population);
+            setAlignment(entity.alignment);
+            setPresence(entity.presence);
+            setDevotion(entity.devotion);
+            setGoals(entity.goals);
+            setDescription(entity.description);
+            setLore(entity.lore);
+            setTraits(entity.traits);
+            setType(entity.type);
             setLoading(false);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
+
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -198,6 +211,15 @@ const Faction = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveFaction({
             name: name,
             type: type,

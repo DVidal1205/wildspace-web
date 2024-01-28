@@ -59,6 +59,7 @@ const Spell = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -104,6 +105,7 @@ const Spell = ({ world }: { world: World }) => {
             setDescription("");
             setImage("");
             setPrompt("");
+            setResponseData("");
         },
         onMutate: () => {
             setCurrentlySavingSpell(true);
@@ -166,20 +168,31 @@ const Spell = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setName(response.name);
-            setSchool(response.school);
-            setLevel(response.level);
-            setCastingTime(response.castingTime);
-            setRange(response.range);
-            setComponents(response.components);
-            setDuration(response.duration);
-            setSpellList(response.spellList);
-            setDescription(response.description);
+        if (entity && entity != responseData) {
+            setName(entity.name);
+            setSchool(entity.school);
+            setLevel(entity.level);
+            setCastingTime(entity.castingTime);
+            setRange(entity.range);
+            setComponents(entity.components);
+            setDuration(entity.duration);
+            setSpellList(entity.spellList);
+            setDescription(entity.description);
             setLoading(false);
-            setResponseData(response);
+            setResponseData(entity);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
+
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -192,6 +205,15 @@ const Spell = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveSpell({
             name: name,
             school: school,

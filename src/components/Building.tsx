@@ -59,6 +59,7 @@ const Building = ({ world }: { world: World }) => {
     const [image, setImage] = useState<string>("");
     const [responseData, setResponseData] = useState<any>("");
     const [contextEntity, setContextEntity] = useState<Entity | null>(null);
+    const [entity, setEntity] = useState<any>("");
 
     const { toast } = useToast();
     const utils = trpc.useContext();
@@ -105,6 +106,7 @@ const Building = ({ world }: { world: World }) => {
             setGoods("");
             setImage("");
             setPrompt("");
+            setResponseData("");
         },
         onMutate: () => {
             setCurrentlySavingBuilding(true);
@@ -155,20 +157,31 @@ const Building = ({ world }: { world: World }) => {
     }, [imageResponse]);
 
     useEffect(() => {
-        if (response && response != responseData) {
-            setName(response.name);
-            setType(response.type);
-            setSize(response.size);
-            setArchitecture(response.architecture);
-            setAmbience(response.ambience);
-            setTraffic(response.traffic);
-            setDescription(response.description);
-            setVendor(response.vendor);
-            setGoods(response.goods);
+        if (entity && entity != responseData) {
+            setName(entity.name);
+            setType(entity.type);
+            setSize(entity.size);
+            setArchitecture(entity.architecture);
+            setAmbience(entity.ambience);
+            setTraffic(entity.traffic);
+            setDescription(entity.description);
+            setVendor(entity.vendor);
+            setGoods(entity.goods);
             setLoading(false);
-            setResponseData(response);
+            setResponseData(entity);
         }
-    }, [response, responseData]);
+    }, [entity, responseData]);
+
+    useEffect(() => {
+        if (response) {
+            setEntity(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        setEntity("");
+        setResponseData("");
+    }, []);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -181,6 +194,15 @@ const Building = ({ world }: { world: World }) => {
     };
 
     const handleSave = () => {
+        if (loading === true) {
+            toast({
+                title: "Error",
+                description:
+                    "Please wait for generation to finish before saving.",
+                variant: "destructive",
+            });
+            return;
+        }
         saveBuilding({
             name: name,
             type: type,
