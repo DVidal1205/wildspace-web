@@ -3,7 +3,7 @@ import { trpc } from "@/app/_trpc/client";
 import Entity from "@/lib/types";
 import { World } from "@prisma/client";
 import { Label } from "@radix-ui/react-label";
-import { Check, HelpCircle, Loader2, Trash } from "lucide-react";
+import { ArrowLeft, Check, HelpCircle, Loader2, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,6 +29,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "./ui/tooltip";
+import MarkdownSave from "./MarkdownSave";
 
 const MonsterView = ({
     world,
@@ -277,6 +278,15 @@ const MonsterView = ({
         </div>
     ) : (
         <TooltipProvider>
+            <div className="flex items-center justify-between">
+                <Button
+                    className="my-2"
+                    onClick={() => router.push(`/dashboard/${world.id}`)}
+                >
+                    <ArrowLeft className="h-4 w-4" /> Back
+                </Button>
+                <MarkdownSave entity={response || monster} />
+            </div>
             <Card>
                 <CardHeader>
                     <CardTitle>{name}</CardTitle>

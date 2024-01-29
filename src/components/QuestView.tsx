@@ -12,7 +12,7 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { Check, HelpCircle, Loader2, Trash } from "lucide-react";
+import { ArrowLeft, Check, HelpCircle, Loader2, Trash } from "lucide-react";
 import { useState, useEffect, useMemo, use } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "./ui/use-toast";
@@ -37,6 +37,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "./ui/tooltip";
+import MarkdownSave from "./MarkdownSave";
 
 const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     const [nameDisabled, setNameDisabled] = useState<boolean>(false);
@@ -275,6 +276,15 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
         </div>
     ) : (
         <TooltipProvider>
+            <div className="flex items-center justify-between">
+                <Button
+                    className="my-2"
+                    onClick={() => router.push(`/dashboard/${world.id}`)}
+                >
+                    <ArrowLeft className="h-4 w-4" /> Back
+                </Button>
+                <MarkdownSave entity={response || quest} />
+            </div>
             <Card>
                 <CardHeader>
                     <CardTitle>{name}</CardTitle>
