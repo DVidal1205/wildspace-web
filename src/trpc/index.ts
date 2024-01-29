@@ -12,8 +12,33 @@ import { privateProcedure, publicProcedure, router } from "./trpc";
 import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
 import { PLANS } from "@/config/stripe";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 export const maxDuration = 300;
+
+const redis = Redis.fromEnv();
+
+const ratelimit = {
+    free: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:free",
+        limiter: Ratelimit.fixedWindow(5, "24 h"),
+    }),
+    paid: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:paid",
+        limiter: Ratelimit.fixedWindow(30, "4 h"),
+    }),
+    image: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:image",
+        limiter: Ratelimit.fixedWindow(30, "4 h"),
+    }),
+};
 
 export const appRouter = router({
     authCallback: publicProcedure.query(async () => {
@@ -384,7 +409,49 @@ export const appRouter = router({
         }),
     generateImage: privateProcedure
         .input(z.object({ object: z.any(), type: z.string() }))
-        .query(async ({ input }) => {
+        .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "dall-e-3" : "dall-e-2";
+            if (userId === admin) {
+                model = "dall-e-3";
+            }
+
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.image.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of images for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    throw new TRPCError({
+                        code: "CONFLICT",
+                        message:
+                            "Image generation is only available to paid users. Please subscribe to generate images.",
+                    });
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     prompt: z
@@ -427,7 +494,7 @@ export const appRouter = router({
 
             const openai = new MyOpenAI();
             const imageResponse = await openai.images.generate({
-                model: "dall-e-3",
+                model: model,
                 prompt: response.prompt,
                 n: 1,
                 size: "1024x1024",
@@ -462,6 +529,51 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const races = [
                 {
                     Race: "Aarakockra",
@@ -1401,7 +1513,11 @@ export const appRouter = router({
 
             const chain = RunnableSequence.from([
                 PromptTemplate.fromTemplate(promptTemplate),
-                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                new OpenAI({
+                    temperature: 0.9,
+                    maxTokens: 1000,
+                    modelName: model,
+                }),
                 parser,
             ]);
             const response = await chain.invoke({
@@ -1770,6 +1886,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the City"),
@@ -1879,7 +2039,11 @@ export const appRouter = router({
 
             const chain = RunnableSequence.from([
                 PromptTemplate.fromTemplate(promptTemplate),
-                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                new OpenAI({
+                    temperature: 0.9,
+                    maxTokens: 1000,
+                    modelName: model,
+                }),
                 parser,
             ]);
 
@@ -2239,6 +2403,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the Faction"),
@@ -2335,7 +2543,11 @@ export const appRouter = router({
 
             const chain = RunnableSequence.from([
                 PromptTemplate.fromTemplate(promptTemplate),
-                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                new OpenAI({
+                    temperature: 0.9,
+                    maxTokens: 1000,
+                    modelName: model,
+                }),
                 parser,
             ]);
 
@@ -2665,6 +2877,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the Quest"),
@@ -2749,7 +3005,11 @@ export const appRouter = router({
 
             const chain = RunnableSequence.from([
                 PromptTemplate.fromTemplate(promptTemplate),
-                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                new OpenAI({
+                    temperature: 0.9,
+                    maxTokens: 1000,
+                    modelName: model,
+                }),
                 parser,
             ]);
 
@@ -3067,6 +3327,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the Building"),
@@ -3158,7 +3462,11 @@ export const appRouter = router({
 
             const chain = RunnableSequence.from([
                 PromptTemplate.fromTemplate(promptTemplate),
-                new OpenAI({ temperature: 0.9, maxTokens: 1000 }),
+                new OpenAI({
+                    temperature: 0.9,
+                    maxTokens: 1000,
+                    modelName: model,
+                }),
                 parser,
             ]);
 
@@ -3482,6 +3790,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the Monster"),
@@ -3956,6 +4308,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the Item"),
@@ -4354,6 +4750,50 @@ export const appRouter = router({
             })
         )
         .query(async ({ ctx, input }) => {
+            const userId = ctx.userId;
+            const subscriptionPlan = await getUserSubscriptionPlan();
+
+            const dbUser = await db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+
+            if (!dbUser) {
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message: "User not found",
+                });
+            }
+
+            const admin = process.env.ADMIN;
+            let model =
+                subscriptionPlan.slug === "premium" ? "gpt-4" : "gpt-3.5-turbo";
+            if (userId === admin) {
+                model = "gpt-4";
+            }
+            if (userId != admin) {
+                if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+                    const { success } = await ratelimit.paid.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                } else {
+                    const { success } = await ratelimit.free.limit(userId);
+                    if (!success) {
+                        throw new TRPCError({
+                            code: "CONFLICT",
+                            message:
+                                "You have reached the maximum number of generations for the current time period. Please try again later.",
+                        });
+                    }
+                }
+            }
+
             const parser = StructuredOutputParser.fromZodSchema(
                 z.object({
                     name: z.string().describe("Name of the Spell"),

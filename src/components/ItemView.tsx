@@ -168,7 +168,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                 description: `${imageError.message}`,
                 variant: "destructive",
             });
-            setLoading(false);
+            setImageLoading(false);
             return;
         }
     }, [imageError, toast]);
@@ -468,7 +468,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                     )}
                                 </Button>
                             ) : (
-                                <p>Please Generate a Item First...</p>
+                                <p>Please Generate an Item First...</p>
                             )}
                         </div>
                     </div>

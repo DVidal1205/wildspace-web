@@ -196,6 +196,30 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
     }, [updateError, toast]);
 
     useEffect(() => {
+        if (error) {
+            toast({
+                title: "Error",
+                description: `${error.message}`,
+                variant: "destructive",
+            });
+            setLoading(false);
+            return;
+        }
+    }, [error, toast]);
+
+    useEffect(() => {
+        if (imageError) {
+            toast({
+                title: "Error",
+                description: `${imageError.message}`,
+                variant: "destructive",
+            });
+            setImageLoading(false);
+            return;
+        }
+    }, [imageError, toast]);
+
+    useEffect(() => {
         if (response && response !== worldResponse) {
             setWorldResponse(response);
             setName(response.name);

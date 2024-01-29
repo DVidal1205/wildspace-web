@@ -211,7 +211,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                 description: `${imageError.message}`,
                 variant: "destructive",
             });
-            setLoading(false);
+            setImageLoading(false);
             return;
         }
     }, [imageError, toast]);

@@ -185,7 +185,7 @@ const City = ({ world }: { world: World }) => {
                 description: `${saveError.message}`,
                 variant: "destructive",
             });
-            setLoading(false);
+            setImageLoading(false);
             return;
         }
     }, [saveError, toast]);

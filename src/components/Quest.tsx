@@ -147,7 +147,7 @@ const Quest = ({ world }: { world: World }) => {
                 description: `${imageError.message}`,
                 variant: "destructive",
             });
-            setLoading(false);
+            setImageLoading(false);
             return;
         }
     }, [imageError, toast]);

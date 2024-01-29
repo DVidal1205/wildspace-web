@@ -139,7 +139,7 @@ const Item = ({ world }: { world: World }) => {
                 description: `${imageError.message}`,
                 variant: "destructive",
             });
-            setLoading(false);
+            setImageLoading(false);
             return;
         }
     }, [imageError, toast]);
@@ -439,7 +439,7 @@ const Item = ({ world }: { world: World }) => {
                                     )}
                                 </Button>
                             ) : (
-                                <p>Please Generate a Item First...</p>
+                                <p>Please Generate an Item First...</p>
                             )}
                         </div>
                     </div>
