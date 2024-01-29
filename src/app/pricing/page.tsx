@@ -140,7 +140,7 @@ const Page = async () => {
                                     >
                                         {plan === "Pro" && (
                                             <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-purple-600 to-violet-600 px-3 py-2 text-sm font-medium text-white">
-                                                Upgrade now
+                                                Popular
                                             </div>
                                         )}
 

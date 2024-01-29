@@ -48,7 +48,6 @@ export const appRouter = router({
         if (!user?.id || !user?.email) {
             throw new TRPCError({
                 code: "UNAUTHORIZED",
-                message: "Unauthorized",
             });
         }
 

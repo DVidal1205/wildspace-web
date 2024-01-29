@@ -69,8 +69,8 @@ export default function Home() {
                                     Sign up for an account
                                 </span>
                                 <span className="mt-2 text-zinc-700">
-                                    Try 5 generations for free, or sign up for a
-                                    premium account.
+                                    Enjoy 5 free demo generations per day, or
+                                    upgrade to a paid plan.
                                 </span>
                             </div>
                         </li>
@@ -98,7 +98,8 @@ export default function Home() {
                                 </span>
                                 <span className="mt-2 text-zinc-700">
                                     It&apos;s that simple. Try generating an
-                                    NPC, location, city, or country.
+                                    entity, such as a character, building, or
+                                    city.
                                 </span>
                             </div>
                         </li>
