@@ -32,7 +32,7 @@ export default function Footer() {
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Get in Touch</h3>
                     <div className="flex space-x-4">
-                        <Link
+                        {/* <Link
                             className="text-gray-300 hover:text-white"
                             href="#"
                         >
@@ -49,7 +49,7 @@ export default function Footer() {
                             href="#"
                         >
                             <InstagramIcon className="h-6 w-6" />
-                        </Link>
+                        </Link> */}
                         <Link
                             className="text-gray-300 hover:text-white"
                             href="mailto:projwildspace@gmail.com"
