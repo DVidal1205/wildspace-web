@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { cn, constructMetadata } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
-import "react-loading-skeleton/dist/skeleton.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { cn, constructMetadata } from "@/lib/utils";
 import type { Viewport } from "next";
+import { Inter } from "next/font/google";
+import "react-loading-skeleton/dist/skeleton.css";
+import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,9 +31,17 @@ export default function RootLayout({
                         inter.className
                     )}
                 >
-                    <Navbar />
-                    {children}
-                    <Toaster />
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <Navbar />
+                        {children}
+                        <Toaster />
+                        <Analytics />
+                    </ThemeProvider>
                 </body>
             </Providers>
         </html>

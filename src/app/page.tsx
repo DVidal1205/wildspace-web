@@ -18,7 +18,7 @@ export default function Home() {
                     Create meaningful{" "}
                     <span className="text-primary">worlds</span> in seconds.
                 </h1>
-                <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
+                <p className="mt-5 max-w-prose text-foreground sm:text-lg">
                     Project Wildspace is a world-building tool that helps you
                     create interactive and unique fantasy worlds. Peer into the
                     Wildspace and discover all that awaits.
@@ -42,10 +42,10 @@ export default function Home() {
 
                 <div className="mb-32 max-w-5xl sm:mt-56">
                     <div className="mb-12">
-                        <h2 className="mt-2 font-bold text-4xl text-gray-900 sm:text-5xl">
+                        <h2 className="mt-2 font-bold text-4xl text-foreground sm:text-5xl">
                             Start world-building in minutes
                         </h2>
-                        <p className="mt-4 text-lg text-zinc-700">
+                        <p className="mt-4 text-lg text-foreground">
                             Creating a world is hard. We&apos;ve made it easy.
                         </p>
                         <div className="my-12 border rounded-lg drop">
@@ -68,7 +68,7 @@ export default function Home() {
                                 <span className="text-xl font-semibold">
                                     Sign up for an account
                                 </span>
-                                <span className="mt-2 text-zinc-700">
+                                <span className="mt-2 text-foreground">
                                     Enjoy 5 free demo generations per day, or
                                     upgrade to a paid plan.
                                 </span>
@@ -82,7 +82,7 @@ export default function Home() {
                                 <span className="text-xl font-semibold">
                                     Create a world
                                 </span>
-                                <span className="mt-2 text-zinc-700">
+                                <span className="mt-2 text-foreground">
                                     We&apos;ll process a world collection. The
                                     rest is up to you.
                                 </span>
@@ -96,7 +96,7 @@ export default function Home() {
                                 <span className="text-xl font-semibold">
                                     Start generating entities
                                 </span>
-                                <span className="mt-2 text-zinc-700">
+                                <span className="mt-2 text-foreground">
                                     It&apos;s that simple. Try generating an
                                     entity, such as a character, building, or
                                     city.
