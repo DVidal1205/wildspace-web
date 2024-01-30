@@ -15,12 +15,12 @@ const MarkdownSave = ({ entity }: { entity: any }) => {
             if (!ignoreKeys.includes(keyLower) && value !== "") {
                 if (keyLower === "name") {
                     // Format the 'name' property as an H1 header
-                    markdown += `# ${value}\n\n`;
+                    markdown += `# ${value}\n`;
                 } else {
                     // Format other properties as H2 headers followed by their values
                     markdown += `## ${
                         key.charAt(0).toUpperCase() + key.slice(1)
-                    }\n${value}\n\n`;
+                    }\n${value}\n`;
                 }
             }
         }
