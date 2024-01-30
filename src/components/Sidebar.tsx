@@ -49,7 +49,7 @@ const Sidebar = ({
                 <div>{world.name}</div>
                 <WorldButton world={world} />
             </div>
-            <Separator className="bg-foreground" />
+            <Separator className="border-b-2" />
             <Accordion
                 type="multiple"
                 className="max-h-[50vh] md:max-h-[75vh] overflow-auto"
