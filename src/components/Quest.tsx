@@ -231,7 +231,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the quest.</p>
@@ -260,7 +260,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -298,7 +298,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="objectives">Objectives</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -335,7 +335,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="outcome">Outcome</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -370,7 +370,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="difficulty">Difficulty</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The difficulty of the quest.</p>
@@ -403,7 +403,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="discovery">Discovery</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -440,7 +440,7 @@ const Quest = ({ world }: { world: World }) => {
                                 </Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -477,7 +477,7 @@ const Quest = ({ world }: { world: World }) => {
                                 <Label htmlFor="rewards">Rewards</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -508,7 +508,7 @@ const Quest = ({ world }: { world: World }) => {
                     </div>
                     <div className="space-y-1">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -591,7 +591,7 @@ const Quest = ({ world }: { world: World }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

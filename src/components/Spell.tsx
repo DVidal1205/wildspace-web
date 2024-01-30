@@ -239,7 +239,7 @@ const Spell = ({ world }: { world: World }) => {
                         Let&apos;s come up with an spell! Leave the fields blank
                         to generate details, or fill in properties and check
                         them to set them. Press the save button to save the
-                        spellListDisabled to your gallery.
+                        spell to your gallery.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4 ">
@@ -249,7 +249,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the spell.</p>
@@ -278,7 +278,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="level">Level</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -310,7 +310,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="school">School</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -342,7 +342,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="components">Components</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -382,7 +382,7 @@ const Spell = ({ world }: { world: World }) => {
                                 </Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -417,7 +417,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="duration">Duration</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -451,7 +451,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="range">Range</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -484,7 +484,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="spellList">Spell List</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -520,7 +520,7 @@ const Spell = ({ world }: { world: World }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -532,7 +532,7 @@ const Spell = ({ world }: { world: World }) => {
                                 </Tooltip>
                             </div>
                             <div className="flex space-x-2 items-center h-full">
-                                <Card className="h-full p-4 w-full overflow-auto">
+                                <Card className="border-input h-full p-4 w-full overflow-auto">
                                     <Markdown remarkPlugins={[remarkGfm]}>
                                         {description}
                                     </Markdown>
@@ -552,7 +552,7 @@ const Spell = ({ world }: { world: World }) => {
                     </div>
                     <div className="space-y-1 mt-4 md:mt-0">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -635,7 +635,7 @@ const Spell = ({ world }: { world: World }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

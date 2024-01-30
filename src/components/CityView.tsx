@@ -319,7 +319,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the city.</p>
@@ -348,7 +348,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="population">Population</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -384,7 +384,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="sprawl">Sprawl</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -418,7 +418,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 </Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -454,7 +454,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="industries">Industries</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -489,7 +489,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="climate">Climate</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The general climate of the city.</p>
@@ -518,7 +518,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="safety">Safety</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -549,7 +549,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="education">Education</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -583,7 +583,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="modernity">Modernity</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -617,7 +617,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="wealth">Wealth</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -651,7 +651,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -689,7 +689,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="lore">Lore</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -722,7 +722,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="governance">Governance</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -760,7 +760,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="quests">Quests</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -793,7 +793,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="space-y-1">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -882,7 +882,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

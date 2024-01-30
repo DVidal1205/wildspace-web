@@ -300,7 +300,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the quest.</p>
@@ -329,7 +329,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -367,7 +367,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="objectives">Objectives</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -404,7 +404,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="outcome">Outcome</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -439,7 +439,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="difficulty">Difficulty</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The difficulty of the quest.</p>
@@ -472,7 +472,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="discovery">Discovery</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -509,7 +509,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 </Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -546,7 +546,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="rewards">Rewards</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -577,7 +577,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="space-y-1">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -667,7 +667,7 @@ const QuestView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

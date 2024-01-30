@@ -110,7 +110,7 @@ const Page = async () => {
             <MaxWidthWrapper className="mb-8 mt-24 text-center max-w-7xl">
                 <div className="mx-auto mb-10 sm:max-w-lg">
                     <h1 className="text-6xl font-bold sm:text-7xl">Pricing</h1>
-                    <p className="mt-5 text-gray-600 sm:text-lg">
+                    <p className="mt-5 text-foreground sm:text-lg">
                         Whether you&apos;re just trying out our service or need
                         more, we&apos;ve got you covered.
                     </p>
@@ -129,7 +129,7 @@ const Page = async () => {
                                     <div
                                         key={plan}
                                         className={cn(
-                                            "relative rounded-2xl bg-white shadow-lg",
+                                            "relative rounded-2xl  shadow-lg",
                                             {
                                                 "border-2 border-purple-600 shadow-purple-200":
                                                     plan === "Pro",
@@ -148,13 +148,13 @@ const Page = async () => {
                                             <h3 className="my-3 text-center font-display text-3xl font-bold">
                                                 {plan}
                                             </h3>
-                                            <p className="text-gray-500">
+                                            <p className="foreground">
                                                 {tagline}
                                             </p>
                                             <p className="my-5 font-display text-6xl font-semibold">
                                                 ${price}
                                             </p>
-                                            <p className="text-gray-500">
+                                            <p className="foreground">
                                                 per month
                                             </p>
                                         </div>
@@ -172,7 +172,7 @@ const Page = async () => {
                                                     >
                                                         <div className="flex-shrink-0">
                                                             {negative ? (
-                                                                <Minus className="h-6 w-6 text-gray-300" />
+                                                                <Minus className="h-6 w-6 text-foreground" />
                                                             ) : (
                                                                 <Check className="h-6 w-6 text-purple-500" />
                                                             )}
@@ -181,9 +181,9 @@ const Page = async () => {
                                                             <div className="flex items-center space-x-1">
                                                                 <p
                                                                     className={cn(
-                                                                        "text-gray-600",
+                                                                        "text-foreground",
                                                                         {
-                                                                            "text-gray-400":
+                                                                            "text-foreground":
                                                                                 negative,
                                                                         }
                                                                     )}
@@ -196,7 +196,7 @@ const Page = async () => {
                                                                     }
                                                                 >
                                                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                                                     </TooltipTrigger>
                                                                     <TooltipContent className="w-80 p-2">
                                                                         {
@@ -208,9 +208,9 @@ const Page = async () => {
                                                         ) : (
                                                             <p
                                                                 className={cn(
-                                                                    "text-gray-600",
+                                                                    "text-foreground",
                                                                     {
-                                                                        "text-gray-400":
+                                                                        "text-foreground":
                                                                             negative,
                                                                     }
                                                                 )}

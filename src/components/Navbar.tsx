@@ -17,9 +17,9 @@ const Navbar = async () => {
     const user = await getUser();
 
     return (
-        <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-accent backdrop-blur-lg transition-all">
+        <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-input backdrop-blur-lg transition-all">
             <MaxWidthWrapper>
-                <div className="flex h-14 items-center justify-between border-b border-accent">
+                <div className="flex h-14 items-center justify-between border-b border-input">
                     <Link href="/" className="flex z-40">
                         <Image
                             src="/logo.png"
@@ -70,10 +70,12 @@ const Navbar = async () => {
 
                                 <Link
                                     href="/dashboard"
-                                    className={buttonVariants({
-                                        variant: "ghost",
-                                        size: "sm",
-                                    })}
+                                    className={`${
+                                        buttonVariants({
+                                            variant: "ghost",
+                                            size: "sm",
+                                        })
+                                    } hover:bg-primary`}
                                 >
                                     Dashboard
                                 </Link>

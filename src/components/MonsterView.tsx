@@ -302,7 +302,7 @@ const MonsterView = ({
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the monster.</p>
@@ -331,7 +331,7 @@ const MonsterView = ({
                                 <Label htmlFor="type">Type</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -364,7 +364,7 @@ const MonsterView = ({
                                 <Label htmlFor="size">Size</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -396,7 +396,7 @@ const MonsterView = ({
                                 <Label htmlFor="alignment">Alignment</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -430,7 +430,7 @@ const MonsterView = ({
                                 <Label htmlFor="resistances">Resistances</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -468,7 +468,7 @@ const MonsterView = ({
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -507,7 +507,7 @@ const MonsterView = ({
                                 <Label htmlFor="lore">Lore</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -545,7 +545,7 @@ const MonsterView = ({
                                 <Label htmlFor="stats">Stats</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -557,11 +557,11 @@ const MonsterView = ({
                                 </Tooltip>
                             </div>
                             <div className="flex flex-col">
-                                <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
+                                <Card className="w-[90vw] border-input md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                     <div className="p-4">
                                         <Markdown
                                             remarkPlugins={[remarkGfm]}
-                                            className="prose"
+                                            className="prose dark:prose-invert"
                                         >
                                             {stats}
                                         </Markdown>
@@ -583,7 +583,7 @@ const MonsterView = ({
                                 <Label htmlFor="abilities">Abilities</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -595,11 +595,11 @@ const MonsterView = ({
                                 </Tooltip>
                             </div>
                             <div className="flex flex-col">
-                                <Card className="w-[90vw] md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
+                                <Card className="w-[90vw] border-input md:w-[30vw] h-[20vw] md:h-[17.5vh] overflow-auto">
                                     <div className="p-4">
                                         <Markdown
                                             remarkPlugins={[remarkGfm]}
-                                            className="prose"
+                                            className="prose dark:prose-invert"
                                         >
                                             {abilities}
                                         </Markdown>
@@ -619,7 +619,7 @@ const MonsterView = ({
                     </div>
                     <div className="space-y-1">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -709,7 +709,7 @@ const MonsterView = ({
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

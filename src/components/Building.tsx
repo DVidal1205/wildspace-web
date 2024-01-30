@@ -238,7 +238,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -270,7 +270,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="type">Type</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -303,7 +303,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="size">Size</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The size of the building.</p>
@@ -334,7 +334,7 @@ const Building = ({ world }: { world: World }) => {
                                 </Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -370,7 +370,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="ambience">Ambience</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -405,7 +405,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="traffic">Traffic</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -439,7 +439,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -477,7 +477,7 @@ const Building = ({ world }: { world: World }) => {
                                 <Label htmlFor="vendor">Vendor</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -513,7 +513,7 @@ const Building = ({ world }: { world: World }) => {
                             <Label htmlFor="goods">Goods and Services</Label>
                             <Tooltip delayDuration={300}>
                                 <TooltipTrigger className="cursor-default ml-1.5">
-                                    <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                    <HelpCircle className="h-4 w-4 text-foreground" />
                                 </TooltipTrigger>
                                 <TooltipContent className="w-80 p-2">
                                     <p>
@@ -526,11 +526,11 @@ const Building = ({ world }: { world: World }) => {
                             </Tooltip>
                         </div>
                         <div className="flex flex-col">
-                            <Card className="aspect-square overflow-y-auto">
+                            <Card className="aspect-square overflow-y-auto border-input">
                                 <div className="p-4">
                                     <Markdown
                                         remarkPlugins={[remarkGfm]}
-                                        className="prose"
+                                        className="prose dark:prose-invert"
                                     >
                                         {goods}
                                     </Markdown>
@@ -547,7 +547,7 @@ const Building = ({ world }: { world: World }) => {
                     </div>
                     <div className="space-y-1">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -630,7 +630,7 @@ const Building = ({ world }: { world: World }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

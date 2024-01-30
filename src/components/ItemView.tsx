@@ -267,7 +267,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the item.</p>
@@ -296,7 +296,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -333,7 +333,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="lore">Lore</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -370,7 +370,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="type">Type</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -403,7 +403,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="abilities">Abilities</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -415,11 +415,11 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 </Tooltip>
                             </div>
                             <div className="flex space-x-2 items-center">
-                                <Card className="overflow-auto h-[20vh] md:h-[30vh] w-full">
+                                <Card className="overflow-auto border-input h-[20vh] md:h-[30vh] w-full">
                                     <div className="p-4">
                                         <Markdown
                                             remarkPlugins={[remarkGfm]}
-                                            className="prose"
+                                            className="prose dark:prose-invert"
                                         >
                                             {abilities}
                                         </Markdown>
@@ -439,7 +439,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="space-y-1">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -529,7 +529,7 @@ const ItemView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>

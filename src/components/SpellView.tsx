@@ -319,7 +319,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>The name of the spell.</p>
@@ -348,7 +348,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="level">Level</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -380,7 +380,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="school">School</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -412,7 +412,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="components">Components</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -452,7 +452,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 </Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -487,7 +487,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="duration">Duration</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -521,7 +521,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="range">Range</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -554,7 +554,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="spellList">Spell List</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -590,7 +590,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 <Label htmlFor="description">Description</Label>
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger className="cursor-default ml-1.5">
-                                        <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                        <HelpCircle className="h-4 w-4 text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="w-80 p-2">
                                         <p>
@@ -602,7 +602,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                                 </Tooltip>
                             </div>
                             <div className="flex space-x-2 items-center h-full">
-                                <Card className="h-full p-4 w-full overflow-auto">
+                                <Card className="border-input h-full p-4 w-full overflow-auto">
                                     <Markdown remarkPlugins={[remarkGfm]}>
                                         {description}
                                     </Markdown>
@@ -622,7 +622,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </div>
                     <div className="space-y-1 mt-4 md:mt-0">
                         <Label>Image</Label>
-                        <Card className="aspect-square">
+                        <Card className="aspect-square border-input">
                             {image && (
                                 <div
                                     className={`${
@@ -712,7 +712,7 @@ const SpellView = ({ world, entityid }: { world: World; entityid: string }) => {
                     </Button>
                     <Tooltip delayDuration={300}>
                         <TooltipTrigger className="cursor-default ml-1.5">
-                            <HelpCircle className="h-4 w-4 text-zinc-500" />
+                            <HelpCircle className="h-4 w-4 text-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="w-80 p-2">
                             <p>
