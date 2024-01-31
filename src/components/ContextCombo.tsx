@@ -40,7 +40,8 @@ type EntityItem = {
         | Building
         | Monster
         | Item
-        | Spell;
+        | Spell
+        | null;
     label: string;
 };
 
@@ -59,6 +60,7 @@ const ContextCombo = ({
     const entities = trpc.getWorldEntities.useQuery(worldID);
 
     const statuses: EntityItem[] = [
+        { value: null, label: "None" },
         ...(entities.data?.characters?.map((entity: Character) => ({
             value: entity,
             label: entity.name,
@@ -172,13 +174,15 @@ function StatusList({
                 <CommandGroup>
                     {statuses.map((status) => (
                         <CommandItem
-                            key={status.value.id}
-                            value={status.value.name}
+                            key={status.value?.name}
+                            value={status.value?.name}
                             onSelect={(value) => {
+                                console.log(value);
                                 setSelectedStatus(
                                     statuses.find(
                                         (priority) =>
-                                            priority.value.name === value
+                                            priority.value?.name.toLowerCase() ===
+                                            value.toLowerCase()
                                     ) || null
                                 );
                                 setOpen(false);
