@@ -3859,7 +3859,7 @@ export const appRouter = router({
                     stats: z
                         .string()
                         .describe(
-                            "Stats of the creature, and MUSt include Armor Class, Movement Speed in feet, Passive Perception, Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. This should be represented as a string representing a nine-columned markdown table, representing the statistic and its value. Be sure to separate new lines with the \n character. An example table would be formatted as follows: | AC | Move Speed | \n | ---- | ---- | \n | 18 | 50ft, 30ft flying |. Note the row with ---- to separate the header and footer. The last row should not be followed by \n or a period. The \n MUST have a space on the left and right of it in order to work (| \n | and not |\n|)  (Markdown Table with 2 rows and 9 columns)"
+                            "Stats of the creature, and MUST include Hit Points, Armor Class, Movement Speed in feet, Passive Perception, Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. This should be represented as a string representing a nine-columned markdown table, representing the statistic and its value. Be sure to separate new lines with the \n character. An example table would be formatted as follows: | HP | AC | \n | ---- | ---- | \n | 18 | 11 |. Note the row with ---- to separate the header and footer. The last row should not be followed by \n or a period. The \n MUST have a space on the left and right of it in order to work (| \n | and not |\n|)  (Markdown Table with 2 rows and 10 columns)"
                         ),
                     abilities: z
                         .string()
