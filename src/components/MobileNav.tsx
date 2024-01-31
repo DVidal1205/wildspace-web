@@ -14,7 +14,8 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
 
     useEffect(() => {
         if (isOpen) toggleOpen();
-    }, [pathname, isOpen]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname]);
 
     const closeOnCurrent = (href: string) => {
         if (pathname === href) {
@@ -26,12 +27,12 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
         <div className="sm:hidden">
             <Menu
                 onClick={toggleOpen}
-                className="relative z-50 h-5 w-5 text-zinc-700"
+                className="relative z-50 h-5 w-5 text-foreground"
             />
 
             {isOpen ? (
                 <div className="fixed animate-in slide-in-from-top-5 fade-in-20 inset-0 z-0 w-full">
-                    <ul className="absolute bg-white border-b border-zinc-200 shadow-xl grid w-full gap-3 px-10 pt-20 pb-8">
+                    <ul className="absolute bg-popover border-b border-input shadow-xl grid w-full gap-3 px-10 pt-20 pb-8">
                         {!isAuth ? (
                             <>
                                 <li>
@@ -39,14 +40,14 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                         onClick={() =>
                                             closeOnCurrent("/sign-up")
                                         }
-                                        className="flex items-center w-full font-semibold text-green-600"
+                                        className="flex items-center w-full font-semibold text-primary"
                                         href="/sign-up"
                                     >
                                         Get started
                                         <ArrowRight className="ml-2 h-5 w-5" />
                                     </Link>
                                 </li>
-                                <li className="my-3 h-px w-full bg-gray-300" />
+                                <li className="my-3 h-px w-full bg-input" />
                                 <li>
                                     <Link
                                         onClick={() =>
@@ -58,7 +59,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                                         Sign in
                                     </Link>
                                 </li>
-                                <li className="my-3 h-px w-full bg-gray-300" />
+                                <li className="my-3 h-px w-full bg-input" />
                                 <li>
                                     <Link
                                         onClick={() =>
