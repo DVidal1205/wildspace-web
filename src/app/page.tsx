@@ -1,3 +1,4 @@
+import DemoVid from "@/components/DemoVid";
 import Footer from "@/components/Footer";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
@@ -32,6 +33,9 @@ export default function Home() {
                         Get started <ArrowRight className="h-5 w-5" />
                     </RegisterLink>
                 </div>
+
+                <DemoVid />
+
                 <Image
                     src="/logo.png"
                     height={1080}
@@ -40,7 +44,7 @@ export default function Home() {
                     className="aspect-auto h-[112] w-auto"
                 ></Image>
 
-                <div className="mb-32 max-w-5xl sm:mt-56">
+                <div className="mb-32 max-w-5xl sm:mt-24">
                     <div className="mb-12">
                         <h2 className="mt-2 font-bold text-4xl text-foreground sm:text-5xl">
                             Start world-building in minutes
@@ -48,7 +52,7 @@ export default function Home() {
                         <p className="mt-4 text-lg text-foreground">
                             Creating a world is hard. We&apos;ve made it easy.
                         </p>
-                        <div className="my-12 border rounded-lg drop">
+                        <div className="my-12 border border-primary rounded-lg drop">
                             <Image
                                 src="/demo.png"
                                 height={1080}
