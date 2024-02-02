@@ -837,7 +837,7 @@ const CityView = ({ world, entityid }: { world: World; entityid: string }) => {
                         </div>
                     </div>
                 </CardContent>
-                <CardFooter className="gap-4 justify-center mt-12 flex flex-col md:flex-row">
+                <CardFooter className="gap-4 justify-center mt-12 flex flex-wrap md:flex-row">
                     <Label htmlFor="race">Prompt</Label>
                     <div className="flex space-x-2 items-center">
                         <Input
