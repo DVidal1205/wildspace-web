@@ -21,12 +21,12 @@ const Page = async () => {
         {
             plan: "Demo",
             tagline: "Try out our service for free.",
-            quota: 5,
+            quota: 10,
             features: [
                 {
-                    text: "5 demo entities per month",
+                    text: "10 demo entities per day",
                     footnote:
-                        "Try out 5 free demo entities a month before choosing to subscribe.",
+                        "Try out 10 free demo entities a month before choosing to subscribe.",
                 },
                 {
                     text: "Entity Saving",

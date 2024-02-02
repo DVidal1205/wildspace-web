@@ -24,7 +24,7 @@ const ratelimit = {
         redis,
         analytics: true,
         prefix: "ratelimit:free",
-        limiter: Ratelimit.fixedWindow(5, "24 h"),
+        limiter: Ratelimit.fixedWindow(10, "24 h"),
     }),
     paid: new Ratelimit({
         redis,

@@ -64,10 +64,10 @@ model Character {
   gender    String
   hair      String
   height    String
-  fashion   String @db.VarChar(1000)
-  quirks    String @db.VarChar(1000)
-  goals     String @db.VarChar(1000)
-  backstory String @db.VarChar(1000)
+  fashion   String @db.VarChar(1500)
+  quirks    String @db.VarChar(1500)
+  goals     String @db.VarChar(1500)
+  backstory String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -87,9 +87,9 @@ model Building {
   architecture String
   ambience     String
   traffic      String
-  description  String @db.VarChar(1000)
-  vendor       String @db.VarChar(1000)
-  goods        String @db.VarChar(1000)
+  description  String @db.VarChar(1500)
+  vendor       String @db.VarChar(1500)
+  goods        String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -113,10 +113,10 @@ model City {
   education    String
   modernity    String
   wealth       String
-  governance   String @db.VarChar(1000)
-  lore         String @db.VarChar(1000)
-  quests       String @db.VarChar(1000)
-  description  String @db.VarChar(1000)
+  governance   String @db.VarChar(1500)
+  lore         String @db.VarChar(1500)
+  quests       String @db.VarChar(1500)
+  description  String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -136,10 +136,10 @@ model Faction {
   alignment   String
   presence    String
   devotion    String
-  description String @db.VarChar(1000)
-  goals       String @db.VarChar(1000)
-  lore        String @db.VarChar(1000)
-  traits      String @db.VarChar(1000)
+  description String @db.VarChar(1500)
+  goals       String @db.VarChar(1500)
+  lore        String @db.VarChar(1500)
+  traits      String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -155,12 +155,12 @@ model Quest {
   id           String @id @default(cuid())
   name         String
   difficulty   String
-  description  String @db.VarChar(1000)
-  discovery    String @db.VarChar(1000)
-  objective    String @db.VarChar(1000)
-  consequences String @db.VarChar(1000)
-  rewards      String @db.VarChar(1000)
-  outcomes     String @db.VarChar(1000)
+  description  String @db.VarChar(1500)
+  discovery    String @db.VarChar(1500)
+  objective    String @db.VarChar(1500)
+  consequences String @db.VarChar(1500)
+  rewards      String @db.VarChar(1500)
+  outcomes     String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -179,10 +179,10 @@ model Monster {
   size        String
   alignment   String
   resistances String
-  stats       String @db.VarChar(1000)
-  abilities   String @db.VarChar(1000)
-  description String @db.VarChar(1000)
-  lore        String @db.VarChar(1000)
+  stats       String @db.VarChar(1500)
+  abilities   String @db.VarChar(1500)
+  description String @db.VarChar(1500)
+  lore        String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -198,9 +198,9 @@ model Item {
   id          String @id @default(cuid())
   name        String
   type        String
-  description String @db.VarChar(1000)
-  lore        String @db.VarChar(1000)
-  abilities   String @db.VarChar(1000)
+  description String @db.VarChar(1500)
+  lore        String @db.VarChar(1500)
+  abilities   String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String
@@ -222,7 +222,7 @@ model Spell {
   duration    String
   range       String
   spellList   String
-  description String @db.VarChar(1000)
+  description String @db.VarChar(1500)
 
   imageURL String @db.VarChar(1000)
   imageKey String

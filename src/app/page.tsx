@@ -73,7 +73,7 @@ export default function Home() {
                                     Sign up for an account
                                 </span>
                                 <span className="mt-2 text-foreground">
-                                    Enjoy 5 free demo generations per day, or
+                                    Enjoy 10 free demo generations per day, or
                                     upgrade to a paid plan.
                                 </span>
                             </div>
