@@ -66,7 +66,7 @@ const Page = async () => {
                     text: "Image Generation",
                 },
                 {
-                    text: "Higher quality responses",
+                    text: "Higher quality images",
                     footnote:
                         "Use our quality models for text and image generation.",
                 },
