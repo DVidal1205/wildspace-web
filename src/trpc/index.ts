@@ -15,8 +15,6 @@ import { PLANS } from "@/config/stripe";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-export const maxDuration = 300;
-
 const redis = Redis.fromEnv();
 
 const ratelimit = {
