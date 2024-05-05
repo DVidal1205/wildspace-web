@@ -18,6 +18,7 @@ export default function Footer() {
                 <div>
                     <Link href="/" className="flex z-40">
                         <Image
+                            unoptimized
                             src="/logo.png"
                             height={128}
                             width={128}

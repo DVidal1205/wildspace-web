@@ -22,6 +22,7 @@ const Navbar = async () => {
                 <div className="flex h-14 items-center justify-between border-b border-input">
                     <Link href="/" className="flex z-40">
                         <Image
+                            unoptimized
                             src="/logo.png"
                             height={128}
                             width={128}

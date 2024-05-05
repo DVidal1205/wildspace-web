@@ -10,7 +10,7 @@ export function absoluteUrl(path: string) {
     if (typeof window !== "undefined") return path;
     if (process.env.VERCEL_URL)
         return `https://www.projectwildspace.tech${path}`;
-    return `http://localhost:${process.env.PORT ?? 3000}${path}`;
+    return `http://localhost:${process.env.PORT ?? 443}${path}`;
 }
 
 export function constructMetadata({
