@@ -8,8 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function absoluteUrl(path: string) {
     if (typeof window !== "undefined") return path;
-    if (process.env.VERCEL_URL)
-        return `https://www.projectwildspace.tech${path}`;
+    if (process.env.VERCEL_URL) return `https://www.projectwild.space${path}`;
     return `http://localhost:${process.env.PORT ?? 443}${path}`;
 }
 
@@ -43,7 +42,7 @@ export function constructMetadata({
             images: [image],
             creator: "@dylanvidal1205",
         },
-        metadataBase: new URL("https://www.projectwildspace.tech"),
+        metadataBase: new URL("https://www.projectwild.space"),
         ...(noIndex && {
             robots: {
                 index: false,
